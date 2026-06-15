@@ -1,23 +1,12 @@
-def localProperties = new Properties()
-def localPropertiesFile = rootProject.file('local.properties')
-if (localPropertiesFile.exists()) {
-    localPropertiesFile.withReader('UTF-8') { reader ->
-        localProperties.load(reader)
-    }
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    id "dev.flutter.flutter-gradle-plugin"
 }
-
-def flutterRoot = localProperties.getProperty('flutter.sdk')
-if (flutterRoot == null) {
-    flutterRoot = ''
-}
-
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
     namespace "com.riman.cryptst"
-    compileSdkVersion 34
+    compileSdk 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -30,8 +19,8 @@ android {
 
     defaultConfig {
         applicationId "com.riman.cryptst"
-        minSdkVersion 21
-        targetSdkVersion 34
+        minSdk 21
+        targetSdk 34
         versionCode 1
         versionName "1.0.0"
     }
@@ -46,5 +35,5 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // kotlin-stdlib is automatically resolved by the kotlin-android plugin
 }

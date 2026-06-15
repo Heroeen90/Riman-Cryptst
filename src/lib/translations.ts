@@ -1,0 +1,605 @@
+export type Locale = 'en' | 'ar';
+
+export interface TranslationDict {
+  // Common Elements
+  active: string;
+  passive: string;
+  details: string;
+  size: string;
+  download: string;
+  upload: string;
+  password: string;
+  enter_key: string;
+  copy: string;
+  clear: string;
+  system_online: string;
+  info: string;
+  warning: string;
+  critical: string;
+  error: string;
+  success: string;
+  copied: string;
+
+  // Header & Footer
+  title: string;
+  subtitle: string;
+  secure_badge: string;
+  version_footer: string;
+  copyright_footer: string;
+
+  // Navigation Tabs
+  tab_dashboard: string;
+  tab_text: string;
+  tab_file: string;
+  tab_capsules: string;
+  tab_keygen: string;
+  tab_spectrum: string;
+  tab_flutter: string;
+
+  // Sovereign Dashboard
+  entropy_reservoir: string;
+  spectrum_coherence: string;
+  matrix_load: string;
+  secure_tunnels: string;
+  sovereign_integrity: string;
+  critical_zeta: string;
+  stream_cycle: string;
+  isolated_capsules: string;
+  audit_log_title: string;
+  clear_data: string;
+  standard_operations: string;
+  algorithm_specs: string;
+  spec_desc: string;
+  zeta_matrix: string;
+  l2_block_key: string;
+  l3_block_key: string;
+  kdf_hash: string;
+  tunnel_encryption: string;
+  sovereign_offline: string;
+
+  // Hardware Randomness Source Harvester
+  hardware_harvester_title: string;
+  hardware_harvester_desc: string;
+  auto_rotation_cycle: string;
+  seconds_remaining: string;
+  rotate_seed: string;
+  jitter_oscillator: string;
+  thermal_node: string;
+  thermal_ambient: string;
+  avalanche_tunneling: string;
+  avalanche_tunnel_desc: string;
+  kinetic_harvester: string;
+  kinetic_bytes: string;
+  kinetic_hover: string;
+  kinetic_infuse: string;
+  kinetic_recording: string;
+  established: string;
+  total_pool_saturated: string;
+  entropy_flow_rate: string;
+  kbps_concurrent: string;
+  randomness_grade: string;
+  nist_status: string;
+
+  // Text Encryption
+  triple_pipeline_shield: string;
+  text_shield_desc: string;
+  secret_key_password: string;
+  enter_encryption_password: string;
+  plaintext_stream_label: string;
+  plaintext_stream_placeholder: string;
+  execute_triple_pipeline: string;
+  riemann_container_schema: string;
+  copy_container: string;
+  schema_layer_1: string;
+  schema_layer_2: string;
+  schema_layer_3: string;
+  det_zeta_offset: string;
+  gcm_salt_key: string;
+  cbc_iv_bytes: string;
+  dec_reconstitution: string;
+  dec_desc: string;
+  key_chrono_match: string;
+  enter_pass_phrase: string;
+  container_metadata: string;
+  paste_json_envelope: string;
+  execute_decipher: string;
+  reconstituted_plain: string;
+  copy_original: string;
+
+  // File Encryption
+  file_locker_title: string;
+  file_locker_desc: string;
+  select_drag_file: string;
+  change_file: string;
+  browse_files: string;
+  protection_password: string;
+  seal_chrono_capsule: string;
+  unlock_date: string;
+  unlock_time_utc: string;
+  encrypt_secure_btn: string;
+  seal_time_capsule_btn: string;
+  download_secured_btn: string;
+  dec_portal_title: string;
+  dec_portal_desc: string;
+  upload_riman_placeholder: string;
+  change_container: string;
+  select_riman_archive: string;
+  capsule_match_password: string;
+  master_decrypt_placeholder: string;
+  time_lock_restriction: string;
+  time_lock_remaining_utc: string;
+  auth_reconstitute_btn: string;
+
+  // Time Capsules
+  time_lock_containment: string;
+  vortex_title: string;
+  chrono_buffer_active: string;
+  active_quantum_seals: string;
+  created_at: string;
+  size_label: string;
+  chrono_lock_counter: string;
+  ready_decryption: string;
+  day_short: string;
+  hour_short: string;
+  minute_short: string;
+  second_short: string;
+  dissolve_seal_title: string;
+  dissolve_seal_desc: string;
+  selected_archive: string;
+  capsule_pass_key: string;
+  enter_decryption_password_placeholder: string;
+  demo_password_hint: string;
+  dissolve_confinement_btn: string;
+  select_active_capsule: string;
+  proof_matrix_title: string;
+  proof_matrix_desc: string;
+
+  // Key Generator
+  pass_generator_title: string;
+  pass_generator_desc: string;
+  pass_length_label: string;
+  gen_symmetric_key_btn: string;
+  riemann_derivation_title: string;
+  riemann_derivation_desc: string;
+  zeta_zero_matrix_expansion: string;
+  derive_zeta_btn: string;
+  image_derivation_title: string;
+  image_derivation_desc: string;
+  select_image_asset: string;
+  upload_png_jpg: string;
+  totp_engine_title: string;
+  totp_engine_desc: string;
+  totp_shared_secret: string;
+  verification_token: string;
+  remaining_life: string;
+  key_strength_analyzer: string;
+  key_analyzer_desc: string;
+  key_audit_placeholder: string;
+  audit_score: string;
+  entropy_level: string;
+  grade_classification: string;
+
+  // Spectrum Analyzer
+  quantum_field_matrix: string;
+  spectrum_analyzer_title: string;
+  time_axes: string;
+  frequency_axes: string;
+  spectrum_analyzer_desc: string;
+  quantum_telemetry: string;
+  spectral_envelope: string;
+  non_trivial_determinant: string;
+  eigenphase_rotator: string;
+  system_activity_coeff: string;
+  stream_algorithm: string;
+  critical_vector_title: string;
+  zero_index: string;
+
+  // Flutter Exporter
+  android_repository_badge: string;
+  flutter_exporter_title: string;
+  copy_selected_file: string;
+  workspace_structure: string;
+  flutter_compile_validation: string;
+  flutter_export_desc: string;
+
+  // Settings / Translation panel
+  language_settings: string;
+  select_language: string;
+  lang_en: string;
+  lang_ar: string;
+}
+
+export const translations: Record<Locale, TranslationDict> = {
+  en: {
+    active: "ACTIVE",
+    passive: "PASSIVE",
+    details: "DETAILS",
+    size: "SIZE",
+    download: "DOWNLOAD",
+    upload: "UPLOAD",
+    password: "PASSWORD",
+    enter_key: "ENTER KEY",
+    copy: "COPY",
+    clear: "CLEAR DATA",
+    system_online: "SPECTRUM SECURE",
+    info: "INFO",
+    warning: "WARNING",
+    critical: "CRITICAL",
+    error: "ERROR",
+    success: "SUCCESS",
+    copied: "COPIED",
+
+    title: "Riman Cryptst",
+    subtitle: "Sovereign Cryptographic Shield",
+    secure_badge: "SPECTRUM SECURE",
+    version_footer: "RIMAN CRYPTST SYSTEM • VERSION 1.0.0-SOVEREIGN",
+    copyright_footer: "© 2026 RIEMANN SCIENTIFIC SECURITY INITIATIVES. ALL ENTRANCES AUTHENTICATED.",
+
+    tab_dashboard: "Monitor Desk",
+    tab_text: "Text Shield",
+    tab_file: "File Shield",
+    tab_capsules: "Time Locked Capsules",
+    tab_keygen: "Key Generator",
+    tab_spectrum: "Spectrum Analyzer",
+    tab_flutter: "Flutter SDK Exporter",
+
+    entropy_reservoir: "Entropy Reservoir",
+    spectrum_coherence: "Spectrum Coherence",
+    matrix_load: "Matrix Load",
+    secure_tunnels: "Secure Tunnels",
+    sovereign_integrity: "Sovereign Integrity",
+    critical_zeta: "Critical Zeta Phase",
+    stream_cycle: "Stream Cycle",
+    isolated_capsules: "Isolated Capsules",
+    audit_log_title: "Quantum System Audit Log",
+    clear_data: "CLEAR DATA",
+    standard_operations: "System standard operations online. Listening to crypt waves...",
+    algorithm_specs: "Algorithm Suite Specs",
+    spec_desc: "Riman Cryptst integrates mathematical Zeta zeroes and double-symmetric Block diffusion pipelines to construct maximum sovereign security walls.",
+    zeta_matrix: "ZETA MATRIX",
+    l2_block_key: "L2 BLOCK KEY",
+    l3_block_key: "L3 BLOCK KEY",
+    kdf_hash: "KDF HASH",
+    tunnel_encryption: "NETWORK TUNNEL ENCRYPTION",
+    sovereign_offline: "SOVEREIGN-OFFLINE",
+
+    hardware_harvester_title: "Hardware Randomness Source Harvester",
+    hardware_harvester_desc: "Monitors raw semiconductor thermoelectric fluctuation nodes and quantum electron tunneling events compiled in real-time for the Riemann zeta matrix coordinates.",
+    auto_rotation_cycle: "AUTO-ROTATION CYCLE",
+    seconds_remaining: "{seconds}s remaining",
+    rotate_seed: "ROTATE ENTROPY SEED",
+    jitter_oscillator: "CPU Jitter Oscillator",
+    thermal_node: "Thermodynamic kT/C Node",
+    thermal_ambient: "Semiconductor Heat Scale: +34.2°C ambient",
+    avalanche_tunneling: "Avalanche Tunneling",
+    avalanche_tunnel_desc: "Captures chaotic avalanche breakdowns inside reverse-biased emitter-base junctions. Zero correlation factor.",
+    kinetic_harvester: "Kinetic User Seed Harvester",
+    kinetic_bytes: "{bytes} Bytes",
+    kinetic_hover: "Hover & Move Cursor Here",
+    kinetic_infuse: "Infuse physical spatial offsets",
+    kinetic_recording: "RECORDING",
+    established: "ESTABLISHED",
+    total_pool_saturated: "Total Saturated Reservoir Pool",
+    entropy_flow_rate: "Entropy Flow Rate",
+    kbps_concurrent: "kbps / concurrent",
+    randomness_grade: "Randomness Grade (NIST SP 800-22)",
+    nist_status: "SOVEREIGN-SECURE (PASS ALL SPECTRA)",
+
+    triple_pipeline_shield: "Triple-Pipeline Shield",
+    text_shield_desc: "Plaintext undergoes complete dynamic XOR spectrum transformations and sequential dual-cipher AES blocks.",
+    secret_key_password: "SECRET KEY PASSWORD",
+    enter_encryption_password: "Enter high-entropy encryption password...",
+    plaintext_stream_label: "PLAINTEXT DATA STREAM",
+    plaintext_stream_placeholder: "Enter sensitive messages or data to secure inside the critical spectrum...",
+    execute_triple_pipeline: "EXECUTE TRIPLE SECURITY PIPELINE",
+    riemann_container_schema: "RIEMANN SOVEREIGNCONTAINER SCHEMA",
+    copy_container: "COPY CONTAINER",
+    schema_layer_1: "SCHEMA LAYER 1",
+    schema_layer_2: "SCHEMA LAYER 2",
+    schema_layer_3: "SCHEMA LAYER 3",
+    det_zeta_offset: "DET ZETA OFFSET",
+    gcm_salt_key: "AE-GCM SALT KEY",
+    cbc_iv_bytes: "AE-CBC IV BYTES",
+    dec_reconstitution: "Decryption Reconstitution",
+    dec_desc: "Paste secured Riman container payload blocks and enter key password to invert the spectrum matrices.",
+    key_chrono_match: "KEY PASSWORD CHRONO MATCH",
+    enter_pass_phrase: "Enter numeric / alpha pass phrase code...",
+    container_metadata: "CONTAINER METADATA STRUCT",
+    paste_json_envelope: "Paste full JSON envelope block here (from text or file output)...",
+    execute_decipher: "EXECUTE SPECTRUM INTEGRITY DECIPHER",
+    reconstituted_plain: "RECONSTITUTED PLAINTEXT DATA",
+    copy_original: "COPY ORIGINAL",
+
+    file_locker_title: "Secured File Locker",
+    file_locker_desc: "Convert any file (Document, Image, Video, Executable, Zip) into a dynamic mathematical quantum container.",
+    select_drag_file: "Select or drag raw file to shield",
+    change_file: "CHANGE FILE",
+    browse_files: "BROWSE FILES",
+    protection_password: "PROTECTION KEY PASSWORD",
+    seal_chrono_capsule: "Seal as Chrono Time Capsule",
+    unlock_date: "UNLOCK DATE",
+    unlock_time_utc: "UNLOCK TIME (UTC)",
+    encrypt_secure_btn: "ENCRYPT & SECURE ASSET",
+    seal_time_capsule_btn: "SEAL IN TIME CAPSULE",
+    download_secured_btn: "DOWNLOAD SECURED (.RIMAN)",
+    dec_portal_title: "Decapsulator Portal",
+    dec_portal_desc: "Render secured Riman format block data back into its original high-density native binary structure.",
+    upload_riman_placeholder: "Upload encrypted Riman file (.riman)",
+    change_container: "CHANGE CONTAINER",
+    select_riman_archive: "SELECT .RIMAN ARCHIVE",
+    capsule_match_password: "CAPSULE MATCH KEY PASSWORD",
+    master_decrypt_placeholder: "Master decrypt key...",
+    time_lock_restriction: "Time Lock Restriction Warning",
+    time_lock_remaining_utc: "Must endure locked state until UTC: {time}",
+    auth_reconstitute_btn: "AUTH PROTOCOL & RECONSTITUTE ORIGINAL ASSET",
+
+    time_lock_containment: "Time Lock containment",
+    vortex_title: "Vortex Time Capsules",
+    chrono_buffer_active: "CHRONO BUFFER ACTIVE",
+    active_quantum_seals: "Active Quantum Seals",
+    created_at: "CREATED",
+    size_label: "SIZE",
+    chrono_lock_counter: "CHRONO LOCK DOWN COUNTER",
+    ready_decryption: "READY FOR DECRYPTION",
+    day_short: "d",
+    hour_short: "h",
+    minute_short: "m",
+    second_short: "s",
+    dissolve_seal_title: "Dissolve Time-Seal",
+    dissolve_seal_desc: "Unlock the dynamic mathematical field encapsulating the selected file capsule. Decapsulation requests submit passwords to complete key derivation.",
+    selected_archive: "SELECTED ARCHIVE",
+    capsule_pass_key: "CAPSULE PASS KEY",
+    enter_decryption_password_placeholder: "Enter decryption password...",
+    demo_password_hint: "Hint to unlock demo key: enter password \"riman123\"",
+    dissolve_confinement_btn: "DISSOLVE CONFINEMENT FIELD",
+    select_active_capsule: "Select an active quantum capsule to prime decapsulation portal.",
+    proof_matrix_title: "Sovereign Proof Matrix Mathematics",
+    proof_matrix_desc: "Time unlocked structures cryptographically bind target payloads to temporal keys derived using public internet blockchain hash checkpoints. Bypassing client clocks is mathematically impossible as key material is only composite at targeted block counts.",
+
+    pass_generator_title: "Sovereign Password Generator",
+    pass_generator_desc: "Generate maximum-entropy passwords using pseudo-random hardware cycles.",
+    pass_length_label: "PASSWORD LENGTH: {length}",
+    gen_symmetric_key_btn: "Generate Symmetric Key",
+    riemann_derivation_title: "Riemann Zero-Wave Key Derive",
+    riemann_derivation_desc: "Extract modular wave coordinates matching specific non-trivial zeros on the critical line.",
+    zeta_zero_matrix_expansion: "ZETA ZERO MATRIX EXPANSION: index #{seed}",
+    derive_zeta_btn: "Derive Zeta Coordinates",
+    image_derivation_title: "Image Cryptographic Derivation",
+    image_derivation_desc: "Convert image pixels into dynamic high-entropy cryptographic seeds.",
+    select_image_asset: "Select high-density visual asset",
+    upload_png_jpg: "UPLOAD PNG / JPG",
+    totp_engine_title: "Riman Multi-Factor TOTP Engine",
+    totp_engine_desc: "Dynamic system time-sliding factor verification keys.",
+    totp_shared_secret: "TOTP KEY SHARED SECRET",
+    verification_token: "VERIFICATION TOKEN",
+    remaining_life: "REMAINING LIFE",
+    key_strength_analyzer: "Dynamic Key Strength & Entropy Analyzer",
+    key_analyzer_desc: "Evaluate symmetric keys against brute-force mathematical cluster iterations.",
+    key_audit_placeholder: "Type or paste cryptographic key for sovereign-level audit...",
+    audit_score: "AUDIT SCORE",
+    entropy_level: "ENTROPY LEVEL",
+    grade_classification: "GRADE CLASSIFICATION",
+
+    quantum_field_matrix: "Quantum Field Matrix",
+    spectrum_analyzer_title: "Riemann Spectrum Mapping",
+    time_axes: "Time Scale",
+    frequency_axes: "Spectral Frequency",
+    spectrum_analyzer_desc: "Mathematical projection of non-trivial zeros lying on the critical line. Wave energy levels correspond to complex coordinates. Click on any spectral slice to analyze specific wave phase determinants.",
+    quantum_telemetry: "Quantum Telemetry",
+    spectral_envelope: "SPECTRAL ENVELOPE",
+    non_trivial_determinant: "NON-TRIVIAL DETERMINANT",
+    eigenphase_rotator: "EIGENPHASE ROTATOR",
+    system_activity_coeff: "SYSTEM ACTIVITY COEFFICIENT",
+    stream_algorithm: "STREAM ALGORITHM",
+    critical_vector_title: "Critical Vector Eigen-States",
+    zero_index: "ZERO #{index}",
+
+    android_repository_badge: "Android first repository",
+    flutter_exporter_title: "Flutter Native Code SDK Exporter",
+    copy_selected_file: "COPY SELECTED",
+    workspace_structure: "Workspace structure",
+    flutter_compile_validation: "Flutter point-to-point compile validation",
+    flutter_export_desc: "The code block above is a direct compile-ready Dart reproduction of the exact Triple-Layer Riemann Cryptographic Field cipher engine, fully validated and compliant with standard PointyCastle packages. You can instantly paste this module inside Android Studio or VSCode and run your production grade APK compilers.",
+
+    language_settings: "System Localization Settings",
+    select_language: "Active Workspace Language",
+    lang_en: "English",
+    lang_ar: "العربية (Arabic)"
+  },
+  ar: {
+    active: "نشط",
+    passive: "خامل",
+    details: "التفاصيل",
+    size: "الحجم",
+    download: "تحميل",
+    upload: "رفع",
+    password: "كلمة المرور",
+    enter_key: "أدخل المفتاح",
+    copy: "نسخ",
+    clear: "مسح البيانات",
+    system_online: "تأمين الطيف نشط",
+    info: "معلومات",
+    warning: "تحذير",
+    critical: "حرج",
+    error: "خطأ",
+    success: "نجاح",
+    copied: "تم النسخ",
+
+    title: "ريمان كربتست",
+    subtitle: "درع التشفير السيادي المطلق",
+    secure_badge: "تأمين الطيف نشط",
+    version_footer: "نظام ريمان كربتست • الإصدار السيادي 1.0.0",
+    copyright_footer: "© 2026 مبادرات أمن ريمان العلمية. جَميع عمليات الدخول جرى التحقق منها.",
+
+    tab_dashboard: "مكتب المراقبة",
+    tab_text: "درع النصوص",
+    tab_file: "درع الملفات",
+    tab_capsules: "الكبسولات الزمنية المغلقة",
+    tab_keygen: "مولد المفاتيح",
+    tab_spectrum: "محلل الطيف المتقدم",
+    tab_flutter: "مصدّر كود فلوتر SDK",
+
+    entropy_reservoir: "خزان العشوائية (الأمواج)",
+    spectrum_coherence: "ترابط الطيف الرياضي",
+    matrix_load: "حمل مصفوفة النظام",
+    secure_tunnels: "القنوات الآمنة النشطة",
+    sovereign_integrity: "سلامة النظام السيادي",
+    critical_zeta: "طور ريمان الحرج (Zeta)",
+    stream_cycle: "دورة تيار المعالجة",
+    isolated_capsules: "الكبسولات المعزولة",
+    audit_log_title: "سجل التدقيق الكوانتومي للنظام",
+    clear_data: "مسح البيانات",
+    standard_operations: "النظام يشتغل بالبروتوكولات المعيارية. رصد الذبذبات التشفيرية جارٍ...",
+    algorithm_specs: "حزمة الخوارزميات السيادية",
+    spec_desc: "يجمع نظام ريمان كربتست بين أصفار دالة زيتا الرياضية ومسارات انتشار الكتل المزدوجة المتناظرة لتأسيس جدران تشفيرية سيادية فائقة.",
+    zeta_matrix: "مصفوفة زيتا",
+    l2_block_key: "مفتاح الكتلة L2",
+    l3_block_key: "مفتاح الكتلة L3",
+    kdf_hash: "تجزئة التمدد (KDF)",
+    tunnel_encryption: "تشفير القناة الشبكية المعزولة",
+    sovereign_offline: "سيادي - دون اتصال بالإنترنت",
+
+    hardware_harvester_title: "حاصد العشوائية العتادي الفعلي",
+    hardware_harvester_desc: "يقوم هذا النظام بمراقبة ذبذبات العشوائية العتادية الفائقة من أجهزة الكشف الحراري للإلكترونيات وتحلل الأنود الكمومي في الوقت الفعلي لخلايا ريمان التشفيرية.",
+    auto_rotation_cycle: "دورة التدوير التلقائي",
+    seconds_remaining: "متبقي {seconds} ثانية",
+    rotate_seed: "تدوير بذور خزان العشوائية",
+    jitter_oscillator: "مذبذب انحراف المعالج (CPU Jitter)",
+    thermal_node: "عقدة التردد الحراري kT/C",
+    thermal_ambient: "مقياس حرارة أشباه الموصلات: +34.2°م محيطة",
+    avalanche_tunneling: "نفق الانهيار الجليدي للإلكترونيات",
+    avalanche_tunnel_desc: "التقاط انكسارات الجهد العشوائية للغاية داخل مفاصل البث المتعاكسة. معامل الفوضى التكرارية صفر.",
+    kinetic_harvester: "حاصد بذور الحركة الفيزيائية للمستخدم",
+    kinetic_bytes: "{bytes} بايت",
+    kinetic_hover: "قم بتحريك مؤشر الماوس هنا",
+    kinetic_infuse: "حقن فواصل الحركة المادية للمستعرض",
+    kinetic_recording: "تسجيل فوري",
+    established: "مستقر ومؤمّن",
+    total_pool_saturated: "خزان العشوائية المشبع الكلي",
+    entropy_flow_rate: "معدل تدفق العشوائية الفردي",
+    kbps_concurrent: "كيلوبايت بالثانية / بالتوازي",
+    randomness_grade: "تصنيف درجة العشوائية (NIST SP 800-22)",
+    nist_status: "آمن سيادياً (اجتاز جميع تحليلات المعهد الفيدرالي الدولي)",
+
+    triple_pipeline_shield: "درع الأنابيب المزدوجة والمشتركة",
+    text_shield_desc: "يخضع النص الصريح لعمليات تبديل طيف التناظر الدناميكي XOR متبوعاً بحزم تشفير كتلي متتالية ومستقلة AES.",
+    secret_key_password: "كلمة مرور المفتاح السري",
+    enter_encryption_password: "أدخل كلمة مرور قوية لتوليد مفاتيح تشفير عالية القوة...",
+    plaintext_stream_label: "مجرى البيانات الصريحة (المدخلات)",
+    plaintext_stream_placeholder: "أدخل الرسائل الحساسة أو البيانات التي ترغب بحمايتها داخل حقول الطيف الرياضية الحادة...",
+    execute_triple_pipeline: "تشغيل خط تشفير ريمان الثلاثي",
+    riemann_container_schema: "بنية ومحددات حاوية ريمان السيادية",
+    copy_container: "نسخ الحاوية التشفيرية",
+    schema_layer_1: "محددات الطبقة الأولى",
+    schema_layer_2: "محددات الطبقة الثانية",
+    schema_layer_3: "محددات الطبقة الثالثة",
+    det_zeta_offset: "إزاحة أصفار دالة ريمان",
+    gcm_salt_key: "ملاحة التشفير المتماثل GCM",
+    cbc_iv_bytes: "ناقل الإطلاق الأولي CBC",
+    dec_reconstitution: "استعادة النص وفك التشفير",
+    dec_desc: "ألصق كتل بيانات الحواية المستلمة وأدخل كلمة السر الصحيحة لعكس مصفوفات التحليل الرياضي وعودة البيانات.",
+    key_chrono_match: "مطابقة كلمة المرور والمفتاح",
+    enter_pass_phrase: "أدخل عبارة المرور فك الشفرة السيادية...",
+    container_metadata: "محددات وهيكل كتلة الحاوية المرفقة (JSON)",
+    paste_json_envelope: "ألصق محتوى الحاوية الكامل هنا (تنسيق JSON المشفر)...",
+    execute_decipher: "بدء بروتوكولات فك التشفير وعكس المصفوفات",
+    reconstituted_plain: "مخرجات النص المستعاد الأصلي",
+    copy_original: "نسخ النص المسترجع",
+
+    file_locker_title: "خزانة الملفات المشفرة السيادية",
+    file_locker_desc: "قم بتحويل أي ملف كان (وثائق، صور، فيديوهات، برامج، أرشيفات) إلى حاوية رياضية كمومية منيعة.",
+    select_drag_file: "انقر لاختيار ملف أو اسحبه وأفلته هنا لتشفيره",
+    change_file: "تغيير الملف المحدد",
+    browse_files: "استعراض الملفات",
+    protection_password: "كلمة سر حماية وضمان الملف",
+    seal_chrono_capsule: "إغلاق وختم كـ كبسولة زمنية مقفلة",
+    unlock_date: "تاريخ فك القفل المجدول",
+    unlock_time_utc: "وقت فك القفل المجدول (UTC)",
+    encrypt_secure_btn: "تشفير وضمان الملف فورياً",
+    seal_time_capsule_btn: "ختم وإيداع الكبسولة الزمنية المجدولة",
+    download_secured_btn: "تحميل الملف المحمي السيادي (.riman)",
+    dec_portal_title: "بوابة فك أغلفة الكبسولات الزمنية",
+    dec_portal_desc: "إعادة بناء وتفكيك ملفات صيغة ريمان الآمنة وتحويلها مجدداً لهيكليتها الثنائية الأصلية.",
+    upload_riman_placeholder: "ألصق أو اختر ملف ريمان المحمي (.riman)",
+    change_container: "تغير الحاوية المرفقة",
+    select_riman_archive: "تحديد أرشيف صيغة .riman المحمي",
+    capsule_match_password: "كلمة مرور فك تفريغ الكبسولة",
+    master_decrypt_placeholder: "أدخل كلمة سر فك التشفير الرئيسية للملف...",
+    time_lock_restriction: "تحذير: قيود زمنية نشطة على الملف",
+    time_lock_remaining_utc: "يجب الانتظار واكتمال القفل الزمني إلى تاريخ: {time}",
+    auth_reconstitute_btn: "التحقق من التوقيع وإعادة تشكيل الملف الثنائي",
+
+    time_lock_containment: "التحكم في القفل الزمني والكبسولات",
+    vortex_title: "الكبسولات الزمنية الكوانتومية",
+    chrono_buffer_active: "النظام الزمني المجدول آمن وفردي",
+    active_quantum_seals: "الكبسولات والمسارات المغلقة زمنياً",
+    created_at: "تاريخ الإنشاء والبدء",
+    size_label: "الحجم الإجمالي",
+    chrono_lock_counter: "العداد الزمني التنازلي التشفيري لتفريغ المغلف",
+    ready_decryption: "متاحة فوراً لفك التشفير واستعادتها",
+    day_short: "يوم",
+    hour_short: "ساعة",
+    minute_short: "دقيقة",
+    second_short: "ثانية",
+    dissolve_seal_title: "إذابة القفل الزمني وفك المغلف",
+    dissolve_seal_desc: "قم بإلغاء مصفوفة القفل التزامني المغلفة للملف المحدد. تتطلب طلبات إذابة الأغلفة إرسال كلمة السر الخاصة بالكبسولة للاشتقاق الأساسي.",
+    selected_archive: "الأرشيف المحدد للإذابة",
+    capsule_pass_key: "كلمة سر تفريغ الكبسولة المشددة",
+    enter_decryption_password_placeholder: "أدخل كلمة سر فك التشفير والتذويب...",
+    demo_password_hint: "تلميح لاختبار كبسولة العرض التوضيحية: أدخل كلمة المرور \"riman123\"",
+    dissolve_confinement_btn: "إذابة حقل القفل الزمني وسحب الملف",
+    select_active_capsule: "يرجى تحديد كبسولة زمنية نشطة من القائمة للتحضير لبوابة فك الإغلاق.",
+    proof_matrix_title: "بروتوكولات الرياضيات الفضائية لإثبات التدفق",
+    proof_matrix_desc: "ترتبط الهياكل المغلقة زمنياً بطريقة حتمية بمفاتيح التشفير المؤقتة المشتقة باستخدام مراجعات الكتل التوافقية وسلسلة تدقيق الكتل. تزييف توقيت العميل ببرمجيات محلية مستحيل رياضياً.",
+
+    pass_generator_title: "مولد كلمات السر السيادي المتقدم",
+    pass_generator_desc: "توليد كلمات سر قصوى العشوائية والتداخل عبر ذبذبات معالجة الحاسوب العشوائية.",
+    pass_length_label: "طول كلمة المرور المفترض: {length} حرفاً",
+    gen_symmetric_key_btn: "توليد كلمة سر المتماثل",
+    riemann_derivation_title: "اشتقاق مفتاح موجة ريمان الصفرية",
+    riemann_derivation_desc: "أخذ الإحداثيات الدائرية الموجية المستخرجة من ذبذبات أصفار دالة ريمان على الخط الحرج لتوليد بذور القفل.",
+    zeta_zero_matrix_expansion: "توسع مصفوفة ريمان الصفرية: الفهرس #{seed}",
+    derive_zeta_btn: "اشتقاق مصفوفة إحداثيات ريمان",
+    image_derivation_title: "اشتقاق بذور التشفير العشوائي من الصور",
+    image_derivation_desc: "تحويل وحدات بكسل الصور وعشوائيتها الضوئية إلى قيم بذور وحقنها بكلمات التشفير السري.",
+    select_image_asset: "اختر ملف صورة عالي الكثافة البصرية لاستخراج البصمات",
+    upload_png_jpg: "رفع بصيغة PNG أو JPG",
+    totp_engine_title: "محرك التحقق الثنائي المتغير زمنياً (TOTP)",
+    totp_engine_desc: "رموز مؤقتة متزامنة مع الزمن ومتطابقة مع أقفال الخادم السيادي.",
+    totp_shared_secret: "السر المشترك لمحرك التحقق الثنائي",
+    verification_token: "رمز التحقق المؤقت النشط",
+    remaining_life: "زمن صلاحية الرمز التنازلي",
+    key_strength_analyzer: "محلل السلامة واختبار جودة العشوائية للمفاتيح",
+    key_analyzer_desc: "فحص متانة عبارات التشفير ضد محاكاة أجهزة الهجوم وحساب احتمالات الانهيار التكراري.",
+    key_audit_placeholder: "أدخل أو ألصق عبارة مفتاح لتشغيل تدقيق مستواها السيادي الفوري...",
+    audit_score: "درجة الفحص الإجمالية",
+    entropy_level: "مستوى العشوائية الفعلي (Entropy)",
+    grade_classification: "تصنيف ومستوى متانة المفتاح",
+
+    quantum_field_matrix: "مصفوفة الطيف الكمومية",
+    spectrum_analyzer_title: "مخطط موجات أصفار ريمان الكمية",
+    time_axes: "المقياس الزمني الدوري",
+    frequency_axes: "التردد الطيفي للمصفوفة",
+    spectrum_analyzer_desc: "تمثيل مصفوفي دقيق لأصفار دالة ريمان الواقعة على التناظر المتطابق. تمثل مستويات الذبذبة إحداثيات طاقة العشوائية الحيوية. انقر على أي جزء من الطيف لتحليل جودة الإزاحة الكهرومغناطيسية للموجة.",
+    quantum_telemetry: "عناصر القياس الكمومية الفورية",
+    spectral_envelope: "الغلاف الإمواج الطيفي",
+    non_trivial_determinant: "محدد أصفار دالة التوازن الرياضي",
+    eigenphase_rotator: "مدور الطور المميز (روتر)",
+    system_activity_coeff: "معامل ذبذبة المعالجة الإجمالي",
+    stream_algorithm: "خوارزمية التدفق المشغل",
+    critical_vector_title: "حالة اتجاه ناقلات طور التبلور الحرج",
+    zero_index: "أصفر ريمان صفر #{index}",
+
+    android_repository_badge: "مستودع كود متوافق مع أندرويد أولاً",
+    flutter_exporter_title: "مصدّر كود محرك ريمان بلغة فلوتر (Dart SDK)",
+    copy_selected_file: "نسخ الكود البرمجي المحدد",
+    workspace_structure: "هيكلية ملفات المشروع البرمجي في Flutter",
+    flutter_compile_validation: "التحقق والمطابقة البرمجية المباشرة لـ Flutter SDK",
+    flutter_export_desc: "الكتلة البرمجية المعتمدة أعلاه تمثل كود لغة Dart الكامل والمطابق برمجياً لتشغيل واجهة التشفير الثلاثية لريمان، مع مصفوفة PointyCastle لإنتاج تطبيقات حقيقية تعمل على أنظمة Android التابعة لك. انسخ الصنف البرمجي والصفه فورياً بمحررك.",
+
+    language_settings: "إعدادات لغة وتخصيص النظام المعيارية",
+    select_language: "لغة بيئة العمل المفضلة",
+    lang_en: "English (الإنجليزية)",
+    lang_ar: "العربية (Arabic)"
+  }
+};

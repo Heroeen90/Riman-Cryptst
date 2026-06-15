@@ -6,7 +6,9 @@ pluginManagement {
             propertiesFile.withReader("UTF-8") { reader -> properties.load(reader) }
         }
         def sdkPath = properties.getProperty("flutter.sdk")
-        assert sdkPath != null, "flutter.sdk not set in local.properties"
+        if (sdkPath == null) {
+            throw new GradleException("Flutter SDK not found. Define location with flutter.sdk in local.properties.")
+        }
         return sdkPath
     }()
 

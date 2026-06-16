@@ -507,11 +507,15 @@ class _SovereignDashboardWidgetState extends State<SovereignDashboardWidget> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.grey),
-                overflow: TextOverflow.ellipsis,
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold, color: Colors.grey),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
+              const SizedBox(width: 4),
               Icon(icon, size: 12, color: color),
             ],
           ),

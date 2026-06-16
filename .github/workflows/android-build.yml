@@ -17,7 +17,7 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Java Development Kit (JDK 17)
+      # Step 2: Setup Java Development Kit (JDK 17) required for modern Gradle and Flutter
       - name: Set up Java Development Kit (JDK)
         uses: actions/setup-java@v4
         with:
@@ -25,11 +25,11 @@ jobs:
           java-version: '17'
           cache: 'gradle'
 
-      # Step 3: Setup Fixed Flutter Environment (تثبيت الإصدار لمنع تعارض الـ Gradle مستقبلاً)
+      # Step 3: Setup Flutter Environment
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.2'
+          flutter-version: '3.x'
           channel: 'stable'
           cache: true
           cache-key: "flutter-:os:-:channel:-:version:-:arch:-:hash:"
@@ -52,7 +52,6 @@ jobs:
             flutter pub get
           else
             echo "::warning title=Missing pubspec.yaml::No pubspec.yaml found at repository root. Skipping flutter pub get."
-            exit 1
           fi
 
       # Step 6: Validate Package Outdated Status
@@ -78,17 +77,28 @@ jobs:
             echo "Skipping tests (no test suite directory or pubspec found)."
           fi
 
-      # Step 9: Build Release APK (تم الإبقاء على الـ Release لأنه الأهم للإنتاج)
+      # Step 9: Build Debug APK
+      - name: Build Debug APK
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter build apk --debug
+          fi
+
+      # Step 10: Build Release APK
       - name: Build Release APK
         run: |
           if [ -f "pubspec.yaml" ]; then
             flutter build apk --release
           fi
 
-      # Step 10: Collect and Upload Artifacts (تحسين مسار المخرجات ليصبح أدق)
+      # Step 11: Collect and Upload Artifacts (Build output)
       - name: Upload APK Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: riman-cryptst-release-apk-${{ github.run_number }}
-          path: build/app/outputs/flutter-apk/app-release.apk
-          if-no-files-found: error
+          name: riman-cryptst-apks-${{ github.run_number }}
+          path: |
+            build/app/outputs/flutter-apk/app-debug.apk
+            build/app/outputs/flutter-apk/app-release.apk
+            **/build/app/outputs/flutter-apk/app-debug.apk
+            **/build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: warn

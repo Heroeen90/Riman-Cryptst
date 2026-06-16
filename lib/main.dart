@@ -992,9 +992,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   children: const [
                     Icon(Icons.vpn_key_sharp, color: Color(0xFFA855F7), size: 18),
                     SizedBox(width: 8),
-                    Text(
-                      'SOVEREIGN MATHEMATICAL CRYPTO-KEY GEN',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white, letterSpacing: 0.5),
+                    Expanded(
+                      child: Text(
+                        'SOVEREIGN MATHEMATICAL CRYPTO-KEY GEN',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white, letterSpacing: 0.5),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),
@@ -1112,9 +1115,12 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   children: const [
                     Icon(Icons.multiline_chart, color: Color(0xFF06B6D4), size: 18),
                     SizedBox(width: 8),
-                    Text(
-                      'RIEMANN ZERO SPECTRUM PROJECTION',
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white, letterSpacing: 0.5),
+                    Expanded(
+                      child: Text(
+                        'RIEMANN ZERO SPECTRUM PROJECTION',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.white, letterSpacing: 0.5),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     ),
                   ],
                 ),

@@ -36,6 +36,9 @@ export interface TranslationDict {
   tab_spectrum: string;
   tab_flutter: string;
   tab_security: string;
+  tab_notes: string;
+  tab_journal: string;
+  tab_biometrics: string;
 
   // Sovereign Dashboard
   entropy_reservoir: string;
@@ -244,6 +247,9 @@ export const translations: Record<Locale, TranslationDict> = {
     tab_spectrum: "Spectrum Analyzer",
     tab_flutter: "Flutter SDK Exporter",
     tab_security: "Security Center",
+    tab_notes: "Secure Notes",
+    tab_journal: "Secure Journal",
+    tab_biometrics: "Biometrics & Session",
 
     entropy_reservoir: "Entropy Reservoir",
     spectrum_coherence: "Spectrum Coherence",
@@ -441,6 +447,9 @@ export const translations: Record<Locale, TranslationDict> = {
     tab_spectrum: "محلل الطيف المتقدم",
     tab_flutter: "مصدّر كود فلوتر SDK",
     tab_security: "مركز الأمان والتحقق",
+    tab_notes: "الملاحظات الآمنة",
+    tab_journal: "اليوميات المؤمنة",
+    tab_biometrics: "الأمن الحيوي وضبط الجلسة",
 
     entropy_reservoir: "خزان العشوائية (الأمواج)",
     spectrum_coherence: "ترابط الطيف الرياضي",

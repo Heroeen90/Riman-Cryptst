@@ -33,6 +33,9 @@ const Map<String, Map<String, String>> i18nData = {
     'tab_keygen': 'Key Generator',
     'tab_spectrum': 'Spectrum Analyzer',
     'tab_flutter': 'Flutter SDK Exporter',
+    'tab_notes': 'Secure Notes',
+    'tab_journal': 'Secure Journal',
+    'tab_biometrics': 'Biometrics & Session',
     
     'entropy_reservoir': 'Entropy Reservoir',
     'spectrum_coherence': 'Spectrum Coherence',
@@ -231,6 +234,9 @@ const Map<String, Map<String, String>> i18nData = {
     'tab_keygen': 'مولد المفاتيح',
     'tab_spectrum': 'محلل الطيف المتقدم',
     'tab_flutter': 'مصدّر كود فلوتر SDK',
+    'tab_notes': 'الملاحظات الآمنة',
+    'tab_journal': 'اليوميات المؤمنة',
+    'tab_biometrics': 'الأمن الحيوي وضبط الجلسة',
     
     'entropy_reservoir': 'خزان العشوائية (الأمواج)',
     'spectrum_coherence': 'ترابط الطيف الرياضي',

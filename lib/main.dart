@@ -13,6 +13,8 @@ import 'widgets/time_capsules.dart';
 import 'widgets/key_generator.dart';
 import 'widgets/spectrum_analyzer_tab.dart';
 import 'widgets/flutter_exporter.dart';
+import 'widgets/secure_notes.dart';
+import 'widgets/secure_journal.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -438,6 +440,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
       {'icon': Icons.lock_clock, 'key': 'tab_capsules'},
       {'icon': Icons.vpn_key, 'key': 'tab_keygen'},
+      {'icon': Icons.note_alt, 'key': 'tab_notes'},
+      {'icon': Icons.book, 'key': 'tab_journal'},
       {'icon': Icons.waves, 'key': 'tab_spectrum'},
       {'icon': Icons.code, 'key': 'tab_flutter'},
     ];
@@ -722,6 +726,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   KeyGeneratorWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  SecureNotesWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  SecureJournalWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

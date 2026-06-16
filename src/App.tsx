@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe
+  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert
 } from 'lucide-react';
 import { SovereignDashboard } from './components/SovereignDashboard';
 import { TextEncryptionModule } from './components/TextEncryptionModule';
@@ -11,6 +11,9 @@ import { RiemannSpectrumAnalyzer } from './components/RiemannSpectrumAnalyzer';
 import { FlutterExplorer } from './components/FlutterExplorer';
 import { RiemannSpectrumCanvas } from './components/RiemannSpectrumCanvas';
 import { SecurityCenter } from './components/SecurityCenter';
+import { SecureNotesModule } from './components/SecureNotesModule';
+import { SecureJournalModule } from './components/SecureJournalModule';
+import { BiometricSettingsModule } from './components/BiometricSettingsModule';
 import { Toast } from './components/Toast';
 import { SecurityEvent } from './types';
 import { useTranslation } from './lib/I18nContext';
@@ -36,7 +39,37 @@ export default function App() {
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
 
   // Protection and recovery states
-  const [biometricsEnabled, setBiometricsEnabled] = useState<boolean>(false);
+  const [biometricsEnabled, setBiometricsEnabled] = useState<boolean>(() => {
+    return localStorage.getItem('riman_biometrics_enabled') === 'true';
+  });
+  const [biometricType, setBiometricType] = useState<'fingerprint' | 'face' | 'both'>(() => {
+    return (localStorage.getItem('riman_biometric_type') as any) || 'fingerprint';
+  });
+  const [sessionTimeout, setSessionTimeout] = useState<number>(() => {
+    const saved = localStorage.getItem('riman_session_timeout');
+    return saved ? parseInt(saved) : 5; // default 5 minutes
+  });
+  const [failedAttempts, setFailedAttempts] = useState<number>(0);
+  const [lockUntil, setLockUntil] = useState<number | null>(null);
+  const [lastActivity, setLastActivity] = useState<number>(Date.now());
+  const [loginTime] = useState<number>(Date.now());
+  const [isBioScanning, setIsBioScanning] = useState<boolean>(false);
+
+  const handleSetBiometricsEnabled = (val: boolean) => {
+    setBiometricsEnabled(val);
+    localStorage.setItem('riman_biometrics_enabled', val ? 'true' : 'false');
+  };
+
+  const handleSetBiometricType = (val: 'fingerprint' | 'face' | 'both') => {
+    setBiometricType(val);
+    localStorage.setItem('riman_biometric_type', val);
+  };
+
+  const handleSetSessionTimeout = (val: number) => {
+    setSessionTimeout(val);
+    localStorage.setItem('riman_session_timeout', val.toString());
+  };
+
   const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
   const [clipboardDuration, setClipboardDuration] = useState<number>(30);
   const [isAppLocked, setIsAppLocked] = useState<boolean>(false);
@@ -107,6 +140,55 @@ export default function App() {
     }
   }, [isSplashActive, locale]);
 
+  // Inactivity tracking (Feature 4 Session Manager)
+  useEffect(() => {
+    const trackInactivity = () => {
+      if (!isSplashActive && !isAppLocked) {
+        setLastActivity(Date.now());
+      }
+    };
+
+    window.addEventListener('mousemove', trackInactivity);
+    window.addEventListener('keydown', trackInactivity);
+    window.addEventListener('click', trackInactivity);
+    window.addEventListener('scroll', trackInactivity);
+    window.addEventListener('touchstart', trackInactivity);
+
+    return () => {
+      window.removeEventListener('mousemove', trackInactivity);
+      window.removeEventListener('keydown', trackInactivity);
+      window.removeEventListener('click', trackInactivity);
+      window.removeEventListener('scroll', trackInactivity);
+      window.removeEventListener('touchstart', trackInactivity);
+    };
+  }, [isSplashActive, isAppLocked]);
+
+  // Monitor inactive timeout (Feature 4 Session auto-lock)
+  useEffect(() => {
+    if (isSplashActive || isAppLocked) return;
+
+    const interval = setInterval(() => {
+      const elapsedMins = (Date.now() - lastActivity) / (1000 * 60);
+      if (elapsedMins >= sessionTimeout) {
+        setIsAppLocked(true);
+        setPinValue('');
+        handleSecurityLog(
+          'Session Inertia Lock Activated', 
+          'warning', 
+          `Auto-lock triggered after ${sessionTimeout} minute(s) of inactivity.`
+        );
+        fireToast(
+          locale === 'ar' 
+            ? `تم قفل الغلاف تلقائياً لخمول النظام لـ ${sessionTimeout} دقيقة!` 
+            : `System memory auto-locked after ${sessionTimeout} mins of complete inactivity.`, 
+          'info'
+        );
+      }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [isSplashActive, isAppLocked, lastActivity, sessionTimeout, locale]);
+
   if (isSplashActive) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-neutral-950 font-sans p-6 overflow-hidden select-none">
@@ -166,21 +248,64 @@ export default function App() {
       if (pinValue === setupPin) {
         setIsAppLocked(false);
         setPinValue('');
+        setFailedAttempts(0);
         handleSecurityLog('Sovereign session authenticated', 'info', 'Correct PIN provided to unlock system memory.');
         fireToast(locVal('Access Granted. Workspace Unlocked.', 'تم التصريح بالدخول. أهلاً بك في وحدة ريمان.'), 'success');
       } else {
-        setPinError(locVal('Incorrect PIN specification!', 'رمز التعريف PIN المدخل خاطئ!'));
-        setPinValue('');
+        const nextAttempts = failedAttempts + 1;
+        setFailedAttempts(nextAttempts);
+        handleSecurityLog('PIN Authentication failure', 'warning', `Incorrect unlock attempt #${nextAttempts}.`);
+        
+        if (nextAttempts >= 5) {
+          const cooldown = Date.now() + 30000;
+          setLockUntil(cooldown);
+          setPinValue('');
+          setPinError(locVal('Lockout triggered! Please wait 30 seconds.', 'تم تفعيل الحماية من الاختراق! انتظر 30 ثانية.'));
+          handleSecurityLog('Authentication threshold lock active', 'critical', '5 consecutive failures detected. Lockdown enforced.');
+        } else {
+          setPinError(locVal(`Incorrect PIN specification! (${nextAttempts}/5)`, `رمز تعريف PIN خاطئ! (${nextAttempts}/5)`));
+          setPinValue('');
+        }
       }
+    };
+
+    const handleBiometricUnlockOnLockScreen = () => {
+      if (lockUntil && Date.now() < lockUntil) {
+        fireToast(locVal('Scanner currently locked due to multi-attempts.', 'مستشعر المعالم الحيوية مقفل حالياً لكثرة المحاولات.'), 'error');
+        return;
+      }
+
+      setIsBioScanning(true);
+      handleSecurityLog(
+        'Lock Screen biometric scan sequence online',
+        'info',
+        `Acquiring device credentials for quick bypass.`
+      );
+
+      setTimeout(() => {
+        setIsBioScanning(false);
+        setIsAppLocked(false);
+        setPinValue('');
+        setFailedAttempts(0);
+        handleSecurityLog(
+          'Biometric quick unlock matched successfully',
+          'info',
+          `Sovereign user identity authorized via live ${biometricType.toUpperCase()} sensor.`
+        );
+        fireToast(
+          locVal('Access Granted. Biometric session active.', 'تم السماح بالدخول. الجلسة الحيوية آمنة ونشطة.'),
+          'success'
+        );
+      }, 1500);
     };
 
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-neutral-950 font-sans p-6 overflow-hidden select-none">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_120%,rgba(244,63,94,0.08),rgba(255,255,255,0))]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_120%,rgba(120,119,198,0.06),rgba(255,255,255,0))]" />
         
         <div className="relative flex flex-col items-center text-center space-y-6 max-w-sm w-full mx-4">
           <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-xl overflow-hidden animate-pulse">
-            <Lock className="w-8 h-8 text-rose-500 glow-text" />
+            <Lock className="w-8 h-8 text-cyan-500 glow-text" />
           </div>
 
           <div className="space-y-1">
@@ -193,13 +318,52 @@ export default function App() {
           </div>
 
           <div className="space-y-4 w-full">
+            {/* Biometric quick authenticate button (Feature 3) */}
+            {biometricsEnabled && (
+              <div className="w-full max-w-[280px] bg-neutral-900/40 border border-neutral-850/60 rounded-2xl p-4 flex flex-col items-center space-y-3 shadow-2xl mx-auto">
+                <div className="flex items-center gap-2 text-[9px] font-mono text-cyan-400 font-bold tracking-wider uppercase">
+                  <Fingerprint className="w-4.5 h-4.5 text-cyan-400 animate-pulse" />
+                  <span>{locVal('Biometric Unlock Active', 'المصادقة الحيوية نشطة')}</span>
+                </div>
+
+                {isBioScanning ? (
+                  <div className="flex flex-col items-center space-y-2 py-1">
+                    <div className="relative w-12 h-12 flex items-center justify-center bg-neutral-950 border border-cyan-500 rounded-full overflow-hidden">
+                      <div className="absolute top-0 bottom-0 left-0 right-0 bg-cyan-500/15 animate-ping rounded-full" />
+                      <div className="absolute left-0 right-0 h-0.5 bg-cyan-400 animate-bounce" />
+                      <Fingerprint className="w-6 h-6 text-cyan-400 animate-pulse" />
+                    </div>
+                    <span className="text-[8px] text-neutral-400 font-mono tracking-widest uppercase animate-pulse">
+                      {locVal('SCANNING CO-ORDS...', 'جاري المسح الحركي...')}
+                    </span>
+                  </div>
+                ) : lockUntil && Date.now() < lockUntil ? (
+                  <div className="flex items-center gap-2 text-rose-400 bg-rose-950/20 border border-rose-900/40 px-3 py-1.5 rounded-xl text-[10px] font-mono">
+                    <ShieldAlert className="w-3.5 h-3.5" />
+                    <span>{locVal(`Locked. Wait ${Math.ceil((lockUntil - Date.now())/1000)}s`, `عطل مؤقت. انتظر ${Math.ceil((lockUntil - Date.now())/1000)} ثانية`)}</span>
+                  </div>
+                ) : (
+                  <button 
+                    onClick={handleBiometricUnlockOnLockScreen}
+                    className="relative w-12 h-12 rounded-full bg-cyan-950/20 border border-cyan-800 flex items-center justify-center hover:bg-cyan-900/40 hover:text-white transition duration-200 cursor-pointer text-cyan-450 group overflow-hidden"
+                  >
+                    <Fingerprint className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition" />
+                  </button>
+                )}
+
+                <span className="text-[9px] text-neutral-500 font-mono">
+                  {locVal('Scan biometrics to bypass credentials', 'انقر على الدائرة لتجاوز رمز PIN')}
+                </span>
+              </div>
+            )}
+
             {/* PIN indicators */}
             <div className="flex justify-center gap-3 py-2">
               {[0, 1, 2, 3].map((i) => (
                 <div 
                   key={i} 
-                  className={`w-3.5 h-3.5 rounded-full border border-neutral-800 transition-all ${
-                    pinValue.length > i ? 'bg-rose-500 shadow shadow-rose-500/50' : 'bg-neutral-900'
+                  className={`w-3.5 h-3.5 rounded-full border border-neutral-850 transition-all ${
+                    pinValue.length > i ? 'bg-cyan-550 shadow shadow-cyan-500/50' : 'bg-neutral-900'
                   }`}
                 />
               ))}
@@ -214,27 +378,31 @@ export default function App() {
               {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
                 <button
                   key={num}
+                  disabled={lockUntil !== null && Date.now() < lockUntil}
                   onClick={() => handlePinPress(num.toString())}
-                  className="w-14 h-14 rounded-full bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-800 text-white font-mono text-lg font-bold flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                  className="w-14 h-14 rounded-full bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-850 text-white font-mono text-lg font-bold flex items-center justify-center active:scale-95 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                 >
                   {num}
                 </button>
               ))}
               <button
+                disabled={lockUntil !== null && Date.now() < lockUntil}
                 onClick={handleBackspace}
-                className="w-14 h-14 rounded-full bg-neutral-950/20 text-neutral-400 font-mono text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer hover:text-white"
+                className="w-14 h-14 rounded-full bg-neutral-950/20 text-neutral-400 font-mono text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer hover:text-white disabled:opacity-30"
               >
                 DEL
               </button>
               <button
+                disabled={lockUntil !== null && Date.now() < lockUntil}
                 onClick={() => handlePinPress('0')}
-                className="w-14 h-14 rounded-full bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-800 text-white font-mono text-lg font-bold flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                className="w-14 h-14 rounded-full bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-850 text-white font-mono text-lg font-bold flex items-center justify-center active:scale-95 transition-all cursor-pointer disabled:opacity-30"
               >
                 0
               </button>
               <button
+                disabled={lockUntil !== null && Date.now() < lockUntil}
                 onClick={handleUnlock}
-                className="w-14 h-14 rounded-full bg-rose-950/40 border border-rose-800 text-rose-400 font-semibold text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer hover:bg-rose-900 hover:text-white"
+                className="w-14 h-14 rounded-full bg-cyan-950/40 border border-cyan-800 text-cyan-400 font-semibold text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer hover:bg-cyan-900 hover:text-white disabled:opacity-30"
               >
                 OPEN
               </button>
@@ -316,10 +484,13 @@ export default function App() {
           {[
             { id: 'dashboard', label: t('tab_dashboard'), icon: <LayoutDashboard className="w-4 h-4" /> },
             { id: 'security', label: t('tab_security'), icon: <Shield className="w-4 h-4 text-cyan-400" /> },
+            { id: 'biometrics', label: t('tab_biometrics'), icon: <Fingerprint className="w-4 h-4 text-purple-400" /> },
             { id: 'text', label: t('tab_text'), icon: <FileLock className="w-4 h-4" /> },
             { id: 'file', label: t('tab_file'), icon: <Key className="w-4 h-4" /> },
             { id: 'capsules', label: t('tab_capsules'), icon: <MailOpen className="w-4 h-4" /> },
             { id: 'keygen', label: t('tab_keygen'), icon: <Compass className="w-4 h-4" /> },
+            { id: 'notes', label: t('tab_notes'), icon: <FileText className="w-4 h-4" /> },
+            { id: 'journal', label: t('tab_journal'), icon: <BookOpen className="w-4 h-4" /> },
             { id: 'spectrum', label: t('tab_spectrum'), icon: <Activity className="w-4 h-4" /> },
             { id: 'flutter', label: t('tab_flutter'), icon: <FileCode2 className="w-4 h-4" /> }
           ].map((tab) => {
@@ -360,7 +531,7 @@ export default function App() {
               onSecurityLog={handleSecurityLog}
               onSuccess={fireToast}
               biometricsEnabled={biometricsEnabled}
-              setBiometricsEnabled={setBiometricsEnabled}
+              setBiometricsEnabled={handleSetBiometricsEnabled}
               recoveryKey={recoveryKey}
               setRecoveryKey={setRecoveryKey}
               clipboardDuration={clipboardDuration}
@@ -371,6 +542,32 @@ export default function App() {
                 handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
                 fireToast(locale === 'ar' ? 'تم تفعيل قفل الطوارئ ومسح كل السجلات النشطة!' : 'Emergency Lock Activated! Cached memory purged.', 'error');
               }}
+            />
+          )}
+
+          {activeTab === 'biometrics' && (
+            <BiometricSettingsModule
+              locale={locale}
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              biometricsEnabled={biometricsEnabled}
+              setBiometricsEnabled={handleSetBiometricsEnabled}
+              biometricType={biometricType}
+              setBiometricType={handleSetBiometricType}
+              sessionTimeout={sessionTimeout}
+              setSessionTimeout={handleSetSessionTimeout}
+              failedAttempts={failedAttempts}
+              setFailedAttempts={setFailedAttempts}
+              lockUntil={lockUntil}
+              setLockUntil={setLockUntil}
+              onLockApp={() => {
+                setIsAppLocked(true);
+                setPinValue('');
+                handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
+                fireToast(locale === 'ar' ? 'تم تفريغ وحظر الجلسة!' : 'Sovereign session suspended and locked.', 'error');
+              }}
+              lastActivity={lastActivity}
+              loginTime={loginTime}
             />
           )}
 
@@ -414,6 +611,22 @@ export default function App() {
           {activeTab === 'flutter' && (
             <FlutterExplorer 
               onSuccess={fireToast}
+            />
+          )}
+
+          {activeTab === 'notes' && (
+            <SecureNotesModule
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              triggerAnimation={triggerCryptoAnimation}
+            />
+          )}
+
+          {activeTab === 'journal' && (
+            <SecureJournalModule
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              triggerAnimation={triggerCryptoAnimation}
             />
           )}
         </section>

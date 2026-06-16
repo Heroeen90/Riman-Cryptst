@@ -8,7 +8,10 @@ void main() {
     await tester.pumpWidget(const RimanCryptstApp());
 
     // Advance time to bypass splash screen (splash screen transitions take 2.5 seconds)
-    await tester.pumpAndSettle(const Duration(seconds: 3));
+    for (int i = 0; i < 110; i++) {
+      await tester.pump(const Duration(milliseconds: 25));
+    }
+    await tester.pumpAndSettle();
 
     // Verify Arabic tabs are visible by default
     expect(find.text('مكتب المراقبة'), findsOneWidget);

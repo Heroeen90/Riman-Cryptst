@@ -16,6 +16,7 @@ import { SecureJournalModule } from './components/SecureJournalModule';
 import { BiometricSettingsModule } from './components/BiometricSettingsModule';
 import { SecureGalleryModule } from './components/SecureGalleryModule';
 import { SecureMediaModule } from './components/SecureMediaModule';
+import { RecoveryCenterModule } from './components/RecoveryCenterModule';
 import { Toast } from './components/Toast';
 import { SecurityEvent } from './types';
 import { useTranslation } from './lib/I18nContext';
@@ -72,7 +73,19 @@ export default function App() {
     localStorage.setItem('riman_session_timeout', val.toString());
   };
 
-  const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
+  const [recoveryKey, setRecoveryKey] = useState<string | null>(() => {
+    return localStorage.getItem('riman_recovery_key');
+  });
+
+  const handleSetRecoveryKey = (key: string | null) => {
+    setRecoveryKey(key);
+    if (key) {
+      localStorage.setItem('riman_recovery_key', key);
+    } else {
+      localStorage.removeItem('riman_recovery_key');
+    }
+  };
+
   const [clipboardDuration, setClipboardDuration] = useState<number>(30);
   const [isAppLocked, setIsAppLocked] = useState<boolean>(false);
   const [pinValue, setPinValue] = useState<string>('');
@@ -557,6 +570,7 @@ export default function App() {
           {[
             { id: 'dashboard', label: t('tab_dashboard'), icon: <LayoutDashboard className="w-4 h-4" /> },
             { id: 'security', label: t('tab_security'), icon: <Shield className="w-4 h-4 text-cyan-400" /> },
+            { id: 'recovery', label: locale === 'ar' ? 'مركز الاستعادة' : 'Recovery Center', icon: <Activity className="w-4 h-4 text-rose-450" /> },
             { id: 'biometrics', label: t('tab_biometrics'), icon: <Fingerprint className="w-4 h-4 text-purple-400" /> },
             { id: 'text', label: t('tab_text'), icon: <FileLock className="w-4 h-4" /> },
             { id: 'file', label: t('tab_file'), icon: <Key className="w-4 h-4" /> },
@@ -608,7 +622,7 @@ export default function App() {
               biometricsEnabled={biometricsEnabled}
               setBiometricsEnabled={handleSetBiometricsEnabled}
               recoveryKey={recoveryKey}
-              setRecoveryKey={setRecoveryKey}
+              setRecoveryKey={handleSetRecoveryKey}
               clipboardDuration={clipboardDuration}
               setClipboardDuration={setClipboardDuration}
               privacySettings={privacySettings}
@@ -621,6 +635,15 @@ export default function App() {
                 handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
                 fireToast(locale === 'ar' ? 'تم تفعيل قفل الطوارئ ومسح كل السجلات النشطة!' : 'Emergency Lock Activated! Cached memory purged.', 'error');
               }}
+            />
+          )}
+
+          {activeTab === 'recovery' && (
+            <RecoveryCenterModule
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              recoveryKey={recoveryKey}
+              setRecoveryKey={handleSetRecoveryKey}
             />
           )}
 

@@ -329,7 +329,6 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        scaffoldBackgroundColor: const Color(0xFF030712),
         backgroundColor: const Color(0xFF030712),
         elevation: 0,
         centerTitle: false,
@@ -599,16 +598,16 @@ class _DashboardScreenState extends State<DashboardScreen> with TickerProviderSt
                   title: 'QUANTUM TUNNELING DIODE',
                   value: 'STREAM [$_avalancheHex]',
                   status: 'ACTIVE',
-                  statusColor: Colors.emeraldAccent,
+                  statusColor: const Color(0xFF10B981),
                   customGraphic: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                     decoration: BoxDecoration(
-                      color: Colors.emerald.withOpacity(0.1),
+                      color: const Color(0xFF10B981).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
                     ),
                     child: const Text(
                       'NIST RESTR.',
-                      style: TextStyle(fontSize: 8, color: Colors.emeraldAccent, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 8, color: Color(0xFF10B981), fontWeight: FontWeight.bold),
                     ),
                   ),
                 ),

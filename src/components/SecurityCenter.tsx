@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   ShieldAlert, ShieldCheck, Heart, Key, Clipboard, Trash2, Fingerprint, Lock, Unlock, Zap, HelpCircle, Copy, Check, RotateCcw,
-  Eye, EyeOff, Plus, Archive, Shield, Activity, FileText, BookOpen, Images, Video, Trash
+  Eye, EyeOff, Plus, Archive, Shield, Activity, FileText, BookOpen, Images, Video, Trash, Share2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SecurityEvent } from '../types';
@@ -851,7 +851,8 @@ export function SecurityCenter({
                   { id: 'notes', label: locVal('Sovereign Crypt Notes', 'ملاحظات ريمان المشفرة'), icon: <FileText className="w-3.5 h-3.5 text-neutral-405" /> },
                   { id: 'journal', label: locVal('Personal Secure Journal', 'المذكرات واليوميات السرية'), icon: <BookOpen className="w-3.5 h-3.5 text-neutral-405" /> },
                   { id: 'gallery', label: locVal('Encrypted Photo Gallery', 'معرض الصور المشفر'), icon: <Images className="w-3.5 h-3.5 text-emerald-400" /> },
-                  { id: 'media_vault', label: locVal('Secure Media Vault', 'خزنة الفيديوهات والصوتيات'), icon: <Video className="w-3.5 h-3.5 text-cyan-400" /> }
+                  { id: 'media_vault', label: locVal('Secure Media Vault', 'خزنة الفيديوهات والصوتيات'), icon: <Video className="w-3.5 h-3.5 text-cyan-400" /> },
+                  { id: 'collab', label: locVal('Secure Collaboration & Inbox', 'التبادل والبريد المشفر'), icon: <Share2 className="w-3.5 h-3.5 text-indigo-400" /> }
                 ].map((item) => {
                   const isHidden = privacySettings.hiddenTabs.includes(item.id);
                   return (

@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video, User
+  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video, User, Share2
 } from 'lucide-react';
 import { SovereignDashboard } from './components/SovereignDashboard';
 import { TextEncryptionModule } from './components/TextEncryptionModule';
 import { FileEncryptionModule } from './components/FileEncryptionModule';
 import { TimeCapsuleModule } from './components/TimeCapsuleModule';
 import { KeyGeneratorModule } from './components/KeyGeneratorModule';
+import { SecureCollaborationModule } from './components/SecureCollaborationModule';
 import { RiemannSpectrumAnalyzer } from './components/RiemannSpectrumAnalyzer';
 import { FlutterExplorer } from './components/FlutterExplorer';
 import { RiemannSpectrumCanvas } from './components/RiemannSpectrumCanvas';
@@ -577,6 +578,7 @@ export default function App() {
             { id: 'text', label: t('tab_text'), icon: <FileLock className="w-4 h-4" /> },
             { id: 'file', label: t('tab_file'), icon: <Key className="w-4 h-4" /> },
             { id: 'capsules', label: t('tab_capsules'), icon: <MailOpen className="w-4 h-4" /> },
+            { id: 'collab', label: locale === 'ar' ? 'التعاون الآمن' : 'Secure Collaboration', icon: <Share2 className="w-4 h-4 text-indigo-400" /> },
             { id: 'keygen', label: t('tab_keygen'), icon: <Compass className="w-4 h-4" /> },
             { id: 'notes', label: t('tab_notes'), icon: <FileText className="w-4 h-4" /> },
             { id: 'journal', label: t('tab_journal'), icon: <BookOpen className="w-4 h-4" /> },
@@ -715,6 +717,14 @@ export default function App() {
             <KeyGeneratorModule 
               onSuccess={fireToast}
               onSecurityLog={handleSecurityLog}
+            />
+          )}
+
+          {activeTab === 'collab' && (
+            <SecureCollaborationModule 
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              triggerAnimation={triggerCryptoAnimation}
             />
           )}
 

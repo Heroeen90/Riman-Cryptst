@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const RimanCryptstApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    runApp(const RimanCryptstApp());
+  } catch (e, stackTrace) {
+    debugPrint('Fatal error starting Riman Cryptst application: $e\n$stackTrace');
+  }
 }
 
 class RimanCryptstApp extends StatelessWidget {

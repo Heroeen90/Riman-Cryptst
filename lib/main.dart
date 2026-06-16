@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'utils/translations.dart';
 import 'widgets/sovereign_dashboard.dart';
+import 'widgets/smart_vaults_tab.dart';
 import 'widgets/text_shield.dart';
 import 'widgets/file_shield.dart';
 import 'widgets/time_capsules.dart';
@@ -274,6 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget _buildTabBar() {
     final List<Map<String, dynamic>> tabs = [
       {'icon': Icons.monitor_heart, 'key': 'tab_dashboard'},
+      {'icon': Icons.security, 'key': 'tab_vaults'},
       {'icon': Icons.text_snippet, 'key': 'tab_text'},
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
       {'icon': Icons.lock_clock, 'key': 'tab_capsules'},
@@ -530,6 +532,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SovereignDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
+                  ),
+                  SmartVaultsTab(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
                   ),
                   TextShieldWidget(
                     locale: _locale,

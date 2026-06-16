@@ -15,6 +15,7 @@ import 'widgets/spectrum_analyzer_tab.dart';
 import 'widgets/flutter_exporter.dart';
 import 'widgets/secure_notes.dart';
 import 'widgets/secure_journal.dart';
+import 'widgets/secure_gallery.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -442,6 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.vpn_key, 'key': 'tab_keygen'},
       {'icon': Icons.note_alt, 'key': 'tab_notes'},
       {'icon': Icons.book, 'key': 'tab_journal'},
+      {'icon': Icons.photo_library, 'key': 'tab_gallery'},
       {'icon': Icons.waves, 'key': 'tab_spectrum'},
       {'icon': Icons.code, 'key': 'tab_flutter'},
     ];
@@ -736,6 +738,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   SecureJournalWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  SecureGalleryWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

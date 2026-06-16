@@ -39,6 +39,7 @@ export interface TranslationDict {
   tab_notes: string;
   tab_journal: string;
   tab_biometrics: string;
+  tab_gallery: string;
 
   // Sovereign Dashboard
   entropy_reservoir: string;
@@ -250,6 +251,7 @@ export const translations: Record<Locale, TranslationDict> = {
     tab_notes: "Secure Notes",
     tab_journal: "Secure Journal",
     tab_biometrics: "Biometrics & Session",
+    tab_gallery: "Secure Media Gallery",
 
     entropy_reservoir: "Entropy Reservoir",
     spectrum_coherence: "Spectrum Coherence",
@@ -450,6 +452,7 @@ export const translations: Record<Locale, TranslationDict> = {
     tab_notes: "الملاحظات الآمنة",
     tab_journal: "اليوميات المؤمنة",
     tab_biometrics: "الأمن الحيوي وضبط الجلسة",
+    tab_gallery: "معرض الصور المحمي",
 
     entropy_reservoir: "خزان العشوائية (الأمواج)",
     spectrum_coherence: "ترابط الطيف الرياضي",

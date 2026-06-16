@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert
+  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images
 } from 'lucide-react';
 import { SovereignDashboard } from './components/SovereignDashboard';
 import { TextEncryptionModule } from './components/TextEncryptionModule';
@@ -14,6 +14,7 @@ import { SecurityCenter } from './components/SecurityCenter';
 import { SecureNotesModule } from './components/SecureNotesModule';
 import { SecureJournalModule } from './components/SecureJournalModule';
 import { BiometricSettingsModule } from './components/BiometricSettingsModule';
+import { SecureGalleryModule } from './components/SecureGalleryModule';
 import { Toast } from './components/Toast';
 import { SecurityEvent } from './types';
 import { useTranslation } from './lib/I18nContext';
@@ -491,6 +492,7 @@ export default function App() {
             { id: 'keygen', label: t('tab_keygen'), icon: <Compass className="w-4 h-4" /> },
             { id: 'notes', label: t('tab_notes'), icon: <FileText className="w-4 h-4" /> },
             { id: 'journal', label: t('tab_journal'), icon: <BookOpen className="w-4 h-4" /> },
+            { id: 'gallery', label: t('tab_gallery'), icon: <Images className="w-4 h-4 text-emerald-400" /> },
             { id: 'spectrum', label: t('tab_spectrum'), icon: <Activity className="w-4 h-4" /> },
             { id: 'flutter', label: t('tab_flutter'), icon: <FileCode2 className="w-4 h-4" /> }
           ].map((tab) => {
@@ -624,6 +626,14 @@ export default function App() {
 
           {activeTab === 'journal' && (
             <SecureJournalModule
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              triggerAnimation={triggerCryptoAnimation}
+            />
+          )}
+
+          {activeTab === 'gallery' && (
+            <SecureGalleryModule
               onSuccess={fireToast}
               onSecurityLog={handleSecurityLog}
               triggerAnimation={triggerCryptoAnimation}

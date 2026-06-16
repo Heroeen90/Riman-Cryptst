@@ -314,6 +314,26 @@ export function SecurityCenter({
               </div>
             </div>
 
+            <div className="flex items-center gap-3 bg-neutral-950 p-3 rounded-xl border border-neutral-850">
+              <div className="w-2 h-2 rounded-full bg-cyan-500 animate-pulse shrink-0" />
+              <div>
+                <span className="block text-xs font-sans font-semibold text-neutral-200">{locVal('Vault DNA Alignment', 'محاذاة جينات ريمان')}</span>
+                <span className="block text-[8.5px] text-cyan-400 font-mono">
+                  {localStorage.getItem('riman_vault_dna_seed') || 'RZ-A81F-92CD'}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 bg-neutral-950 p-3 rounded-xl border border-neutral-850">
+              <div className="w-2 h-2 rounded-full bg-purple-500 animate-pulse shrink-0" />
+              <div>
+                <span className="block text-xs font-sans font-semibold text-neutral-200">{locVal('Neural Riemann Signature', 'توقيع ريمان العصبي')}</span>
+                <span className="block text-[8.5px] text-purple-400 font-mono">
+                  {locVal('Stable & Integrated', 'نمط مستقر ومعتمد')}
+                </span>
+              </div>
+            </div>
+
           </div>
 
           {/* Emergency Lock Launchpad */}

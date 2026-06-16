@@ -161,8 +161,100 @@ export const SovereignDashboard: React.FC<DashProps> = ({
     }, 1800);
   };
 
+  // Load Riemann Identity data dynamically
+  const vaultName = localStorage.getItem('riman_vault_custom_name') || (locale === 'ar' ? 'العقدة السيادية الرئيسية' : 'Primary Sovereign Node');
+  const vaultDna = localStorage.getItem('riman_vault_dna_seed') || 'RZ-A81F-92CD';
+  
+  // Calculate level score
+  let totalItems = 0;
+  try {
+    const keys = ['riman_notes_vault_payload', 'riman_journal_vault_payload', 'riman_gallery_vault_payload', 'riman_media_vault_payload'];
+    keys.forEach(k => {
+      const raw = localStorage.getItem(k);
+      if (raw) {
+        try {
+          const p = JSON.parse(raw);
+          if (Array.isArray(p)) totalItems += p.length;
+          else if (p.data && Array.isArray(p.data)) totalItems += p.data.length;
+          else if (p.items && Array.isArray(p.items)) totalItems += p.items.length;
+          else totalItems += 1;
+        } catch(e) { totalItems += 2; }
+      }
+    });
+  } catch(e) {}
+
+  const recoveryKey = localStorage.getItem('riman_recovery_key');
+  const biometricsEnabled = localStorage.getItem('riman_biometrics_enabled') === 'true';
+  let score = 5;
+  if (recoveryKey) score += 18;
+  if (biometricsEnabled) score += 15;
+  if (localStorage.getItem('riman_last_backup_time')) score += 17;
+  score += Math.min(25, totalItems * 2.5);
+  const securityLevel = Math.max(1, Math.min(100, Math.round(score)));
+
+  // Reputation
+  const getReputation = (lvl: number) => {
+    if (lvl >= 90) return { label: locale === 'ar' ? 'حلف التيتانيوم الأقصى' : 'Titanium Alliance', color: 'text-neutral-100 bg-neutral-900 border-neutral-750' };
+    if (lvl >= 75) return { label: locale === 'ar' ? 'درع البلاتين النادر' : 'Platinum Shield', color: 'text-cyan-300 bg-cyan-950/40 border-cyan-850' };
+    if (lvl >= 55) return { label: locale === 'ar' ? 'معقل الذهب المتطور' : 'Gold Bastion', color: 'text-amber-300 bg-amber-950/30 border-amber-900/50' };
+    if (lvl >= 35) return { label: locale === 'ar' ? 'مؤسسة الفضة اللامعة' : 'Silver Coherence', color: 'text-neutral-400 bg-neutral-900 border-neutral-850' };
+    return { label: locale === 'ar' ? 'طوق البرونز الأولي' : 'Bronze Perimeter', color: 'text-orange-400 bg-orange-950/20 border-orange-900/30' };
+  };
+  const rep = getReputation(securityLevel);
+
+  // Parse DNA characters for central signature SVG color
+  const chars = vaultDna.replace(/-/g, '').slice(2);
+  const rVal = chars.length > 5 ? ((chars.charCodeAt(0) * 3 + chars.charCodeAt(1)) % 180 + 75) : 100;
+  const gVal = chars.length > 5 ? ((chars.charCodeAt(2) * 5 + chars.charCodeAt(3)) % 180 + 75) : 160;
+  const bVal = chars.length > 5 ? ((chars.charCodeAt(4) * 7 + chars.charCodeAt(5)) % 180 + 75) : 220;
+  const sigColor = `#${rVal.toString(16).padStart(2,'0')}${gVal.toString(16).padStart(2,'0')}${bVal.toString(16).padStart(2,'0')}`;
+
   return (
     <div className="space-y-6">
+
+      {/* REAT 9: DYNAMIC IDENTITY SYSTEM BANNER */}
+      <div className="glass-card p-5 rounded-3xl border border-neutral-850/50 bg-neutral-900/10 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none" />
+        
+        {/* Left section: mini animated visual engine & passport info */}
+        <div className="flex items-center gap-4 w-full md:w-auto">
+          {/* Animated mini-signature preview */}
+          <div className="relative w-14 h-14 bg-neutral-950 border border-neutral-850 rounded-2xl flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 100 100" className="w-10 h-10 animate-spin" style={{ animationDuration: '20s' }}>
+              <circle cx="50" cy="50" r="42" fill="none" stroke={sigColor} strokeWidth="1.5" strokeDasharray="3 5 1 5" />
+              <polygon points="50,22 75,36 75,64 50,78 25,64 25,36" fill="yellow" fillOpacity="0.04" stroke={sigColor} strokeWidth="1" />
+              <circle cx="50" cy="50" r="8" fill={sigColor} />
+            </svg>
+            <div className="absolute inset-0 rounded-2xl shadow-inner border border-white/[0.04] pointer-events-none" />
+          </div>
+
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h4 className="text-sm font-bold text-white tracking-wide">{vaultName}</h4>
+              <span className={`px-2 py-0.5 text-[8px] font-mono font-semibold rounded-md border ${rep.color} uppercase tracking-wider`}>
+                {rep.label}
+              </span>
+            </div>
+            
+            <div className="flex items-center gap-2 text-[10px] text-neutral-400 font-mono">
+              <span className="text-[9px] text-neutral-500 uppercase tracking-widest">{locale === 'ar' ? 'جينات ريمان:' : 'VAULT DNA:'}</span>
+              <span className="font-bold text-cyan-400 selection:bg-cyan-950">{vaultDna}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Section: Level metrics summary */}
+        <div className="flex items-center gap-6 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-neutral-900 pt-4 md:pt-0 shrink-0">
+          <div className="space-y-1 text-start md:text-end">
+            <span className="block text-[8px] font-mono text-neutral-500 uppercase tracking-wider">{locale === 'ar' ? 'مستوى التحصين' : 'SECURITY LEVEL PROGRESS'}</span>
+            <span className="block text-sm font-mono font-bold text-neutral-200">LVL {securityLevel} <span className="text-[10px] text-neutral-500 font-normal">/ 100</span></span>
+          </div>
+          <div className="w-24 h-1.5 bg-neutral-950 border border-neutral-850 rounded-full overflow-hidden hidden sm:block">
+            <div className="h-full bg-cyan-400" style={{ width: `${securityLevel}%` }} />
+          </div>
+        </div>
+
+      </div>
       
       {/* Dynamic Key Indicators Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">

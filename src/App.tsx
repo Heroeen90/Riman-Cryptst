@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video
+  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video, User
 } from 'lucide-react';
 import { SovereignDashboard } from './components/SovereignDashboard';
 import { TextEncryptionModule } from './components/TextEncryptionModule';
@@ -17,6 +17,7 @@ import { BiometricSettingsModule } from './components/BiometricSettingsModule';
 import { SecureGalleryModule } from './components/SecureGalleryModule';
 import { SecureMediaModule } from './components/SecureMediaModule';
 import { RecoveryCenterModule } from './components/RecoveryCenterModule';
+import { VaultProfileModule } from './components/VaultProfileModule';
 import { Toast } from './components/Toast';
 import { SecurityEvent } from './types';
 import { useTranslation } from './lib/I18nContext';
@@ -569,6 +570,7 @@ export default function App() {
         <nav className="flex flex-wrap gap-2 p-1.5 bg-neutral-900/40 border border-neutral-850 rounded-2xl backdrop-blur-md max-w-full overflow-x-auto select-none">
           {[
             { id: 'dashboard', label: t('tab_dashboard'), icon: <LayoutDashboard className="w-4 h-4" /> },
+            { id: 'profile', label: locale === 'ar' ? 'الهوية الطيفية' : 'Riemann Identity', icon: <User className="w-4 h-4 text-amber-400" /> },
             { id: 'security', label: t('tab_security'), icon: <Shield className="w-4 h-4 text-cyan-400" /> },
             { id: 'recovery', label: locale === 'ar' ? 'مركز الاستعادة' : 'Recovery Center', icon: <Activity className="w-4 h-4 text-rose-450" /> },
             { id: 'biometrics', label: t('tab_biometrics'), icon: <Fingerprint className="w-4 h-4 text-purple-400" /> },
@@ -610,6 +612,16 @@ export default function App() {
               activeTunnels={activeCapsulesCount}
               activityRate={activityLevel}
               onSecurityLog={handleSecurityLog}
+            />
+          )}
+
+          {activeTab === 'profile' && (
+            <VaultProfileModule
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              recoveryKey={recoveryKey}
+              biometricsEnabled={biometricsEnabled}
+              setupPin={setupPin}
             />
           )}
 

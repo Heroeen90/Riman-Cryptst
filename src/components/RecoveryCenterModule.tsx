@@ -569,10 +569,17 @@ export const RecoveryCenterModule: React.FC<RecoveryCenterProps> = ({
                       </span>
                     </div>
 
-                    <div className="flex justify-between items-center text-xs">
+                    <div className="flex justify-between items-center text-xs pb-2 border-b border-neutral-900">
                       <span className="text-neutral-400 font-medium">{locVal('Disaster Recovery Tested', 'فحوصات استعادة الكتل السابقة')}</span>
                       <span className={`font-mono font-bold ${recoveryTested ? 'text-emerald-400' : 'text-amber-500 animate-pulse'}`}>
                         {recoveryTested ? locVal('Success (Tested)', 'مجرّب وناجح!') : locVal('Untested (Action Required)', 'غير مجرّب (موصى به)')}
+                      </span>
+                    </div>
+
+                    <div className="flex justify-between items-center text-xs">
+                      <span className="text-neutral-400 font-medium">{locVal('Primary Vault DNA Lock', 'بصمة رموز الذاكرة السيادية (DNA)')}</span>
+                      <span className="font-mono font-bold text-cyan-400">
+                        {localStorage.getItem('riman_vault_dna_seed') || 'RZ-A81F-92CD'}
                       </span>
                     </div>
                   </div>

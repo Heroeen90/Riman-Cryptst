@@ -25,6 +25,7 @@ const Map<String, Map<String, String>> i18nData = {
     'copyright_footer': '© 2026 RIEMANN SCIENTIFIC SECURITY INITIATIVES. ALL ENTRANCES AUTHENTICATED.',
     
     'tab_dashboard': 'Monitor Desk',
+    'tab_security': 'Security Center',
     'tab_vaults': 'Smart Vaults',
     'tab_text': 'Text Shield',
     'tab_file': 'File Shield',
@@ -222,6 +223,7 @@ const Map<String, Map<String, String>> i18nData = {
     'copyright_footer': '© 2026 مبادرات أمن ريمان العلمية. جَميع عمليات الدخول جرى التحقق منها.',
     
     'tab_dashboard': 'مكتب المراقبة',
+    'tab_security': 'مركز الأمان والتحقق',
     'tab_vaults': 'الخزائن الذكية',
     'tab_text': 'درع النصوص',
     'tab_file': 'درع الملفات',

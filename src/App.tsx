@@ -10,6 +10,7 @@ import { KeyGeneratorModule } from './components/KeyGeneratorModule';
 import { RiemannSpectrumAnalyzer } from './components/RiemannSpectrumAnalyzer';
 import { FlutterExplorer } from './components/FlutterExplorer';
 import { RiemannSpectrumCanvas } from './components/RiemannSpectrumCanvas';
+import { SecurityCenter } from './components/SecurityCenter';
 import { Toast } from './components/Toast';
 import { SecurityEvent } from './types';
 import { useTranslation } from './lib/I18nContext';
@@ -33,6 +34,15 @@ export default function App() {
   // Custom toast notification system
   const [toastMessage, setToastMessage] = useState<string>('');
   const [toastType, setToastType] = useState<'success' | 'error' | 'info'>('success');
+
+  // Protection and recovery states
+  const [biometricsEnabled, setBiometricsEnabled] = useState<boolean>(false);
+  const [recoveryKey, setRecoveryKey] = useState<string | null>(null);
+  const [clipboardDuration, setClipboardDuration] = useState<number>(30);
+  const [isAppLocked, setIsAppLocked] = useState<boolean>(false);
+  const [pinValue, setPinValue] = useState<string>('');
+  const [setupPin, setSetupPin] = useState<string>('1234');
+  const [pinError, setPinError] = useState<string>('');
 
   // Trigger custom interactive UI micro-animations during key crypt requests
   const triggerCryptoAnimation = (mode: 'encrypt' | 'decrypt') => {
@@ -141,6 +151,104 @@ export default function App() {
     );
   }
 
+  if (isAppLocked) {
+    const locVal = (en: string, ar: string) => (locale === 'ar' ? ar : en);
+    const handlePinPress = (val: string) => {
+      setPinError('');
+      if (pinValue.length < 4) {
+        setPinValue(prev => prev + val);
+      }
+    };
+    const handleBackspace = () => {
+      setPinValue(prev => prev.slice(0, -1));
+    };
+    const handleUnlock = () => {
+      if (pinValue === setupPin) {
+        setIsAppLocked(false);
+        setPinValue('');
+        handleSecurityLog('Sovereign session authenticated', 'info', 'Correct PIN provided to unlock system memory.');
+        fireToast(locVal('Access Granted. Workspace Unlocked.', 'تم التصريح بالدخول. أهلاً بك في وحدة ريمان.'), 'success');
+      } else {
+        setPinError(locVal('Incorrect PIN specification!', 'رمز التعريف PIN المدخل خاطئ!'));
+        setPinValue('');
+      }
+    };
+
+    return (
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-neutral-950 font-sans p-6 overflow-hidden select-none">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_120%,rgba(244,63,94,0.08),rgba(255,255,255,0))]" />
+        
+        <div className="relative flex flex-col items-center text-center space-y-6 max-w-sm w-full mx-4">
+          <div className="relative flex items-center justify-center w-16 h-16 rounded-2xl bg-neutral-900 border border-neutral-800 shadow-xl overflow-hidden animate-pulse">
+            <Lock className="w-8 h-8 text-rose-500 glow-text" />
+          </div>
+
+          <div className="space-y-1">
+            <h1 className="text-xl font-display font-bold text-white tracking-tight glow-text">
+              {locVal('Memory Zero-Key Locked', 'تم تأمين وتجميد الذاكرة')}
+            </h1>
+            <p className="text-[10px] text-neutral-500 font-mono uppercase tracking-widest leading-relaxed">
+              {locVal('Panic protocol has immolated temporary session keys and purged cached decryptions.', 'بروتوكول الطوارئ قام بمحو مفاتيح التشفير وتفريغ الحافظة المؤقتة.')}
+            </p>
+          </div>
+
+          <div className="space-y-4 w-full">
+            {/* PIN indicators */}
+            <div className="flex justify-center gap-3 py-2">
+              {[0, 1, 2, 3].map((i) => (
+                <div 
+                  key={i} 
+                  className={`w-3.5 h-3.5 rounded-full border border-neutral-800 transition-all ${
+                    pinValue.length > i ? 'bg-rose-500 shadow shadow-rose-500/50' : 'bg-neutral-900'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {pinError && (
+              <span className="text-[10px] text-rose-400 font-mono block animate-pulse">{pinError}</span>
+            )}
+
+            {/* PIN Pad 0-9 */}
+            <div className="grid grid-cols-3 gap-2 max-w-[240px] mx-auto">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => (
+                <button
+                  key={num}
+                  onClick={() => handlePinPress(num.toString())}
+                  className="w-14 h-14 rounded-full bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-800 text-white font-mono text-lg font-bold flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+                >
+                  {num}
+                </button>
+              ))}
+              <button
+                onClick={handleBackspace}
+                className="w-14 h-14 rounded-full bg-neutral-950/20 text-neutral-400 font-mono text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer hover:text-white"
+              >
+                DEL
+              </button>
+              <button
+                onClick={() => handlePinPress('0')}
+                className="w-14 h-14 rounded-full bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-800 text-white font-mono text-lg font-bold flex items-center justify-center active:scale-95 transition-all cursor-pointer"
+              >
+                0
+              </button>
+              <button
+                onClick={handleUnlock}
+                className="w-14 h-14 rounded-full bg-rose-950/40 border border-rose-800 text-rose-400 font-semibold text-xs flex items-center justify-center active:scale-95 transition-all cursor-pointer hover:bg-rose-900 hover:text-white"
+              >
+                OPEN
+              </button>
+            </div>
+
+            <div className="text-[9.5px] text-neutral-600 font-mono">
+              {locVal('Master bypass lock. (Hint: 1234)', 'رمز العبور المبدئي لفك القفل هو (1234)')}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans relative overflow-x-hidden selection:bg-cyan-500/30 selection:text-white">
       {/* Immersive radial background vector fields */}
@@ -207,6 +315,7 @@ export default function App() {
         <nav className="flex flex-wrap gap-2 p-1.5 bg-neutral-900/40 border border-neutral-850 rounded-2xl backdrop-blur-md max-w-full overflow-x-auto select-none">
           {[
             { id: 'dashboard', label: t('tab_dashboard'), icon: <LayoutDashboard className="w-4 h-4" /> },
+            { id: 'security', label: t('tab_security'), icon: <Shield className="w-4 h-4 text-cyan-400" /> },
             { id: 'text', label: t('tab_text'), icon: <FileLock className="w-4 h-4" /> },
             { id: 'file', label: t('tab_file'), icon: <Key className="w-4 h-4" /> },
             { id: 'capsules', label: t('tab_capsules'), icon: <MailOpen className="w-4 h-4" /> },
@@ -241,6 +350,27 @@ export default function App() {
               activeTunnels={activeCapsulesCount}
               activityRate={activityLevel}
               onSecurityLog={handleSecurityLog}
+            />
+          )}
+
+          {activeTab === 'security' && (
+            <SecurityCenter
+              locale={locale}
+              securityLogs={securityLogs}
+              onSecurityLog={handleSecurityLog}
+              onSuccess={fireToast}
+              biometricsEnabled={biometricsEnabled}
+              setBiometricsEnabled={setBiometricsEnabled}
+              recoveryKey={recoveryKey}
+              setRecoveryKey={setRecoveryKey}
+              clipboardDuration={clipboardDuration}
+              setClipboardDuration={setClipboardDuration}
+              onEmergencyLock={() => {
+                setIsAppLocked(true);
+                setPinValue('');
+                handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
+                fireToast(locale === 'ar' ? 'تم تفعيل قفل الطوارئ ومسح كل السجلات النشطة!' : 'Emergency Lock Activated! Cached memory purged.', 'error');
+              }}
             />
           )}
 

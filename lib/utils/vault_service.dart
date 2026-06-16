@@ -143,9 +143,64 @@ class VaultService extends ChangeNotifier {
   List<VaultActivity> _activities = [];
   List<String> _categories = ['Documents', 'Photos', 'Videos', 'Notes', 'Archives'];
 
+  bool _biometricEnabled = false;
+  bool _recoveryKeyAvailable = false;
+  String? _recoveryKey;
+  int _clipboardClearDurationSeconds = 30;
+  bool _isLocked = false;
+
   List<Vault> get vaults => _vaults;
   List<VaultActivity> get activities => _activities;
   List<String> get categories => _categories;
+
+  bool get biometricEnabled => _biometricEnabled;
+  bool get recoveryKeyAvailable => _recoveryKeyAvailable;
+  String? get recoveryKey => _recoveryKey;
+  int get clipboardClearDurationSeconds => _clipboardClearDurationSeconds;
+  bool get isLocked => _isLocked;
+
+  void setBiometricEnabled(bool val) {
+    _biometricEnabled = val;
+    logActivity('biometric_enabled', val ? 'Biometrics Enabled' : 'Biometrics Disabled', 
+        val ? 'Synchronized fingerprint coordinates with local secure container.' : 'De-synchronized fingerprint authentication.');
+    saveStateLocally();
+    notifyListeners();
+  }
+
+  void generateRecoveryKey() {
+    final rand = math.Random();
+    final parts = [
+      'RIEMANN',
+      'ZETA',
+      'RECOVERY',
+      rand.nextInt(9999).toString().padLeft(4, '0'),
+      'COHERENCE',
+      rand.nextInt(999).toString().padLeft(3, '0')
+    ];
+    _recoveryKey = parts.join('-');
+    _recoveryKeyAvailable = true;
+    logActivity('recovery_key_created', 'Recovery Key Generated', 'Created a sovereign offline recovery key: $_recoveryKey');
+    saveStateLocally();
+    notifyListeners();
+  }
+
+  void setClipboardClearDurationSeconds(int seconds) {
+    _clipboardClearDurationSeconds = seconds;
+    logActivity('clipboard_timer_changed', 'Clipboard Duration Updated', 'Clipboard auto-clear duration shifted to $seconds seconds.');
+    saveStateLocally();
+    notifyListeners();
+  }
+
+  void setLocked(bool val) {
+    _isLocked = val;
+    if (val) {
+      logActivity('emergency_lock', 'System Emergency Locked', 'Triggered panic protocol. Immolated session caches.');
+    } else {
+      logActivity('system_unlocked', 'System Memory Unlocked', 'PIN verified. Sovereign access restored.');
+    }
+    saveStateLocally();
+    notifyListeners();
+  }
 
   void _initializeDefaultState() {
     // Initial seeded vaults (Realistic & Premium, no placeholders)
@@ -363,6 +418,11 @@ class VaultService extends ChangeNotifier {
         'vaults': _vaults.map((v) => v.toJson()).toList(),
         'activities': _activities.map((a) => a.toJson()).toList(),
         'categories': _categories,
+        'biometricEnabled': _biometricEnabled,
+        'recoveryKeyAvailable': _recoveryKeyAvailable,
+        'recoveryKey': _recoveryKey,
+        'clipboardClearDurationSeconds': _clipboardClearDurationSeconds,
+        'isLocked': _isLocked,
       };
       final dataStr = json.encode(state);
       final file = File('vaults_db.json');
@@ -390,6 +450,12 @@ class VaultService extends ChangeNotifier {
         if (actList != null) {
           _activities = actList.map((a) => VaultActivity.fromJson(a as Map<String, dynamic>)).toList();
         }
+
+        _biometricEnabled = state['biometricEnabled'] as bool? ?? false;
+        _recoveryKeyAvailable = state['recoveryKeyAvailable'] as bool? ?? false;
+        _recoveryKey = state['recoveryKey'] as String?;
+        _clipboardClearDurationSeconds = state['clipboardClearDurationSeconds'] as int? ?? 30;
+        _isLocked = state['isLocked'] as bool? ?? false;
       }
     } catch (e) {
       debugPrint('Local reading ignored or unavailable in current environment: $e');

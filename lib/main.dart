@@ -3,7 +3,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'utils/translations.dart';
+import 'utils/vault_service.dart';
 import 'widgets/sovereign_dashboard.dart';
+import 'widgets/security_center.dart';
 import 'widgets/smart_vaults_tab.dart';
 import 'widgets/text_shield.dart';
 import 'widgets/file_shield.dart';
@@ -85,17 +87,29 @@ class _DashboardScreenState extends State<DashboardScreen> {
   final List<SecurityLogEvent> _logs = [];
   final ScrollController _terminalScrollController = ScrollController();
 
+  // Pin lock overlays
+  String _pinValue = '';
+  String _pinError = '';
+
   @override
   void initState() {
     super.initState();
     _startSplashScreenLoading();
     _seedInitialSecurityLogs();
+    VaultService().addListener(_onVaultServiceUpdate);
   }
 
   @override
   void dispose() {
     _terminalScrollController.dispose();
+    VaultService().removeListener(_onVaultServiceUpdate);
     super.dispose();
+  }
+
+  void _onVaultServiceUpdate() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _startSplashScreenLoading() {
@@ -261,7 +275,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   ),
                 ),
                 Text(
-                  '\$_loadingProgress %',
+                  '$_loadingProgress %',
                   style: const TextStyle(fontSize: 11, color: Color(0xFF06B6D4), fontWeight: FontWeight.bold, fontFamily: 'monospace'),
                 )
               ],
@@ -272,9 +286,153 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  Widget _buildAppLockOverlay() {
+    final locVal = (String en, String ar) => _locale == 'ar' ? ar : en;
+    return Scaffold(
+      backgroundColor: const Color(0xFF030712),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.lock, color: Colors.red, size: 56),
+                const SizedBox(height: 16),
+                Text(
+                  locVal('Sovereign Session Locked', 'تأمين وتجميد الذاكرة'),
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  locVal('All decrypted cached channels have been purged.', 'بروتوكول الطوارئ مسح مفاتيح التشفير وتفريغ الحافظة.'),
+                  style: TextStyle(fontSize: 9, color: Colors.grey.shade500),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                // PIN Dots
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(4, (index) {
+                    final isFilled = _pinValue.length > index;
+                    return Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                      width: 14,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: isFilled ? Colors.red : Colors.transparent,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.red.withOpacity(0.5), width: 2),
+                      ),
+                    );
+                  }),
+                ),
+                if (_pinError.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Text(
+                    _pinError,
+                    style: const TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold),
+                  ),
+                ],
+                const SizedBox(height: 32),
+                // Number Pad (Grid of Buttons)
+                SizedBox(
+                  width: 240,
+                  child: GridView.count(
+                    shrinkWrap: true,
+                    crossAxisCount: 3,
+                    childAspectRatio: 1.25,
+                    mainAxisSpacing: 12,
+                    crossAxisSpacing: 12,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      ...[1, 2, 3, 4, 5, 6, 7, 8, 9].map((num) => _buildPinPadButton(num.toString())),
+                      // Backspace
+                      TextButton(
+                        onPressed: () {
+                          if (_pinValue.isNotEmpty) {
+                            setState(() {
+                              _pinValue = _pinValue.substring(0, _pinValue.length - 1);
+                              _pinError = '';
+                            });
+                          }
+                        },
+                        child: const Text('DEL', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
+                      _buildPinPadButton('0'),
+                      // OK Button
+                      TextButton(
+                        onPressed: () {
+                          if (_pinValue == '1234') {
+                            setState(() {
+                              _pinValue = '';
+                              _pinError = '';
+                              VaultService().setLocked(false);
+                            });
+                            _appendSecurityLog(
+                              'Sovereign session authenticated',
+                              'info',
+                              'Correct PIN provided to unlock system memory.',
+                            );
+                            _showNotification(
+                              locVal('Access Granted. Workspace Unlocked.', 'تم التصريح بالدخول. أهلاً بك في وحدة ريمان.'),
+                              'success',
+                            );
+                          } else {
+                            setState(() {
+                              _pinValue = '';
+                              _pinError = locVal('Incorrect PIN specification!', 'رمز التعريف PIN المدخل خاطئ!');
+                            });
+                          }
+                        },
+                        child: const Text('OPEN', style: TextStyle(color: Colors.cyan, fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  locVal('Initial bypass PIN is: 1234', 'رمز العبور المبدئي لفك القفل هو: 1234'),
+                  style: TextStyle(fontSize: 8, color: Colors.grey.shade650, fontFamily: 'monospace'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPinPadButton(String text) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(30),
+      onTap: () {
+        if (_pinValue.length < 4) {
+          setState(() {
+            _pinValue += text;
+            _pinError = '';
+          });
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.02),
+          borderRadius: BorderRadius.circular(30),
+          border: Border.all(color: Colors.white.withOpacity(0.04)),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
+        ),
+      ),
+    );
+  }
+
   Widget _buildTabBar() {
     final List<Map<String, dynamic>> tabs = [
       {'icon': Icons.monitor_heart, 'key': 'tab_dashboard'},
+      {'icon': Icons.verified_user, 'key': 'tab_security'},
       {'icon': Icons.security, 'key': 'tab_vaults'},
       {'icon': Icons.text_snippet, 'key': 'tab_text'},
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
@@ -446,6 +604,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return _buildSplashScreen();
     }
 
+    final vaultService = VaultService();
+    if (vaultService.isLocked) {
+      return _buildAppLockOverlay();
+    }
+
     final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -532,6 +695,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   SovereignDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
+                  ),
+                  SecurityCenterWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
                   ),
                   SmartVaultsTab(
                     locale: _locale,

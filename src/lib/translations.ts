@@ -35,6 +35,7 @@ export interface TranslationDict {
   tab_keygen: string;
   tab_spectrum: string;
   tab_flutter: string;
+  tab_security: string;
 
   // Sovereign Dashboard
   entropy_reservoir: string;
@@ -242,6 +243,7 @@ export const translations: Record<Locale, TranslationDict> = {
     tab_keygen: "Key Generator",
     tab_spectrum: "Spectrum Analyzer",
     tab_flutter: "Flutter SDK Exporter",
+    tab_security: "Security Center",
 
     entropy_reservoir: "Entropy Reservoir",
     spectrum_coherence: "Spectrum Coherence",
@@ -438,6 +440,7 @@ export const translations: Record<Locale, TranslationDict> = {
     tab_keygen: "مولد المفاتيح",
     tab_spectrum: "محلل الطيف المتقدم",
     tab_flutter: "مصدّر كود فلوتر SDK",
+    tab_security: "مركز الأمان والتحقق",
 
     entropy_reservoir: "خزان العشوائية (الأمواج)",
     spectrum_coherence: "ترابط الطيف الرياضي",

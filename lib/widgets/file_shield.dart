@@ -272,7 +272,7 @@ class _FileShieldWidgetState extends State<FileShieldWidget> {
                           ? '${_selectedRawFile!['name']} (${_selectedRawFile!['size']})'
                           : translate('select_drag_file', widget.locale),
                       style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                      textAlign: Center,
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -448,7 +448,7 @@ class _FileShieldWidgetState extends State<FileShieldWidget> {
                     Text(
                       _selectedRimanFile ?? translate('upload_riman_placeholder', widget.locale),
                       style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
-                      textAlign: Center,
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -534,7 +534,7 @@ class _FileShieldWidgetState extends State<FileShieldWidget> {
                   : Text(
                       translate('auth_reconstitute_btn', widget.locale),
                       style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 10, letterSpacing: 0.5),
-                      textAlign: Center,
+                      textAlign: TextAlign.center,
                     ),
             ),
           ],

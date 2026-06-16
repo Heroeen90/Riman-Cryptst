@@ -366,7 +366,7 @@ class _KeyGeneratorWidgetState extends State<KeyGeneratorWidget> {
                             Text(
                               _imageName.isNotEmpty ? _imageName : translate('select_image_asset', widget.locale),
                               style: const TextStyle(color: Colors.white, fontSize: 10),
-                              textAlign: Center,
+                              textAlign: TextAlign.center,
                             ),
                             const SizedBox(height: 2),
                             Text(

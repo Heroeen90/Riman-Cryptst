@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images
+  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video
 } from 'lucide-react';
 import { SovereignDashboard } from './components/SovereignDashboard';
 import { TextEncryptionModule } from './components/TextEncryptionModule';
@@ -15,6 +15,7 @@ import { SecureNotesModule } from './components/SecureNotesModule';
 import { SecureJournalModule } from './components/SecureJournalModule';
 import { BiometricSettingsModule } from './components/BiometricSettingsModule';
 import { SecureGalleryModule } from './components/SecureGalleryModule';
+import { SecureMediaModule } from './components/SecureMediaModule';
 import { Toast } from './components/Toast';
 import { SecurityEvent } from './types';
 import { useTranslation } from './lib/I18nContext';
@@ -78,6 +79,38 @@ export default function App() {
   const [setupPin, setSetupPin] = useState<string>('1234');
   const [pinError, setPinError] = useState<string>('');
 
+  // FEATURE 9: ADVANCED PRIVACY SETTINGS ENGINE
+  const [privacySettings, setPrivacySettings] = useState(() => {
+    const saved = localStorage.getItem('riman_privacy_settings');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        // Ensure all keys are initialized
+        return {
+          hiddenVaultsEnabled: parsed.hiddenVaultsEnabled ?? true,
+          decoyVaultEnabled: parsed.decoyVaultEnabled ?? true,
+          panicPassword: parsed.panicPassword ?? 'panic123',
+          hiddenVaultPasswords: parsed.hiddenVaultPasswords ?? [],
+          hiddenTabs: parsed.hiddenTabs ?? [],
+          darkArchive: parsed.darkArchive ?? []
+        };
+      } catch (e) {}
+    }
+    return {
+      hiddenVaultsEnabled: true,
+      decoyVaultEnabled: true,
+      panicPassword: 'panic123',
+      hiddenVaultPasswords: [],
+      hiddenTabs: [],
+      darkArchive: []
+    };
+  });
+
+  const handleUpdatePrivacySettings = (newSettings: typeof privacySettings) => {
+    setPrivacySettings(newSettings);
+    localStorage.setItem('riman_privacy_settings', JSON.stringify(newSettings));
+  };
+
   // Trigger custom interactive UI micro-animations during key crypt requests
   const triggerCryptoAnimation = (mode: 'encrypt' | 'decrypt') => {
     if (mode === 'encrypt') {
@@ -110,8 +143,22 @@ export default function App() {
       severity,
       details
     };
-    setSecurityLogs(prev => [newLog, ...prev].slice(0, 50));
+    setSecurityLogs(prev => {
+      const updated = [newLog, ...prev].slice(0, 50);
+      localStorage.setItem('riman_security_logs_v3', JSON.stringify(updated));
+      return updated;
+    });
   };
+
+  // Load persistent security logs on initialization
+  useEffect(() => {
+    const savedLogs = localStorage.getItem('riman_security_logs_v3');
+    if (savedLogs) {
+      try {
+        setSecurityLogs(JSON.parse(savedLogs));
+      } catch (e) {}
+    }
+  }, []);
 
   // Splash loader countdown mimicking secure memory hydration
   useEffect(() => {
@@ -445,6 +492,31 @@ export default function App() {
               </span>
             </div>
 
+            {/* FEATURE 4: PANIC LOCK HEADER BUTTON */}
+            <button
+              onClick={() => {
+                setIsAppLocked(true);
+                setPinValue('');
+                // Clear active/decrypted session storage keys
+                sessionStorage.removeItem('riman_gallery_cached_key');
+                sessionStorage.removeItem('riman_media_vault_cached_key');
+                handleSecurityLog(
+                  'Panic Lock Protocol Activated',
+                  'critical',
+                  'Emergency lockout initiated via active terminal gate. Session caches dissolved.'
+                );
+                fireToast(
+                  locale === 'ar' ? 'تم تفعيل بروتوكول قفل الذعر فوراً!' : 'Panic Lock activated! Security shields engaged.',
+                  'error'
+                );
+              }}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-950/35 border border-rose-900/50 hover:bg-rose-900/45 text-xs text-rose-400 font-mono font-bold hover:text-white transition-all active:scale-95 cursor-pointer uppercase animate-pulse shadow-lg shadow-rose-950/20"
+              title={locale === 'en' ? 'Immediate Panic Lock' : 'بروتوكول قفل الذعر المباشر'}
+            >
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-500 animate-spin" style={{ animationDuration: '3s' }} />
+              <span className="hidden sm:inline">{locale === 'en' ? 'PANIC LOCK' : 'قفل الذعر'}</span>
+            </button>
+
             {/* Language Switcher Button inside Settings / Header Area */}
             <div className="flex items-center gap-2 border-s border-neutral-900 ps-4">
               <button 
@@ -493,9 +565,10 @@ export default function App() {
             { id: 'notes', label: t('tab_notes'), icon: <FileText className="w-4 h-4" /> },
             { id: 'journal', label: t('tab_journal'), icon: <BookOpen className="w-4 h-4" /> },
             { id: 'gallery', label: t('tab_gallery'), icon: <Images className="w-4 h-4 text-emerald-400" /> },
+            { id: 'media_vault', label: t('tab_media_vault'), icon: <Video className="w-4 h-4 text-cyan-400" /> },
             { id: 'spectrum', label: t('tab_spectrum'), icon: <Activity className="w-4 h-4" /> },
             { id: 'flutter', label: t('tab_flutter'), icon: <FileCode2 className="w-4 h-4" /> }
-          ].map((tab) => {
+          ].filter(tab => !privacySettings.hiddenTabs.includes(tab.id)).map((tab) => {
             const active = activeTab === tab.id;
             return (
               <button
@@ -538,9 +611,13 @@ export default function App() {
               setRecoveryKey={setRecoveryKey}
               clipboardDuration={clipboardDuration}
               setClipboardDuration={setClipboardDuration}
+              privacySettings={privacySettings}
+              onPrivacySettingsChange={handleUpdatePrivacySettings}
               onEmergencyLock={() => {
                 setIsAppLocked(true);
                 setPinValue('');
+                sessionStorage.removeItem('riman_gallery_cached_key');
+                sessionStorage.removeItem('riman_media_vault_cached_key');
                 handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
                 fireToast(locale === 'ar' ? 'تم تفعيل قفل الطوارئ ومسح كل السجلات النشطة!' : 'Emergency Lock Activated! Cached memory purged.', 'error');
               }}
@@ -565,6 +642,8 @@ export default function App() {
               onLockApp={() => {
                 setIsAppLocked(true);
                 setPinValue('');
+                sessionStorage.removeItem('riman_gallery_cached_key');
+                sessionStorage.removeItem('riman_media_vault_cached_key');
                 handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
                 fireToast(locale === 'ar' ? 'تم تفريغ وحظر الجلسة!' : 'Sovereign session suspended and locked.', 'error');
               }}
@@ -621,6 +700,8 @@ export default function App() {
               onSuccess={fireToast}
               onSecurityLog={handleSecurityLog}
               triggerAnimation={triggerCryptoAnimation}
+              privacySettings={privacySettings}
+              isAppLocked={isAppLocked}
             />
           )}
 
@@ -629,6 +710,8 @@ export default function App() {
               onSuccess={fireToast}
               onSecurityLog={handleSecurityLog}
               triggerAnimation={triggerCryptoAnimation}
+              privacySettings={privacySettings}
+              isAppLocked={isAppLocked}
             />
           )}
 
@@ -637,6 +720,18 @@ export default function App() {
               onSuccess={fireToast}
               onSecurityLog={handleSecurityLog}
               triggerAnimation={triggerCryptoAnimation}
+              privacySettings={privacySettings}
+              isAppLocked={isAppLocked}
+            />
+          )}
+
+          {activeTab === 'media_vault' && (
+            <SecureMediaModule
+              onSuccess={fireToast}
+              onSecurityLog={handleSecurityLog}
+              triggerAnimation={triggerCryptoAnimation}
+              privacySettings={privacySettings}
+              isAppLocked={isAppLocked}
             />
           )}
         </section>

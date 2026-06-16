@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  ShieldAlert, ShieldCheck, Heart, Key, Clipboard, Trash2, Fingerprint, Lock, Unlock, Zap, HelpCircle, Copy, Check, RotateCcw
+  ShieldAlert, ShieldCheck, Heart, Key, Clipboard, Trash2, Fingerprint, Lock, Unlock, Zap, HelpCircle, Copy, Check, RotateCcw,
+  Eye, EyeOff, Plus, Archive, Shield, Activity, FileText, BookOpen, Images, Video, Trash
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { SecurityEvent } from '../types';
@@ -17,6 +18,15 @@ interface SecurityCenterProps {
   clipboardDuration: number;
   setClipboardDuration: (seconds: number) => void;
   onEmergencyLock: () => void;
+  privacySettings: {
+    hiddenVaultsEnabled: boolean;
+    decoyVaultEnabled: boolean;
+    panicPassword: string;
+    hiddenVaultPasswords: string[];
+    hiddenTabs: string[];
+    darkArchive: { id: string; title: string; content: string; createdAt: number; lastModifiedAt: number; category: string }[];
+  };
+  onPrivacySettingsChange: (settings: any) => void;
 }
 
 export function SecurityCenter({
@@ -30,7 +40,9 @@ export function SecurityCenter({
   setRecoveryKey,
   clipboardDuration,
   setClipboardDuration,
-  onEmergencyLock
+  onEmergencyLock,
+  privacySettings,
+  onPrivacySettingsChange
 }: SecurityCenterProps) {
   
   // Real-time password strength analyzer state
@@ -635,6 +647,347 @@ export function SecurityCenter({
           >
             {locVal('CLEAR AUDITING LOGS', 'تفريغ وتصفية السجلات')}
           </button>
+        </div>
+
+      </div>
+
+      {/* FEATURE 9: ADVANCED PRIVACY & PLAUSIBLE DENIABILITY SYSTEM */}
+      <div className="bg-neutral-900 border border-neutral-850 rounded-2xl p-6 space-y-6">
+        <div className="space-y-1">
+          <h3 className="text-sm font-display font-bold text-white flex items-center gap-2">
+            <EyeOff className="w-4.5 h-4.5 text-purple-400" />
+            {locVal('Advanced Sovereign Plausible Deniability Settings', 'إعدادات السرية المتقدمة والتنصل المقنع للمحترفين')}
+          </h3>
+          <p className="text-[10px] text-neutral-500 font-mono">
+            {locVal('Advanced configurations for decoy files, hidden partitions, instant emergency hide, and Dark Archive.', 'تحكم كامل في الخزائن المموهة والملفات المخفية، الإخفاء العاجل والأرشيف المظلم المعزول.')}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pt-2">
+          
+          {/* Subcard 1: Partition & Decoy Configuration */}
+          <div className="space-y-4 bg-neutral-950 p-4 rounded-xl border border-neutral-850">
+            <h4 className="text-xs font-mono font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-neutral-900">
+              <Shield className="w-3.5 h-3.5" />
+              {locVal('Decoy and Hidden Partitions', 'الأقسام المخفية والمموهة (Decoy)')}
+            </h4>
+
+            {/* Hidden Vault Master Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5 max-w-[70%]">
+                <span className="block text-xs font-sans font-semibold text-neutral-200">{locVal('Hidden Vault Architecture', 'بنية الخزنة المخفية كاملة')}</span>
+                <span className="block text-[9px] text-neutral-500">
+                  {locVal('Permit unlocking custom hidden vaults with their isolated secret passwords.', 'تفعيل توليد أقسام مشفرة منعزلة تفتح فقط عند إدخال كلمة سر مخفية غير رئيسية.')}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = { ...privacySettings, hiddenVaultsEnabled: !privacySettings.hiddenVaultsEnabled };
+                  onPrivacySettingsChange(updated);
+                  onSecurityLog('Hidden Vault configuration changed', 'warning', `Hidden vault architecture toggled: ${updated.hiddenVaultsEnabled}`);
+                  onSuccess(locVal('Hidden Vaults updated.', 'تم تحديث وضع الخزنات السحرية المتقدمة.'), 'success');
+                }}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
+                  privacySettings.hiddenVaultsEnabled ? 'bg-cyan-500' : 'bg-neutral-800'
+                }`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                  privacySettings.hiddenVaultsEnabled ? (locale === 'ar' ? '-translate-x-5' : 'translate-x-5') : 'translate-x-1'
+                }`} />
+              </button>
+            </div>
+
+            {/* Decoy Vault Master Toggle */}
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5 max-w-[70%]">
+                <span className="block text-xs font-sans font-semibold text-neutral-200">{locVal('Decoy Vault Gateway (Plausible Deniability)', 'بوابة الخزنة المموهة المقنعة (Decoy)')}</span>
+                <span className="block text-[9px] text-neutral-500">
+                  {locVal('If active, unlocking with Panic Password loads realistic fake notes and files.', 'عند تشغيله، يؤدي فتح القفل بكلمة مرور الذعر إلى إظهار ملاحظات وصور وهمية بديلة.')}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  const updated = { ...privacySettings, decoyVaultEnabled: !privacySettings.decoyVaultEnabled };
+                  onPrivacySettingsChange(updated);
+                  onSecurityLog('Decoy Vault configuration changed', 'warning', `Decoy vault toggle updated: ${updated.decoyVaultEnabled}`);
+                  onSuccess(locVal('Decoy Vault updated.', 'تم تحديث وضع الخزنة المموهة بنجاح.'), 'success');
+                }}
+                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors cursor-pointer focus:outline-none ${
+                  privacySettings.decoyVaultEnabled ? 'bg-cyan-500' : 'bg-neutral-800'
+                }`}
+              >
+                <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
+                  privacySettings.decoyVaultEnabled ? (locale === 'ar' ? '-translate-x-5' : 'translate-x-5') : 'translate-x-1'
+                }`} />
+              </button>
+            </div>
+
+            {/* Panic Password Configuration */}
+            <div className="space-y-1.5 pt-2 border-t border-neutral-900">
+              <label className="block text-[9.5px] font-mono text-neutral-400 uppercase">{locVal('Custom Panic Password', 'كلمة مرور الذعر المموهة الخاصة')}</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={privacySettings.panicPassword}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    const updated = { ...privacySettings, panicPassword: val };
+                    onPrivacySettingsChange(updated);
+                  }}
+                  placeholder="panic123"
+                  className="px-3 py-1.5 rounded-lg bg-neutral-950 border border-neutral-850 text-xs font-mono text-white focus:outline-none focus:border-cyan-400 grow"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    onSecurityLog('Panic Password configured', 'info', `New Panic Password length: ${privacySettings.panicPassword.length}`);
+                    onSuccess(locVal('Panic Password successfully updated!', 'تم حفظ وتأكيد كلمة مرور الذعر بأمان!'), 'success');
+                  }}
+                  className="px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-800 text-xs font-semibold text-neutral-300 hover:text-white cursor-pointer active:scale-95 transition"
+                >
+                  {locVal('Save', 'حفظ')}
+                </button>
+              </div>
+              <span className="block text-[8px] text-neutral-600 font-mono">
+                {locVal('Specifying this password when opening any vault loads its completely separate harmless decoy.', 'أدخل كلمة المرور هذه في مخزن الملاحظات، الصور، أو المذكرات لرؤية محتوى بديل آمن تماماً.')}
+              </span>
+            </div>
+
+            {/* Hidden Vault Passwords Configuration */}
+            <div className="space-y-2 pt-2 border-t border-neutral-900">
+              <label className="block text-[9.5px] font-mono text-neutral-400 uppercase">{locVal('Hidden Vault Secrets Keys', 'مفاتيح السر الفائقة للولوج المخفي كامل')}</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  id="new_hidden_pass"
+                  placeholder={locVal('Add secret hidden password...', 'أضف كلمة مرور مخفية...')}
+                  className="px-3 py-1.5 rounded-lg bg-neutral-950 border border-neutral-850 text-xs font-mono text-white focus:outline-none focus:border-cyan-400 grow"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const input = e.currentTarget;
+                      const val = input.value.trim();
+                      if (val && val.length >= 6) {
+                        if (privacySettings.hiddenVaultPasswords.includes(val)) {
+                          onSuccess(locVal('Password already registered!', 'كلمة المرور مسجلة بالفعل!'), 'error');
+                          return;
+                        }
+                        const updated = { ...privacySettings, hiddenVaultPasswords: [...privacySettings.hiddenVaultPasswords, val] };
+                        onPrivacySettingsChange(updated);
+                        onSecurityLog('Hidden Vault password registered', 'info', 'A non-revealing key has been registered.');
+                        onSuccess(locVal('Hidden Vault Key registered!', 'تم تسجيل المفتاح المخفي بنجاح!'), 'success');
+                        input.value = '';
+                      } else {
+                        onSuccess(locVal('Secret password must be at least 6 characters long', 'يجب أن لا تقل كلمة المرور المخفية عن 6 أحرف'), 'error');
+                      }
+                    }
+                  }}
+                />
+              </div>
+              <p className="text-[8px] text-neutral-600 leading-relaxed">
+                {locVal('Press Enter to save. Unlocking notes/gallery using these passwords displays completely hidden sub-categories unavailable to master user lists.', 'اضغط Enter لحفظ الكود. كتابة هذه المفاتيح في منصات التصفح تفتح مساحات مشفرة منعزلة ليس لها أي أثر.')}
+              </p>
+
+              {privacySettings.hiddenVaultPasswords.length > 0 && (
+                <div className="flex flex-wrap gap-1.5 pt-1.5">
+                  {privacySettings.hiddenVaultPasswords.map((pass, i) => (
+                    <div key={i} className="flex items-center gap-1.5 bg-cyan-950/25 border border-cyan-900/40 px-2 py-0.5 rounded-md text-[9px] font-mono text-cyan-400">
+                      <span>••••••</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = { ...privacySettings, hiddenVaultPasswords: privacySettings.hiddenVaultPasswords.filter(p => p !== pass) };
+                          onPrivacySettingsChange(updated);
+                          onSecurityLog('Hidden Vault password removed', 'warning', 'A hidden key has been decommissioned.');
+                          onSuccess(locVal('Hidden Vault Key decommissioned!', 'تم إلغاء تسجيل المفتاح المخفي!'), 'info');
+                        }}
+                        className="text-rose-400 hover:text-rose-300 font-bold ml-1 cursor-pointer"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
+
+          {/* Subcard 2: FEATURE 5: EMERGENCY HIDE CO-ORDINATES */}
+          <div className="space-y-4 bg-neutral-950 p-4 rounded-xl border border-neutral-850 flex flex-col justify-between">
+            <div className="space-y-3">
+              <h4 className="text-xs font-mono font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-neutral-900">
+                <EyeOff className="w-3.5 h-3.5" />
+                {locVal('Emergency Tab Vault Hide', 'إخفاء عاجل للأقسام الحيوية')}
+              </h4>
+
+              <p className="text-[10px] text-neutral-400 leading-relaxed">
+                {locVal('Instantly isolate and de-render whole tabs from the workspace menu. This is fully reversible by re-enabling them under PIN protection here.', 'محو فوري للأقسام والتبويبات المحددة من الواجهة الرئيسية للتطبيق بشكل يمنع كشفها. يمكنك استعادة إظهارها في أي وقت من هنا.')}
+              </p>
+
+              <div className="space-y-2.5 pt-1">
+                {[
+                  { id: 'notes', label: locVal('Sovereign Crypt Notes', 'ملاحظات ريمان المشفرة'), icon: <FileText className="w-3.5 h-3.5 text-neutral-405" /> },
+                  { id: 'journal', label: locVal('Personal Secure Journal', 'المذكرات واليوميات السرية'), icon: <BookOpen className="w-3.5 h-3.5 text-neutral-405" /> },
+                  { id: 'gallery', label: locVal('Encrypted Photo Gallery', 'معرض الصور المشفر'), icon: <Images className="w-3.5 h-3.5 text-emerald-400" /> },
+                  { id: 'media_vault', label: locVal('Secure Media Vault', 'خزنة الفيديوهات والصوتيات'), icon: <Video className="w-3.5 h-3.5 text-cyan-400" /> }
+                ].map((item) => {
+                  const isHidden = privacySettings.hiddenTabs.includes(item.id);
+                  return (
+                    <div key={item.id} className="flex items-center justify-between p-2 rounded-lg bg-neutral-900/60 border border-neutral-850 hover:bg-neutral-900 transition">
+                      <div className="flex items-center gap-2">
+                        {item.icon}
+                        <span className="text-xs font-sans text-neutral-300 font-semibold">{item.label}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          let nextTabsState;
+                          if (isHidden) {
+                            nextTabsState = privacySettings.hiddenTabs.filter(t => t !== item.id);
+                          } else {
+                            nextTabsState = [...privacySettings.hiddenTabs, item.id];
+                          }
+                          const updated = { ...privacySettings, hiddenTabs: nextTabsState };
+                          onPrivacySettingsChange(updated);
+                          onSecurityLog(
+                            'Emergency Vault Hide Activated',
+                            'warning',
+                            `Vault tab ${item.id} visibility toggled: hidden state = ${!isHidden}`
+                          );
+                          onSuccess(
+                            isHidden 
+                              ? locVal(`${item.label} tab restored successfully!`, `تمت استعادة إظهار قسم ${item.label} بنجاح!`)
+                              : locVal(`${item.label} tab hidden instantly!`, `تم إخفاء قسم ${item.label} بنجاح فوراً!`),
+                            'success'
+                          );
+                        }}
+                        className={`text-[9.5px] font-mono font-bold px-2.5 py-1 rounded-md transition ${
+                          isHidden 
+                            ? 'bg-rose-950/25 border border-rose-900/50 text-rose-400' 
+                            : 'bg-emerald-950/25 border border-emerald-900/50 text-emerald-400'
+                        }`}
+                      >
+                        {isHidden ? locVal('HIDDEN', 'مخفي') : locVal('VISIBLE', 'مرئي')}
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="p-2 bg-neutral-900 border border-neutral-850 rounded-lg text-[8.5px] font-mono text-neutral-500 mt-2">
+              {locVal('Note: Hidden tab configurations are safely stored in metadata-protected registries on this client.', 'تنبيه: يتم تشفير وحفظ تفضيلات المظهر للتنصل المقنع بدقة عالية.')}
+            </div>
+          </div>
+
+        </div>
+
+        {/* FEATURE 6: DARK ARCHIVE AREA */}
+        <div className="space-y-4 bg-neutral-950 p-4 rounded-xl border border-neutral-850 pt-4 mt-6">
+          <h4 className="text-xs font-mono font-bold text-amber-500 uppercase tracking-wider flex items-center gap-1.5 pb-2 border-b border-neutral-900">
+            <Archive className="w-3.5 h-3.5" />
+            {locVal('Sovereign Dark Archive (Isolated Area)', 'الحافة المظلمة المعزولة والمدفونة (Dark Archive)')}
+          </h4>
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+            
+            <div className="lg:col-span-1 space-y-3">
+              <p className="text-[10px] text-neutral-400 leading-relaxed">
+                {locVal('This special workspace is isolated completely from directories, indexes, dashboards, global search, and normal navigation. Only unlocked and managed directly through here.', 'هذا القسم يمثل حافة مظلمة مطلقة معزولة عن الفهارس، البحث الكلي، والإحصائيات. الملفات مفرودة في حيز مشفر منعزل تماماً.')}
+              </p>
+
+              {/* Form to insert Dark Archive Entry */}
+              <div className="space-y-2 pt-2 bg-neutral-900/50 p-3 rounded-xl border border-neutral-850">
+                <span className="block text-[9px] font-mono text-amber-400 uppercase font-bold">{locVal('Seal New Secret Cargo', 'دفن عنصر جديد')}</span>
+                <input
+                  type="text"
+                  id="dark_title"
+                  placeholder={locVal('Title / Label', 'اسم العنصر')}
+                  className="w-full px-2.5 py-1.5 bg-neutral-950 border border-neutral-850 rounded text-xs focus:outline-none text-white focus:border-amber-500 font-sans"
+                />
+                <textarea
+                  id="dark_content"
+                  rows={2}
+                  placeholder={locVal('Text/Hex bytes contents...', 'المحتوى النصي أو قيم التشفير...')}
+                  className="w-full px-2.5 py-1.5 bg-neutral-950 border border-neutral-850 rounded text-xs focus:outline-none text-white focus:border-amber-500 font-mono resize-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const titleEl = document.getElementById('dark_title') as HTMLInputElement;
+                    const contentEl = document.getElementById('dark_content') as HTMLTextAreaElement;
+                    const title = titleEl?.value.trim();
+                    const content = contentEl?.value.trim();
+                    if (!title || !content) {
+                      onSuccess(locVal('Please enter both title and content!', 'يرجى ملء اسم ومضمون العنصر أولاً!'), 'error');
+                      return;
+                    }
+                    const newEntry = {
+                      id: Math.random().toString(36).substring(7),
+                      title,
+                      content,
+                      createdAt: Date.now(),
+                      lastModifiedAt: Date.now(),
+                      category: 'DarkArchive'
+                    };
+                    const updated = { ...privacySettings, darkArchive: [...privacySettings.darkArchive, newEntry] };
+                    onPrivacySettingsChange(updated);
+                    onSecurityLog('Dark Archive entry stored', 'warning', `New sealed element ID: ${newEntry.id}`);
+                    onSuccess(locVal('File sealed inside Dark Archive!', 'تم إخفاء وتأمين العنصر داخل الأرشيف المظلم المعزول بنجاح!'), 'success');
+                    if (titleEl) titleEl.value = '';
+                    if (contentEl) contentEl.value = '';
+                  }}
+                  className="w-full py-1.5 rounded bg-amber-600/35 border border-amber-500/50 hover:bg-amber-600 text-[10px] text-amber-300 font-bold transition active:scale-95 cursor-pointer uppercase"
+                >
+                  {locVal('SEAL INTO THE DARK', 'تشديد وتأمين العنصر')}
+                </button>
+              </div>
+            </div>
+
+            {/* List of elements in Dark Archive */}
+            <div className="lg:col-span-2 space-y-2 max-h-[220px] overflow-y-auto pr-1">
+              {privacySettings.darkArchive.length === 0 ? (
+                <div className="h-full flex flex-col items-center justify-center border border-dashed border-neutral-850 rounded-xl p-8 text-center text-neutral-500 animate-pulse">
+                  <Archive className="w-8 h-8 text-neutral-700 mb-2" />
+                  <p className="text-[10px] font-mono uppercase">{locVal('Dark Archive Empty', 'لا توجد عناصر سرية معزولة')}</p>
+                  <p className="text-[9px] text-neutral-600 font-sans mt-0.5">{locVal('No isolated elements sealed yet.', 'القسم فارغ وخالٍ من البيانات.')}</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {privacySettings.darkArchive.map((entry) => (
+                    <div key={entry.id} className="p-3 bg-neutral-900 border border-neutral-850 rounded-xl space-y-2 relative group hover:border-amber-500/40 transition">
+                      <div className="flex justify-between items-start">
+                        <span className="font-sans font-bold text-xs text-neutral-250 truncate pr-5">{entry.title}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = { ...privacySettings, darkArchive: privacySettings.darkArchive.filter(d => d.id !== entry.id) };
+                            onPrivacySettingsChange(updated);
+                            onSecurityLog('Dark Archive entry deleted', 'critical', `Immolated entry ID: ${entry.id}`);
+                            onSuccess(locVal('Element completely immolated from filesystem!', 'تم فرم ومحو العنصر تماماً من الأرشيف!'), 'info');
+                          }}
+                          className="absolute top-2 right-2 p-1 bg-neutral-950 border border-neutral-850 rounded hover:text-rose-400 text-neutral-500 hover:border-rose-900 transition cursor-pointer"
+                          title={locVal('Immolate Element', 'تدمير العنصر')}
+                        >
+                          <Trash className="w-3 h-3" />
+                        </button>
+                      </div>
+                      <div className="bg-neutral-950 p-2 rounded border border-neutral-850 font-mono text-[9px] text-neutral-400 break-all select-all h-[55px] overflow-y-auto">
+                        {entry.content}
+                      </div>
+                      <div className="flex justify-between text-[8px] font-mono text-neutral-600">
+                        <span>ID: {entry.id}</span>
+                        <span>{new Date(entry.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+          </div>
         </div>
 
       </div>

@@ -38,12 +38,22 @@ interface SecureJournalProps {
   onSuccess: (msg: string, type: 'success' | 'error' | 'info') => void;
   onSecurityLog: (event: string, severity: 'info' | 'warning' | 'critical', details: string) => void;
   triggerAnimation: (mode: 'encrypt' | 'decrypt') => void;
+  privacySettings?: {
+    hiddenVaultsEnabled: boolean;
+    decoyVaultEnabled: boolean;
+    panicPassword: string;
+    hiddenVaultPasswords: string[];
+    hiddenTabs: string[];
+  };
+  isAppLocked?: boolean;
 }
 
 export const SecureJournalModule: React.FC<SecureJournalProps> = ({
   onSuccess,
   onSecurityLog,
-  triggerAnimation
+  triggerAnimation,
+  privacySettings,
+  isAppLocked
 }) => {
   const { t, locale } = useTranslation();
   const locVal = (en: string, ar: string) => (locale === 'ar' ? ar : en);
@@ -52,6 +62,17 @@ export const SecureJournalModule: React.FC<SecureJournalProps> = ({
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [vaultPassword, setVaultPassword] = useState<string>('');
   const [showPasswordInput, setShowPasswordInput] = useState<boolean>(false);
+  const [activeMode, setActiveMode] = useState<'normal' | 'decoy' | 'hidden'>('normal');
+  const [activePassword, setActivePassword] = useState<string>('');
+
+  // Is lock triggered globally
+  useEffect(() => {
+    if (isAppLocked) {
+      setIsUnlocked(false);
+      setVaultPassword('');
+      setEntries([]);
+    }
+  }, [isAppLocked]);
 
   // Journal entries
   const [entries, setEntries] = useState<JournalEntry[]>([]);
@@ -114,6 +135,36 @@ export const SecureJournalModule: React.FC<SecureJournalProps> = ({
     }
   ];
 
+  const createDecoyJournals = (): JournalEntry[] => [
+    {
+      id: 'decoy_journal_01',
+      title: locVal('Weekend Hiking Exploration', 'رحلة المشي في الجبل في نهاية الأسبوع'),
+      content: locVal('Started early at 6 AM. The forest air was extremely clean. Walked about 12 kilometers with Sarah and had sandwiches by the lake.', 'بدأنا باكراً في السادسة صباحاً. كان هواء الغابة نقياً ومثيراً للاهتمام. مشينا حوالي 12 كيلومتراً مع سارة وتناولنا السندويشات قرب البحيرة والتقطنا صوراً رائعة.'),
+      createdAt: Date.now() - 3600000 * 24,
+      mood: 'serene',
+      location: { latitude: 34.0522, longitude: -118.2437, name: locVal('Green Valley Lake', 'بحيرة الوادي الأخضر') }
+    },
+    {
+      id: 'decoy_journal_02',
+      title: locVal('Thoughts on New Coffee Machine', 'ملاحظات حول آلة القهوة الجديدة'),
+      content: locVal('The espresso pull is excellent, thick crema and delicious body. Need to buy more medium-roasted Arabica beans.', 'تحضير الإسبريسو رائع، رغوة غنية وقوام متكامل ولذيذ. يجب شراء المزيد من حبوب أرابيكا المحمصة بدرجة متوسطة لضمان الطعم النقي.'),
+      createdAt: Date.now() - 3600000 * 5,
+      mood: 'focused',
+      location: { latitude: 40.7128, longitude: -74.0060, name: locVal('Home Kitchen', 'مطبخ البيت') }
+    }
+  ];
+
+  const createHiddenJournals = (): JournalEntry[] => [
+    {
+      id: 'hidden_journal_01',
+      title: locVal('Sealed Ledger Coordinates', 'إحداثيات الدفتر المنعزل المخفي'),
+      content: locVal('Hidden journal partition calibrated. Zero footprints left. No external indexes contain references to this sector.', 'تمت معايرة قسم المذكرات العميقة المخفية بنجاح مطلق. لا توجد أي أدلة تشير لوجود هذا الأرشيف خارج إرادتك الشخصية والرمزية.'),
+      createdAt: Date.now(),
+      mood: 'vigilant',
+      location: { latitude: 30.0444, longitude: 31.2357, name: locVal('Sovereign Sector', 'القطاع السيادي') }
+    }
+  ];
+
   const handleUnlockJournal = () => {
     if (!vaultPassword || vaultPassword.length < 6) {
       onSuccess(locVal('Sovereign password must be at least 6 characters', 'يجب أن لا تقل كلمة مرور النظام السيادي عن 6 أحرف'), 'error');
@@ -124,77 +175,127 @@ export const SecureJournalModule: React.FC<SecureJournalProps> = ({
       triggerAnimation('decrypt');
       onSecurityLog('Journal decryption array armed', 'info', 'Step 1: Instantiating Rijndael verification grids.');
 
-      const savedVerifyToken = localStorage.getItem('riman_journal_vault_token');
-      let decryptedEntries: JournalEntry[] = [];
-
-      if (!savedVerifyToken) {
-        // Setup newly
-        onSecurityLog('Journal Vault initialization', 'warning', 'No existing configuration. Initializing brand new zero-knowledge journaling payload.');
-        
-        // Save verification token
-        const verifyData = { active: true, owner: 'riman_cryptst_journal' };
-        const payloadBytes = stringToBytes(JSON.stringify(verifyData));
-        const encryptedToken = executeRiemannTripleLayerEncrypt(payloadBytes, vaultPassword, {
-          fileType: 'application/json',
-          filename: 'journal_token.riman'
-        });
-        localStorage.setItem('riman_journal_vault_token', JSON.stringify(encryptedToken));
-
-        // Create default list & persist
-        const defaults = defaultJournalEntries();
-        saveJournalToLocalStorage(defaults, vaultPassword);
-        decryptedEntries = defaults;
-        onSuccess(locVal('Sovereign Secure Journal initialized!', 'تم تهيئة وتأسيس اليوميات المشفرة الآمنة لأول مرة!'), 'success');
-      } else {
-        // Verify key integrity
-        try {
-          const tokenContainer: EncryptedContainer = JSON.parse(savedVerifyToken);
-          const decryptedTokenBytes = executeRiemannTripleLayerDecrypt(tokenContainer, vaultPassword);
-          const decryptedTokenStr = bytesToString(decryptedTokenBytes);
-          const parsed = JSON.parse(decryptedTokenStr);
-          if (parsed.owner !== 'riman_cryptst_journal') {
-            throw new Error('Owner mismatch');
-          }
-        } catch (authErr) {
-          onSecurityLog('Journal authentication failed', 'critical', 'Incorrect password key provided. Cipher reject.');
-          onSuccess(locVal('Incorrect secure password!', 'فشل فتح اليوميات: كلمة المرور غير صحيحة!'), 'error');
-          return;
-        }
-
-        // Lock verification passed, decrypt data payload
-        const encryptedJournalPayload = localStorage.getItem('riman_journal_vault_payload');
-        if (encryptedJournalPayload) {
-          try {
-            const payloadContainer: EncryptedContainer = JSON.parse(encryptedJournalPayload);
-            const decryptedBytes = executeRiemannTripleLayerDecrypt(payloadContainer, vaultPassword);
-            const decryptedStr = bytesToString(decryptedBytes);
-            decryptedEntries = JSON.parse(decryptedStr);
-          } catch (decErr) {
-            onSecurityLog('Journal payload corrupted', 'critical', 'Node sequence integrity compromised.');
-            decryptedEntries = [];
-          }
-        }
+      let mode: 'normal' | 'decoy' | 'hidden' = 'normal';
+      if (privacySettings?.decoyVaultEnabled && vaultPassword === privacySettings?.panicPassword) {
+        mode = 'decoy';
+      } else if (privacySettings?.hiddenVaultsEnabled && privacySettings?.hiddenVaultPasswords?.includes(vaultPassword)) {
+        mode = 'hidden';
       }
 
+      let decryptedEntries: JournalEntry[] = [];
+
+      if (mode === 'decoy') {
+        const decoyPayload = localStorage.getItem('riman_journal_decoy_payload');
+        if (!decoyPayload) {
+          const defaultDecoy = createDecoyJournals();
+          saveJournalToLocalStorage(defaultDecoy, vaultPassword, 'decoy');
+          decryptedEntries = defaultDecoy;
+        } else {
+          try {
+            const container = JSON.parse(decoyPayload);
+            const decBytes = executeRiemannTripleLayerDecrypt(container, vaultPassword);
+            decryptedEntries = JSON.parse(bytesToString(decBytes));
+          } catch (e) {
+            const defaultDecoy = createDecoyJournals();
+            saveJournalToLocalStorage(defaultDecoy, vaultPassword, 'decoy');
+            decryptedEntries = defaultDecoy;
+          }
+        }
+        onSecurityLog('Decoy Journal Access', 'warning', 'Plausible deniability scenario triggered. Fake journal payload decrypted.');
+        onSuccess(locVal('Decoy Journal logs loaded.', 'تم فك لوائح تدوينات اليوميات المموهة بنجاح.'), 'info');
+      } else if (mode === 'hidden') {
+        const encSuffix = btoa(vaultPassword).substring(0, 15);
+        const hiddenPayload = localStorage.getItem(`riman_journal_hidden_payload_${encSuffix}`);
+        if (!hiddenPayload) {
+          const defaultHidden = createHiddenJournals();
+          saveJournalToLocalStorage(defaultHidden, vaultPassword, 'hidden');
+          decryptedEntries = defaultHidden;
+        } else {
+          try {
+            const container = JSON.parse(hiddenPayload);
+            const decBytes = executeRiemannTripleLayerDecrypt(container, vaultPassword);
+            decryptedEntries = JSON.parse(bytesToString(decBytes));
+          } catch (e) {
+            const defaultHidden = createHiddenJournals();
+            saveJournalToLocalStorage(defaultHidden, vaultPassword, 'hidden');
+            decryptedEntries = defaultHidden;
+          }
+        }
+        onSecurityLog('Hidden Journal Vault Access', 'warning', 'Isolated hidden journal vault decrypted successfully.');
+        onSuccess(locVal('Hidden Journal partition unlocked!', 'تم فتح قسم المذكرات المشفر المخفي!'), 'success');
+      } else {
+        // STANDARD NORMAL JOURNAL
+        const savedVerifyToken = localStorage.getItem('riman_journal_vault_token');
+        if (!savedVerifyToken) {
+          onSecurityLog('Journal Vault initialization', 'warning', 'No existing configuration. Initializing brand new zero-knowledge journaling payload.');
+          const verifyData = { active: true, owner: 'riman_cryptst_journal' };
+          const payloadBytes = stringToBytes(JSON.stringify(verifyData));
+          const encryptedToken = executeRiemannTripleLayerEncrypt(payloadBytes, vaultPassword, {
+            fileType: 'application/json',
+            filename: 'journal_token.riman'
+          });
+          localStorage.setItem('riman_journal_vault_token', JSON.stringify(encryptedToken));
+
+          const defaults = defaultJournalEntries();
+          saveJournalToLocalStorage(defaults, vaultPassword, 'normal');
+          decryptedEntries = defaults;
+          onSuccess(locVal('Sovereign Secure Journal initialized!', 'تم تهيئة وتأسيس اليوميات المشفرة الآمنة لأول مرة!'), 'success');
+        } else {
+          try {
+            const tokenContainer: EncryptedContainer = JSON.parse(savedVerifyToken);
+            const decryptedTokenBytes = executeRiemannTripleLayerDecrypt(tokenContainer, vaultPassword);
+            const decryptedTokenStr = bytesToString(decryptedTokenBytes);
+            const parsed = JSON.parse(decryptedTokenStr);
+            if (parsed.owner !== 'riman_cryptst_journal') {
+              throw new Error('Owner mismatch');
+            }
+          } catch (authErr) {
+            onSecurityLog('Journal authentication failed', 'critical', 'Incorrect password key provided. Cipher reject.');
+            onSuccess(locVal('Incorrect secure password!', 'فشل فتح اليوميات: كلمة المرور غير صحيحة!'), 'error');
+            return;
+          }
+
+          const encryptedJournalPayload = localStorage.getItem('riman_journal_vault_payload');
+          if (encryptedJournalPayload) {
+            try {
+              const payloadContainer: EncryptedContainer = JSON.parse(encryptedJournalPayload);
+              const decryptedBytes = executeRiemannTripleLayerDecrypt(payloadContainer, vaultPassword);
+              const decryptedStr = bytesToString(decryptedBytes);
+              decryptedEntries = JSON.parse(decryptedStr);
+            } catch (decErr) {
+              onSecurityLog('Journal payload corrupted', 'critical', 'Node sequence integrity compromised.');
+              decryptedEntries = [];
+            }
+          }
+        }
+        onSecurityLog('Journal unlocked and decrypted', 'info', `De-routed ${decryptedEntries.length} chronological secure log entry frames.`);
+        onSuccess(locVal('Journal open. Entries decrypted in thread heap.', 'تم إذابة شفرة ريمان وعرض اليوميات بنجاح تام!'), 'success');
+      }
+
+      setActiveMode(mode);
+      setActivePassword(vaultPassword);
       setEntries(decryptedEntries);
       setIsUnlocked(true);
-      onSecurityLog('Journal unlocked and decrypted', 'info', `De-routed ${decryptedEntries.length} chronological secure log entry frames.`);
-      onSuccess(locVal('Journal open. Entries decrypted in thread heap.', 'تم إذابة شفرة ريمان وعرض اليوميات بنجاح تام!'), 'success');
     } catch (e: any) {
       onSecurityLog('Journal sequence failed', 'critical', e.message || 'Decryption failure');
       onSuccess(locVal('Zero-knowledge authentication failed.', 'فشل فك تشفير البيانات المجدولة.'), 'error');
     }
   };
 
-  const saveJournalToLocalStorage = (currentEntries: JournalEntry[], passString: string) => {
+  const saveJournalToLocalStorage = (currentEntries: JournalEntry[], passString: string, mode: 'normal' | 'decoy' | 'hidden') => {
     try {
       const payloadStr = JSON.stringify(currentEntries);
       const payloadBytes = stringToBytes(payloadStr);
       const encryptedObj = executeRiemannTripleLayerEncrypt(payloadBytes, passString, {
         fileType: 'application/json',
-        filename: 'journal_payload.riman'
+        filename: mode === 'decoy' ? 'decoy_journal.riman' : mode === 'hidden' ? 'hidden_journal.riman' : 'journal_payload.riman'
       });
-      localStorage.setItem('riman_journal_vault_payload', JSON.stringify(encryptedObj));
+      const keyStr = mode === 'decoy' 
+        ? 'riman_journal_decoy_payload' 
+        : mode === 'hidden' 
+          ? `riman_journal_hidden_payload_${btoa(passString).substring(0, 15)}` 
+          : 'riman_journal_vault_payload';
+      localStorage.setItem(keyStr, JSON.stringify(encryptedObj));
     } catch (e: any) {
       onSecurityLog('Journal local commits failed', 'critical', 'Disk allocation failures.');
     }
@@ -203,7 +304,7 @@ export const SecureJournalModule: React.FC<SecureJournalProps> = ({
   const syncJournalWithDisk = (updatedEntries: JournalEntry[]) => {
     setEntries(updatedEntries);
     if (isUnlocked) {
-      saveJournalToLocalStorage(updatedEntries, vaultPassword);
+      saveJournalToLocalStorage(updatedEntries, activePassword, activeMode);
     }
   };
 

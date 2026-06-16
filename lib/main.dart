@@ -16,6 +16,7 @@ import 'widgets/flutter_exporter.dart';
 import 'widgets/secure_notes.dart';
 import 'widgets/secure_journal.dart';
 import 'widgets/secure_gallery.dart';
+import 'widgets/secure_media.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -444,6 +445,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.note_alt, 'key': 'tab_notes'},
       {'icon': Icons.book, 'key': 'tab_journal'},
       {'icon': Icons.photo_library, 'key': 'tab_gallery'},
+      {'icon': Icons.video_library, 'key': 'tab_media_vault'},
       {'icon': Icons.waves, 'key': 'tab_spectrum'},
       {'icon': Icons.code, 'key': 'tab_flutter'},
     ];
@@ -743,6 +745,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   SecureGalleryWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  SecureMediaWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

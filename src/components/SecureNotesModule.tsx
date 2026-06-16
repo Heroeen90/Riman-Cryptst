@@ -29,6 +29,14 @@ interface SecureNotesProps {
   onSuccess: (msg: string, type: 'success' | 'error' | 'info') => void;
   onSecurityLog: (event: string, severity: 'info' | 'warning' | 'critical', details: string) => void;
   triggerAnimation: (mode: 'encrypt' | 'decrypt') => void;
+  privacySettings?: {
+    hiddenVaultsEnabled: boolean;
+    decoyVaultEnabled: boolean;
+    panicPassword: string;
+    hiddenVaultPasswords: string[];
+    hiddenTabs: string[];
+  };
+  isAppLocked?: boolean;
 }
 
 const NOTE_COLORS = [
@@ -43,7 +51,9 @@ const NOTE_COLORS = [
 export const SecureNotesModule: React.FC<SecureNotesProps> = ({
   onSuccess,
   onSecurityLog,
-  triggerAnimation
+  triggerAnimation,
+  privacySettings,
+  isAppLocked
 }) => {
   const { t, locale } = useTranslation();
   const locVal = (en: string, ar: string) => (locale === 'ar' ? ar : en);
@@ -64,10 +74,22 @@ export const SecureNotesModule: React.FC<SecureNotesProps> = ({
     setBiometricType(type);
   }, []);
 
+  // Is lock triggered globally
+  useEffect(() => {
+    if (isAppLocked) {
+      setIsUnlocked(false);
+      setVaultPassword('');
+      setNotes([]);
+      setActiveNote(null);
+    }
+  }, [isAppLocked]);
+
   // Main Vault unlock state
   const [isUnlocked, setIsUnlocked] = useState<boolean>(false);
   const [vaultPassword, setVaultPassword] = useState<string>('');
   const [showPasswordInput, setShowPasswordInput] = useState<boolean>(false);
+  const [activeMode, setActiveMode] = useState<'normal' | 'decoy' | 'hidden'>('normal');
+  const [activePassword, setActivePassword] = useState<string>('');
 
   // Decrypted active state
   const [notes, setNotes] = useState<Note[]>([]);
@@ -143,6 +165,56 @@ export const SecureNotesModule: React.FC<SecureNotesProps> = ({
     localStorage.setItem('riman_scratchspace_content', content);
   };
 
+  const createDecoyNotes = (): Note[] => [
+    {
+      id: 'decoy_01',
+      title: locVal('Personal Grocery List', 'قائمة المشتريات الشخصية'),
+      content: locVal('1. Greek yogurt\n2. Oats & Honey\n3. Bananas\n4. Almond milk\n5. Green Tea bag boxes', '1. زبادي طبيعي\n2. حبوب الشوفان والعسل\n3. موز طازج\n4. حليب اللوز\n5. علبة شاي أخضر بالنعناع'),
+      category: 'Personal',
+      color: '#10B981',
+      createdAt: Date.now() - 3600000 * 2,
+      lastModifiedAt: Date.now() - 3600000 * 2,
+      isPinned: true,
+      isSelectiveLocked: false
+    },
+    {
+      id: 'decoy_02',
+      title: locVal('Weekly Workout Routine', 'جدول التمارين الأسبوعي'),
+      content: locVal('- Monday: Chest & Triceps (Hypertrophy)\n- Wednesday: Back & Biceps (Pull focus)\n- Friday: Legs & Shoulders (Overload)\n- Gym card code on keychain: 9812-B', 'الأثنين: تمارين صدر وترايسبس\nالأربعاء: تمارين ظهر وبايسبس\nالجمعة: تمارين أرجل وأكتاف\nرقم العضوية في النادي: 9812-B'),
+      category: 'Work',
+      color: '#06B6D4',
+      createdAt: Date.now() - 3600000 * 20,
+      lastModifiedAt: Date.now() - 3600000 * 20,
+      isPinned: false,
+      isSelectiveLocked: false
+    },
+    {
+      id: 'decoy_03',
+      title: locVal('Kitchen Cabinet Redesign Ideas', 'أفكار تجديد المطبخ الجديد'),
+      content: locVal('Need to contact local carpenter on Monday:\n- Wooden panels for cupboards: semi-matte off-white.\n- Handle styles: brushed brass minimalist pulls.', 'الاتصال بالنجار لتفصيل كبائن المطبخ المقاومة للمياه:\n- خشب أبيض مطفي مقاوم للرطوبة.\n- المقابض: نحاس مطفي ناعم ممتد.'),
+      category: 'Personal',
+      color: '#F59E0B',
+      createdAt: Date.now() - 3600050 * 50,
+      lastModifiedAt: Date.now() - 3600050 * 50,
+      isPinned: false,
+      isSelectiveLocked: false
+    }
+  ];
+
+  const createHiddenNotes = (): Note[] => [
+    {
+      id: 'hidden_01',
+      title: locVal('Isolated Dynamic Zero Gaps', 'الفجوات الديناميكية المنعزلة لقسم الأصفار'),
+      content: locVal('Hidden vault mapped successfully. System coordinates: [PHASE-4-DEVIATION]. Primary partition token: 0x981F4B96.', 'تم فك تشفير وتأسيس الخزنة السحرية المعزولة بنجاح تام. لا توجد أي سجلات أو إشارات في الفهارس الرسمية.'),
+      category: 'Secrets',
+      color: '#A855F7',
+      createdAt: Date.now(),
+      lastModifiedAt: Date.now(),
+      isPinned: true,
+      isSelectiveLocked: false
+    }
+  ];
+
   const handleUnlockNotesVault = () => {
     if (!vaultPassword || vaultPassword.length < 6) {
       onSuccess(locVal('Sovereign password must be at least 6 characters', 'يجب أن لا تقل كلمة مرور النظام السيادي عن 6 أحرف'), 'error');
@@ -153,80 +225,132 @@ export const SecureNotesModule: React.FC<SecureNotesProps> = ({
       triggerAnimation('decrypt');
       onSecurityLog('Notes Vault decryption sequence online', 'info', 'Deriving triple encryption key vectors from password.');
 
-      const savedTokenJson = localStorage.getItem('riman_notes_vault_token');
-      let decryptedNotes: Note[] = [];
-
-      if (!savedTokenJson) {
-        // First-time setup
-        onSecurityLog('Notes Vault initialization', 'warning', 'No existing vault configuration. Creating brand new encrypted container.');
-        
-        // Save verification token
-        const verifyObj = { active: true, verifier: 'riemann_zero' };
-        const payloadBytes = stringToBytes(JSON.stringify(verifyObj));
-        const encryptedTokenObj = executeRiemannTripleLayerEncrypt(payloadBytes, vaultPassword, {
-          fileType: 'application/json',
-          filename: 'notes_token.riman'
-        });
-        localStorage.setItem('riman_notes_vault_token', JSON.stringify(encryptedTokenObj));
-
-        // Create default notes and encrypt them
-        const defaultNotes = createDefaultNotes(vaultPassword);
-        saveNotesToLocalStorage(defaultNotes, vaultPassword);
-        decryptedNotes = defaultNotes;
-        onSuccess(locVal('Secured Crypt Notes initialized successfully!', 'تم تهيئة وتأسيس مخزن الملاحظات المشفر لأول مرة!'), 'success');
-      } else {
-        // Authenticate using verification token
-        try {
-          const tokenContainer: EncryptedContainer = JSON.parse(savedTokenJson);
-          const decryptedTokenBytes = executeRiemannTripleLayerDecrypt(tokenContainer, vaultPassword);
-          const decryptedTokenStr = bytesToString(decryptedTokenBytes);
-          const tokenParsed = JSON.parse(decryptedTokenStr);
-          
-          if (tokenParsed.verifier !== 'riemann_zero') {
-            throw new Error('Verification tag invalid');
-          }
-        } catch (authErr) {
-          onSecurityLog('Notes Vault authentication failed', 'critical', 'Incorrect password key provided. Decryption aborted.');
-          onSuccess(locVal('Incorrect vault key password!', 'فشل فك التشفير: كلمة المرور غير صحيحة!'), 'error');
-          return;
-        }
-
-        // Authentication succeeded, load and decrypt notes
-        const encryptedNotesListJson = localStorage.getItem('riman_notes_vault_payload');
-        if (encryptedNotesListJson) {
-          try {
-            const notesContainer: EncryptedContainer = JSON.parse(encryptedNotesListJson);
-            const decryptedNotesBytes = executeRiemannTripleLayerDecrypt(notesContainer, vaultPassword);
-            const decryptedNotesStr = bytesToString(decryptedNotesBytes);
-            decryptedNotes = JSON.parse(decryptedNotesStr);
-          } catch (decErr) {
-            onSecurityLog('Notes Payload decryption crash', 'critical', 'Corrupted node payload mapping.');
-            decryptedNotes = [];
-          }
-        } else {
-          decryptedNotes = [];
-        }
+      let mode: 'normal' | 'decoy' | 'hidden' = 'normal';
+      if (privacySettings?.decoyVaultEnabled && vaultPassword === privacySettings?.panicPassword) {
+        mode = 'decoy';
+      } else if (privacySettings?.hiddenVaultsEnabled && privacySettings?.hiddenVaultPasswords?.includes(vaultPassword)) {
+        mode = 'hidden';
       }
 
+      let decryptedNotes: Note[] = [];
+
+      if (mode === 'decoy') {
+        const decoyPayload = localStorage.getItem('riman_notes_decoy_payload');
+        if (!decoyPayload) {
+          const defaultDecoy = createDecoyNotes();
+          saveNotesToLocalStorage(defaultDecoy, vaultPassword, 'decoy');
+          decryptedNotes = defaultDecoy;
+        } else {
+          try {
+            const container = JSON.parse(decoyPayload);
+            const decBytes = executeRiemannTripleLayerDecrypt(container, vaultPassword);
+            decryptedNotes = JSON.parse(bytesToString(decBytes));
+          } catch (e) {
+            const defaultDecoy = createDecoyNotes();
+            saveNotesToLocalStorage(defaultDecoy, vaultPassword, 'decoy');
+            decryptedNotes = defaultDecoy;
+          }
+        }
+        onSecurityLog('Decoy Notes Vault Access', 'warning', 'Plausible deniability scenario triggered. Fake payload decrypted.');
+        onSuccess(locVal('Decoy Notes database loaded.', 'تم فك لوائح البيانات المموهة بنجاح.'), 'info');
+      } else if (mode === 'hidden') {
+        const encSuffix = btoa(vaultPassword).substring(0, 15);
+        const hiddenPayload = localStorage.getItem(`riman_notes_hidden_payload_${encSuffix}`);
+        if (!hiddenPayload) {
+          const defaultHidden = createHiddenNotes();
+          saveNotesToLocalStorage(defaultHidden, vaultPassword, 'hidden');
+          decryptedNotes = defaultHidden;
+        } else {
+          try {
+            const container = JSON.parse(hiddenPayload);
+            const decBytes = executeRiemannTripleLayerDecrypt(container, vaultPassword);
+            decryptedNotes = JSON.parse(bytesToString(decBytes));
+          } catch (e) {
+            const defaultHidden = createHiddenNotes();
+            saveNotesToLocalStorage(defaultHidden, vaultPassword, 'hidden');
+            decryptedNotes = defaultHidden;
+          }
+        }
+        onSecurityLog('Hidden Notes Vault Access', 'warning', 'Isolated hidden vault successfully decrypted and loaded.');
+        onSuccess(locVal('Hidden partition unlocked!', 'تم فتح القسم المشفر المخفي بالكامل!'), 'success');
+      } else {
+        // STANDARD NORMAL VAULT
+        const savedTokenJson = localStorage.getItem('riman_notes_vault_token');
+        if (!savedTokenJson) {
+          // First-time setup
+          onSecurityLog('Notes Vault initialization', 'warning', 'No existing vault configuration. Creating brand new encrypted container.');
+          const verifyObj = { active: true, verifier: 'riemann_zero' };
+          const payloadBytes = stringToBytes(JSON.stringify(verifyObj));
+          const encryptedTokenObj = executeRiemannTripleLayerEncrypt(payloadBytes, vaultPassword, {
+            fileType: 'application/json',
+            filename: 'notes_token.riman'
+          });
+          localStorage.setItem('riman_notes_vault_token', JSON.stringify(encryptedTokenObj));
+
+          const defaultNotes = createDefaultNotes(vaultPassword);
+          saveNotesToLocalStorage(defaultNotes, vaultPassword, 'normal');
+          decryptedNotes = defaultNotes;
+          onSuccess(locVal('Secured Crypt Notes initialized successfully!', 'تم تهيئة وتأسيس مخزن الملاحظات المشفر لأول مرة!'), 'success');
+        } else {
+          // Authenticate using verification token
+          try {
+            const tokenContainer: EncryptedContainer = JSON.parse(savedTokenJson);
+            const decryptedTokenBytes = executeRiemannTripleLayerDecrypt(tokenContainer, vaultPassword);
+            const decryptedTokenStr = bytesToString(decryptedTokenBytes);
+            const tokenParsed = JSON.parse(decryptedTokenStr);
+            
+            if (tokenParsed.verifier !== 'riemann_zero') {
+              throw new Error('Verification tag invalid');
+            }
+          } catch (authErr) {
+            onSecurityLog('Notes Vault authentication failed', 'critical', 'Incorrect password key provided. Decryption aborted.');
+            onSuccess(locVal('Incorrect vault key password!', 'فشل فك التشفير: كلمة المرور غير صحيحة!'), 'error');
+            return;
+          }
+
+          const encryptedNotesListJson = localStorage.getItem('riman_notes_vault_payload');
+          if (encryptedNotesListJson) {
+            try {
+              const notesContainer: EncryptedContainer = JSON.parse(encryptedNotesListJson);
+              const decryptedNotesBytes = executeRiemannTripleLayerDecrypt(notesContainer, vaultPassword);
+              const decryptedNotesStr = bytesToString(decryptedNotesBytes);
+              decryptedNotes = JSON.parse(decryptedNotesStr);
+            } catch (decErr) {
+              onSecurityLog('Notes Payload decryption crash', 'critical', 'Corrupted node payload mapping.');
+              decryptedNotes = [];
+            }
+          } else {
+            decryptedNotes = [];
+          }
+        }
+        onSecurityLog('Sovereign Notes unlocked', 'info', `Successfully hydrated ${decryptedNotes.length} secure items from local container.`);
+        onSuccess(locVal('Notes Vault decrypted completely!', 'تم إذابة وفك تشفير حواية الملاحظات بنجاح تام!'), 'success');
+      }
+
+      setActiveMode(mode);
+      setActivePassword(vaultPassword);
       setNotes(decryptedNotes);
       setIsUnlocked(true);
-      onSecurityLog('Sovereign Notes unlocked', 'info', `Successfully hydrated ${decryptedNotes.length} secure items from local container.`);
-      onSuccess(locVal('Notes Vault decrypted completely!', 'تم إذابة وفك تشفير حواية الملاحظات بنجاح تام!'), 'success');
     } catch (e: any) {
       onSecurityLog('Notes Vault opening crashed', 'critical', e.message || 'Decryption error');
       onSuccess(locVal('Decryption failed. Please check your password.', 'خطأ في المعالجة الرياضية: كلمة المرور غير مطابقة!'), 'error');
     }
   };
 
-  const saveNotesToLocalStorage = (currentNotes: Note[], passwordStr: string) => {
+  const saveNotesToLocalStorage = (currentNotes: Note[], passwordStr: string, mode: 'normal' | 'decoy' | 'hidden') => {
     try {
       const notesJsonStr = JSON.stringify(currentNotes);
       const payloadBytes = stringToBytes(notesJsonStr);
       const encryptedNotesObj = executeRiemannTripleLayerEncrypt(payloadBytes, passwordStr, {
         fileType: 'application/json',
-        filename: 'notes_payload.riman'
+        filename: mode === 'decoy' ? 'decoy_notes.riman' : mode === 'hidden' ? 'hidden_notes.riman' : 'notes_payload.riman'
       });
-      localStorage.setItem('riman_notes_vault_payload', JSON.stringify(encryptedNotesObj));
+      const keyStr = mode === 'decoy' 
+        ? 'riman_notes_decoy_payload' 
+        : mode === 'hidden' 
+          ? `riman_notes_hidden_payload_${btoa(passwordStr).substring(0, 15)}` 
+          : 'riman_notes_vault_payload';
+      localStorage.setItem(keyStr, JSON.stringify(encryptedNotesObj));
     } catch (err: any) {
       onSecurityLog('Local persistence failed', 'critical', err.message || 'Write error');
     }
@@ -235,7 +359,7 @@ export const SecureNotesModule: React.FC<SecureNotesProps> = ({
   const syncNotesWithDisk = (updatedNotes: Note[]) => {
     setNotes(updatedNotes);
     if (isUnlocked) {
-      saveNotesToLocalStorage(updatedNotes, vaultPassword);
+      saveNotesToLocalStorage(updatedNotes, activePassword, activeMode);
     }
   };
 

@@ -49,12 +49,22 @@ interface SecureGalleryProps {
   onSuccess: (msg: string, type: 'success' | 'error' | 'info') => void;
   onSecurityLog: (event: string, severity: 'info' | 'warning' | 'critical', details: string) => void;
   triggerAnimation: (mode: 'encrypt' | 'decrypt') => void;
+  privacySettings?: {
+    hiddenVaultsEnabled: boolean;
+    decoyVaultEnabled: boolean;
+    panicPassword: string;
+    hiddenVaultPasswords: string[];
+    hiddenTabs: string[];
+  };
+  isAppLocked?: boolean;
 }
 
 export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
   onSuccess,
   onSecurityLog,
-  triggerAnimation
+  triggerAnimation,
+  privacySettings,
+  isAppLocked
 }) => {
   const { t, locale } = useTranslation();
   const locVal = (en: string, ar: string) => (locale === 'ar' ? ar : en);
@@ -65,6 +75,19 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
   const [showPasswordInput, setShowPasswordInput] = useState<boolean>(false);
   const [biometricsActive, setBiometricsActive] = useState<boolean>(false);
   const [isBiometricScanning, setIsBiometricScanning] = useState<boolean>(false);
+  const [activeMode, setActiveMode] = useState<'normal' | 'decoy' | 'hidden'>('normal');
+  const [activePassword, setActivePassword] = useState<string>('');
+
+  // Is lock triggered globally
+  useEffect(() => {
+    if (isAppLocked) {
+      setIsUnlocked(false);
+      setVaultPassword('');
+      setMediaItems([]);
+      setViewerItem(null);
+      sessionStorage.removeItem('riman_gallery_cached_key');
+    }
+  }, [isAppLocked]);
 
   // Security features config (Feature 7)
   const [preventScreenshot, setPreventScreenshot] = useState<boolean>(true);
@@ -141,6 +164,12 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
     }, 1500);
   };
 
+  const getGalleryPayloadKey = (mode: 'normal' | 'decoy' | 'hidden', pwdStr: string) => {
+    if (mode === 'decoy') return 'riman_gallery_decoy_payload';
+    if (mode === 'hidden') return `riman_gallery_hidden_payload_${btoa(pwdStr).substring(0, 15)}`;
+    return 'riman_gallery_vault_payload';
+  };
+
   const handleUnlockWithPassword = (passwordToTry: string) => {
     const pwd = passwordToTry || vaultPassword;
     if (!pwd || pwd.length < 4) {
@@ -152,49 +181,85 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
       triggerAnimation('decrypt');
       onSecurityLog('Media Vault decryption initialized', 'info', 'Beginning Riemann sequential mathematical layers decomposition.');
 
-      const savedTokenJson = localStorage.getItem('riman_gallery_vault_token');
+      let mode: 'normal' | 'decoy' | 'hidden' = 'normal';
+      if (privacySettings?.decoyVaultEnabled && pwd === privacySettings?.panicPassword) {
+        mode = 'decoy';
+      } else if (privacySettings?.hiddenVaultsEnabled && privacySettings?.hiddenVaultPasswords?.includes(pwd)) {
+        mode = 'hidden';
+      }
+
       let decryptedRecords: EncryptedMediaRecord[] = [];
+      const payloadKey = getGalleryPayloadKey(mode, pwd);
 
-      if (!savedTokenJson) {
-        // Initial setup
-        onSecurityLog('Media Vault First-time enrollment active', 'warning', 'No previous gallery config discovered. Initializing raw baseline.');
-        
-        // Create token verifier
-        const verifierObj = { authenticated: true, schema: 'riman_gallery_v25' };
-        const encToken = executeRiemannTripleLayerEncrypt(stringToBytes(JSON.stringify(verifierObj)), pwd, {
-          filename: 'gallery_token.riman'
-        });
-        localStorage.setItem('riman_gallery_vault_token', JSON.stringify(encToken));
-
-        // Create initial default gallery records
-        const defaultRecords = buildSeededRecords(pwd);
-        localStorage.setItem('riman_gallery_vault_payload', JSON.stringify(defaultRecords));
-        decryptedRecords = defaultRecords;
-        
-        // Save to sessionStorage to enable biometric quick-unlock
-        sessionStorage.setItem('riman_gallery_cached_key', pwd);
-        onSuccess(locVal('Secure Media Vault configured and initialized!', 'تم تأمين وتأسيس مخزن الوسائط المشفر بنجاح!'), 'success');
-      } else {
-        // Run verification
-        try {
-          const tokenContainer: EncryptedContainer = JSON.parse(savedTokenJson);
-          const decryptedBytes = executeRiemannTripleLayerDecrypt(tokenContainer, pwd);
-          const decryptedStr = bytesToString(decryptedBytes);
-          const parsed = JSON.parse(decryptedStr);
-          if (parsed.schema !== 'riman_gallery_v25') {
-            throw new Error('Key validation failed');
-          }
-        } catch (err) {
-          onSecurityLog('Media Vault validation failure', 'critical', 'Incorrect symmetric password provided. Aborting decryption pipeline.');
-          onSuccess(locVal('Incorrect symmetric vault password!', 'رقم أو كلمة السر غير مطابقة! فشل فك التشفير.'), 'error');
-          return;
+      if (mode === 'decoy') {
+        const decoyPayload = localStorage.getItem('riman_gallery_decoy_payload');
+        if (!decoyPayload) {
+          const defaultRecords = buildSeededRecords(pwd);
+          localStorage.setItem('riman_gallery_decoy_payload', JSON.stringify(defaultRecords));
+          decryptedRecords = defaultRecords;
+        } else {
+          decryptedRecords = JSON.parse(decoyPayload);
         }
-
-        // Hydrated entries
         sessionStorage.setItem('riman_gallery_cached_key', pwd);
-        const payloadJson = localStorage.getItem('riman_gallery_vault_payload');
-        if (payloadJson) {
-          decryptedRecords = JSON.parse(payloadJson);
+        onSecurityLog('Decoy Media Vault Access', 'warning', 'Plausible deniability scenario triggered. Loaded mimic galleries.');
+        onSuccess(locVal('Mimic Media Vault loaded completely.', 'تم تحميل معرض الصور التمويهي بنجاح.'), 'info');
+      } else if (mode === 'hidden') {
+        const encSuffix = btoa(pwd).substring(0, 15);
+        const hiddenPayload = localStorage.getItem(`riman_gallery_hidden_payload_${encSuffix}`);
+        if (!hiddenPayload) {
+          const defaultRecords = buildSeededRecords(pwd);
+          localStorage.setItem(`riman_gallery_hidden_payload_${encSuffix}`, JSON.stringify(defaultRecords));
+          decryptedRecords = defaultRecords;
+        } else {
+          decryptedRecords = JSON.parse(hiddenPayload);
+        }
+        sessionStorage.setItem('riman_gallery_cached_key', pwd);
+        onSecurityLog('Hidden Media Vault Access', 'warning', 'Isolated hidden media vault successfully decrypted.');
+        onSuccess(locVal('Isolated Media partition unlocked completely!', 'تم فتح قطاع الصور المخفي بالكامل!'), 'success');
+      } else {
+        // STANDARD NORMAL MASTER
+        const savedTokenJson = localStorage.getItem('riman_gallery_vault_token');
+        if (!savedTokenJson) {
+          // Initial setup
+          onSecurityLog('Media Vault First-time enrollment active', 'warning', 'No previous gallery config discovered. Initializing raw baseline.');
+          
+          // Create token verifier
+          const verifierObj = { authenticated: true, schema: 'riman_gallery_v25' };
+          const encToken = executeRiemannTripleLayerEncrypt(stringToBytes(JSON.stringify(verifierObj)), pwd, {
+            filename: 'gallery_token.riman'
+          });
+          localStorage.setItem('riman_gallery_vault_token', JSON.stringify(encToken));
+
+          // Create initial default gallery records
+          const defaultRecords = buildSeededRecords(pwd);
+          localStorage.setItem('riman_gallery_vault_payload', JSON.stringify(defaultRecords));
+          decryptedRecords = defaultRecords;
+          
+          // Save to sessionStorage to enable biometric quick-unlock
+          sessionStorage.setItem('riman_gallery_cached_key', pwd);
+          onSuccess(locVal('Secure Media Vault configured and initialized!', 'تم تأمين وتأسيس مخزن الوسائط المشفر بنجاح!'), 'success');
+        } else {
+          // Run verification
+          try {
+            const tokenContainer: EncryptedContainer = JSON.parse(savedTokenJson);
+            const decryptedBytes = executeRiemannTripleLayerDecrypt(tokenContainer, pwd);
+            const decryptedStr = bytesToString(decryptedBytes);
+            const parsed = JSON.parse(decryptedStr);
+            if (parsed.schema !== 'riman_gallery_v25') {
+              throw new Error('Key validation failed');
+            }
+          } catch (err) {
+            onSecurityLog('Media Vault validation failure', 'critical', 'Incorrect symmetric password provided. Aborting decryption pipeline.');
+            onSuccess(locVal('Incorrect symmetric vault password!', 'رقم أو كلمة السر غير مطابقة! فشل فك التشفير.'), 'error');
+            return;
+          }
+
+          // Hydrated entries
+          sessionStorage.setItem('riman_gallery_cached_key', pwd);
+          const payloadJson = localStorage.getItem('riman_gallery_vault_payload');
+          if (payloadJson) {
+            decryptedRecords = JSON.parse(payloadJson);
+          }
         }
       }
 
@@ -239,6 +304,8 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
       if (foundAlbums.length > 0) setAlbums(foundAlbums);
       if (foundCats.length > 0) setCategories(foundCats);
 
+      setActiveMode(mode);
+      setActivePassword(pwd);
       setMediaItems(items);
       setIsUnlocked(true);
       onSecurityLog('Media Gallery secure channel established', 'success', `Decrypted ${items.length} media units to system RAM.`);
@@ -295,7 +362,7 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
       return;
     }
 
-    const currentPw = sessionStorage.getItem('riman_gallery_cached_key') || vaultPassword;
+    const currentPw = activePassword || sessionStorage.getItem('riman_gallery_cached_key') || vaultPassword;
     if (!currentPw) {
       onSuccess(locVal('Session key unavailable. Relock and enter password.', 'كلمة مرور الجلسة مفقودة. اعد فتح المعرض الحركي.'), 'error');
       return;
@@ -365,7 +432,8 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
         };
 
         // Save back DB
-        const savedPayload = localStorage.getItem('riman_gallery_vault_payload');
+        const payloadKey = getGalleryPayloadKey(activeMode, currentPw);
+        const savedPayload = localStorage.getItem(payloadKey);
         let currentList: EncryptedMediaRecord[] = [];
         if (savedPayload) {
           currentList = JSON.parse(savedPayload);
@@ -373,7 +441,7 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
         currentList.push(newRecord);
 
         // Commit to local disk encrypted
-        localStorage.setItem('riman_gallery_vault_payload', JSON.stringify(currentList));
+        localStorage.setItem(payloadKey, JSON.stringify(currentList));
 
         // State update
         const newDecryptedItem: DecryptedMediaItem = {
@@ -410,15 +478,16 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
   };
 
   const handleDeleteItem = (id: string, name: string) => {
-    const currentPw = sessionStorage.getItem('riman_gallery_cached_key') || vaultPassword;
+    const currentPw = activePassword || sessionStorage.getItem('riman_gallery_cached_key') || vaultPassword;
     if (!currentPw) return;
 
     // Filter local disk db
-    const savedPayload = localStorage.getItem('riman_gallery_vault_payload');
+    const payloadKey = getGalleryPayloadKey(activeMode, currentPw);
+    const savedPayload = localStorage.getItem(payloadKey);
     if (savedPayload) {
       const currentList: EncryptedMediaRecord[] = JSON.parse(savedPayload);
       const filteredList = currentList.filter(rec => rec.id !== id);
-      localStorage.setItem('riman_gallery_vault_payload', JSON.stringify(filteredList));
+      localStorage.setItem(payloadKey, JSON.stringify(filteredList));
     }
 
     setMediaItems(prev => prev.filter(item => item.id !== id));
@@ -433,10 +502,11 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
   };
 
   const handleToggleFavorite = (id: string) => {
-    const currentPw = sessionStorage.getItem('riman_gallery_cached_key') || vaultPassword;
+    const currentPw = activePassword || sessionStorage.getItem('riman_gallery_cached_key') || vaultPassword;
     if (!currentPw) return;
 
-    const savedPayload = localStorage.getItem('riman_gallery_vault_payload');
+    const payloadKey = getGalleryPayloadKey(activeMode, currentPw);
+    const savedPayload = localStorage.getItem(payloadKey);
     if (savedPayload) {
       const currentList: EncryptedMediaRecord[] = JSON.parse(savedPayload);
       const updatedList = currentList.map(rec => {
@@ -445,7 +515,7 @@ export const SecureGalleryModule: React.FC<SecureGalleryProps> = ({
         }
         return rec;
       });
-      localStorage.setItem('riman_gallery_vault_payload', JSON.stringify(updatedList));
+      localStorage.setItem(payloadKey, JSON.stringify(updatedList));
 
       setMediaItems(prev => prev.map(item => {
         if (item.id === id) {

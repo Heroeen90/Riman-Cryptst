@@ -10,6 +10,9 @@ dependencies:
     sdk: flutter
   cryptography: ^2.5.0
   encrypt: ^5.0.3
+  local_auth: ^2.1.8
+  flutter_windowmanager: ^0.2.0
+  flutter_jailbreak_detection: ^1.2.0
 
 dev_dependencies:
   flutter_test:

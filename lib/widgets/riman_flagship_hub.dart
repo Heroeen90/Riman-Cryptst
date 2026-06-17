@@ -126,7 +126,7 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             child: Column(
               children: [
                 Text(
-                  _locVal('CONVERGENCE STATUS: V120.0 OPERATIONAL', 'حالة النظم: V120.0 جاهز'),
+                  _locVal('CONVERGENCE STATUS: V125.0 OPERATIONAL', 'حالة النظم: V125.0 جاهز'),
                   style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
                 ),
               ],

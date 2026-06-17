@@ -570,7 +570,7 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
             decoration: InputDecoration(
               isDense: true,
               hintText: _locVal('Enter a passphrase to test strength...', 'أدخل كلمة مرور لاختبار العشوائية المقدرة...'),
-              hintStyle: TextStyle(color: Colors.grey.shade650, fontSize: 10, fontFamily: 'monospace'),
+              hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 10, fontFamily: 'monospace'),
               filled: true,
               fillColor: Colors.black38,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -747,7 +747,7 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
             decoration: InputDecoration(
               isDense: true,
               hintText: _locVal('Type and copy sensitive data to test...', 'اكتب نصاً لنسخه واختبار الإتلاف...'),
-              hintStyle: TextStyle(color: Colors.grey.shade655, fontSize: 10, fontFamily: 'monospace'),
+              hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 10, fontFamily: 'monospace'),
               filled: true,
               fillColor: Colors.black38,
               suffixIcon: GestureDetector(

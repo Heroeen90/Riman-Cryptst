@@ -397,7 +397,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 24),
                 Text(
                   locVal('Initial bypass PIN is: 1234', 'رمز العبور المبدئي لفك القفل هو: 1234'),
-                  style: TextStyle(fontSize: 8, color: Colors.grey.shade650, fontFamily: 'monospace'),
+                  style: TextStyle(fontSize: 8, color: Colors.grey.shade600, fontFamily: 'monospace'),
                 ),
               ],
             ),

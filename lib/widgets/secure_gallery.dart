@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/translations.dart';
@@ -271,7 +272,7 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
               Text(
                 _locVal('Decrypts raw data vectors in-RAM only with zero traces left in local caches.', 
                         'يقوم بفك ضغط وتشفير الصور داخل الذاكرة المؤقتة لمنع تسريب الكاش للقرص.'),
-                style: const TextStyle(color: Colors.neutral-500, fontSize: 11, fontFamily: 'monospace'),
+                style: const TextStyle(color: Colors.grey, fontSize: 11, fontFamily: 'monospace'),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -332,7 +333,9 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
   Widget _buildMediaNav() {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      border: Border(bottom: BorderSide(color: Colors.neutral-800.withOpacity(0.3))),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: Colors.grey.shade800)),
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -344,7 +347,7 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.power_settings_new, color: Colors.roseAccent),
+            icon: const Icon(Icons.power_settings_new, color: Colors.pinkAccent),
             tooltip: _locVal('Lock Gallery', 'قفل وإغلاق المعرض'),
             onPressed: _handleLock,
           ),
@@ -419,17 +422,17 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
         children: [
           Row(
             children: [
-              const Icon(Icons.shield, color: Colors.emerald, size: 14),
+              const Icon(Icons.shield, color: Colors.green, size: 14),
               const SizedBox(width: 6),
               Text(
                 _locVal('PREVENT SCREENSHOT', 'منع لقطة الشاشة'),
-                style: const TextStyle(fontSize: 10, color: Colors.neutral-300, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold),
               ),
             ],
           ),
           Switch(
             value: _preventScreenshot,
-            activeColor: Colors.emerald,
+            activeColor: Colors.green,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onChanged: (val) {
               setState(() => _preventScreenshot = val);
@@ -476,8 +479,8 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
               // Favorite button filter
               TextButton.icon(
                 onPressed: () => setState(() => _onlyFavorites = !_onlyFavorites),
-                icon: Icon(Icons.favorite, color: _onlyFavorites ? Colors.rose : Colors.neutral-400, size: 14),
-                label: Text(_locVal('FAVS', 'المفضلة'), style: TextStyle(fontSize: 10, color: _onlyFavorites ? Colors.rose : Colors.white)),
+                icon: Icon(Icons.favorite, color: _onlyFavorites ? Colors.pink : Colors.grey, size: 14),
+                label: Text(_locVal('FAVS', 'المفضلة'), style: TextStyle(fontSize: 10, color: _onlyFavorites ? Colors.pink : Colors.white)),
               )
             ],
           )
@@ -529,9 +532,9 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.photo_library_outlined, size: 48, color: Colors.neutral-600),
+          const Icon(Icons.photo_library_outlined, size: 48, color: Colors.grey),
           const SizedBox(height: 8),
-          Text(_locVal('NO SECURE IMAGES', 'لا يوجد صور تشفيرية'), style: const TextStyle(fontSize: 11, color: Colors.neutral-400)),
+          Text(_locVal('NO SECURE IMAGES', 'لا يوجد صور تشفيرية'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
         ],
       ),
     );
@@ -568,14 +571,14 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
                     child: Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.favorite, color: item.isFavorite ? Colors.rose : Colors.grey, size: 14),
+                          icon: Icon(Icons.favorite, color: item.isFavorite ? Colors.pink : Colors.grey, size: 14),
                           onPressed: () => _handleToggleFavorite(item),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
                         ),
                         const SizedBox(width: 6),
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.neutral-400, size: 14),
+                          icon: const Icon(Icons.delete, color: Colors.grey, size: 14),
                           onPressed: () => _handleDeleteItem(item),
                           padding: EdgeInsets.zero,
                           constraints: const BoxConstraints(),
@@ -594,7 +597,7 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(item.album, style: const TextStyle(fontSize: 8, color: Colors.cyan), overflow: TextOverflow.ellipsis),
-              Text(item.resolution, style: const TextStyle(fontSize: 8, color: Colors.neutral-500)),
+              Text(item.resolution, style: const TextStyle(fontSize: 8, color: Colors.grey)),
             ],
           ),
           const SizedBox(height: 2),
@@ -665,7 +668,7 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
         children: [
           Text(
             _locVal('MEDIA VAULT PHYSICAL STATISTICS', 'إحصائيات مستودع الصور المحمي المتقدمة'),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.neutral-400),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey),
           ),
           const SizedBox(height: 16),
           _dashboardStatTile(_locVal('Total Encrypted Assets', 'إجمالي الصور المسجلة'), '${_mediaItems.length} items', Colors.cyan),
@@ -674,13 +677,13 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
           const SizedBox(height: 24),
           Text(
             _locVal('PIPELINE VAULTS LOGS', 'سجل المستودعات النشطة'),
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.neutral-500),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.grey),
           ),
           const SizedBox(height: 8),
           ..._mediaItems.take(4).map((i) => Container(
             margin: const EdgeInsets.only(bottom: 6),
             padding: const EdgeInsets.all(10),
-            color: Colors.neutral-900,
+            color: Colors.grey.shade900,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -700,7 +703,7 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: const Color(0xFF111827),
-        border: Border.all(color: Colors.neutral-800.withOpacity(0.4)),
+        border: Border.all(color: Colors.grey.shade800),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(
@@ -731,7 +734,7 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
           Text(
             _locVal('Blueprint parameters defined for extreme media chunking in transit.', 
                     'المعالم الهندسية لمعالجة كاش الملفات الضخمة والصوتيات تحت درع ريمان.'),
-            style: const TextStyle(color: Colors.neutral-500, fontSize: 10),
+            style: const TextStyle(color: Colors.grey, fontSize: 10),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
@@ -821,7 +824,7 @@ class _MemoryOnlyImageDialog extends StatelessWidget {
             Container(
               height: 220,
               decoration: BoxDecoration(
-                color: Colors.neutral-900,
+                color: Colors.grey.shade900,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: _renderSafePainterInsideDialog(item),
@@ -830,7 +833,7 @@ class _MemoryOnlyImageDialog extends StatelessWidget {
             // IMAGE METADATA DETAILS (Feature 8)
             Container(
               padding: const EdgeInsets.all(12),
-              color: Colors.neutral-900,
+              color: Colors.grey.shade900,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -873,7 +876,7 @@ class _MemoryOnlyImageDialog extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(path, style: const TextStyle(fontSize: 9, color: Colors.neutral-500, fontFamily: 'monospace')),
+          Text(path, style: const TextStyle(fontSize: 9, color: Colors.grey, fontFamily: 'monospace')),
           Text(value, style: const TextStyle(fontSize: 10, color: Colors.white, fontWeight: FontWeight.bold, fontFamily: 'monospace')),
         ],
       ),

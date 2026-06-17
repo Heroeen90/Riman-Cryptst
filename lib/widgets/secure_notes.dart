@@ -251,7 +251,6 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
             category: _selectedCategory,
             color: _selectedColor,
             createdAt: _activeDetailNote!.createdAt,
-            isLocked_temp: _isNoteSelectiveLocked,
             isSelectiveLocked: _isNoteSelectiveLocked,
           );
         }

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/translations.dart';
+import '../utils/nexus_service.dart';
 
 class JournalEntryModel {
   final String id;
@@ -95,6 +96,7 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
         location: {'lat': 30.0571, 'lng': 31.2272},
       ),
     ]);
+    NexusService().registerJournals(_entries);
   }
 
   String _locVal(String en, String ar) {
@@ -165,6 +167,7 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
       _titleCtrl.clear();
       _contentCtrl.clear();
       _isLocationArmed = false;
+      NexusService().registerJournals(_entries);
     });
 
     widget.onSecurityLog(
@@ -182,6 +185,7 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
   void _deleteEntry(String id) {
     setState(() {
       _entries.removeWhere((element) => element.id == id);
+      NexusService().registerJournals(_entries);
     });
 
     widget.onSecurityLog(

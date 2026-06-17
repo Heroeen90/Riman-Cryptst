@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/translations.dart';
+import '../utils/nexus_service.dart';
 
 class SecureNote {
   final String id;
@@ -144,6 +145,7 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
         isSelectiveLocked: true,
       ),
     ]);
+    NexusService().registerNotes(_notes);
   }
 
   String _locVal(String en, String ar) {
@@ -219,6 +221,7 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
       );
       _scratchTitleCtrl.clear();
       _scratchContentCtrl.clear();
+      NexusService().registerNotes(_notes);
     });
 
     widget.onSecurityLog(
@@ -274,6 +277,7 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
       _noteTitleCtrl.clear();
       _noteContentCtrl.clear();
       _isNoteSelectiveLocked = false;
+      NexusService().registerNotes(_notes);
     });
 
     widget.onSuccess(
@@ -288,6 +292,7 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
       if (_activeDetailNote?.id == id) {
         _activeDetailNote = null;
       }
+      NexusService().registerNotes(_notes);
     });
 
     widget.onSecurityLog(

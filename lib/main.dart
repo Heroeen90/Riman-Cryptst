@@ -17,6 +17,7 @@ import 'widgets/secure_notes.dart';
 import 'widgets/secure_journal.dart';
 import 'widgets/secure_gallery.dart';
 import 'widgets/secure_media.dart';
+import 'widgets/nexus_dashboard.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -438,6 +439,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.monitor_heart, 'key': 'tab_dashboard'},
       {'icon': Icons.verified_user, 'key': 'tab_security'},
       {'icon': Icons.security, 'key': 'tab_vaults'},
+      {'icon': Icons.hub, 'key': 'tab_nexus'},
       {'icon': Icons.text_snippet, 'key': 'tab_text'},
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
       {'icon': Icons.lock_clock, 'key': 'tab_capsules'},
@@ -710,6 +712,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   SmartVaultsTab(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  NexusDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

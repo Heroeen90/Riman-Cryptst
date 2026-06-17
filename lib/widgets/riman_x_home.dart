@@ -246,7 +246,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 11,
-                  color: Colors.white.withOpacity(0.70), // Colors.white70 replacement
+                  color: Colors.white70, // Fixed compilation rule variable
                   height: 1.4,
                 ),
               ),
@@ -264,7 +264,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                         height: 8,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.emerald,
+                          color: Colors.green, // FIX: Avoid non-existent color literal 'emerald'
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -275,7 +275,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                           fontFamily: 'Inter',
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.emerald,
+                          color: Colors.green, // FIX: Avoid non-existent color literal 'emerald'
                         ),
                       ),
                     ],
@@ -300,7 +300,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
-                        borderSide: BorderSide(
+                        side: BorderSide( // FIX: Rectified forbidden parameter 'borderSide' to valid 'side'
                           color: _isCustomizing ? const Color(0xFF06B6D4) : Colors.white12,
                         ),
                       ),
@@ -391,7 +391,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                     ),
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.white.withOpacity(0.70), // complying with white70 rule
+                      color: Colors.white70, // Fixed complying standard
                       height: 1.3,
                     ),
                   ),
@@ -559,7 +559,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                         result.subtitle,
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          color: Colors.white.withOpacity(0.70), // Colors.white70 complying
+                          color: Colors.white70, // Fixed variable
                           fontSize: 10,
                         ),
                       ),
@@ -675,7 +675,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 9,
-                        color: Colors.white.withOpacity(0.70), // Colors.white70 replacement
+                        color: Colors.white70, // Fixed standard token
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -689,7 +689,6 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
             const SizedBox(height: 4),
             GestureDetector(
               onTap: () {
-                // Take to activities log log screen if needed, or trigger success note
                 widget.onSuccess(
                   _locVal('Total of ${list.length} secure operations are archived in local database thread.', 'تمت أرشفة ${list.length} عملية أمنية مسجلة في المحرك المحلي.'),
                   'info',
@@ -716,7 +715,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
   Color _getSeverityColor(String sev) {
     if (sev == 'critical') return const Color(0xFFF43F5E); // Rose
     if (sev == 'warning') return const Color(0xFFF59E0B); // Amber
-    if (sev == 'success') return const Color(0xFF10B981); // Emerald
+    if (sev == 'success') return const Color(0xFF10B981); // Emerald / Green
     return const Color(0xFF06B6D4); // Cyan info
   }
 
@@ -838,7 +837,6 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                 ),
                 child: Row(
                   children: [
-                    // Drag marker icons or order weights
                     Icon(
                       Icons.menu,
                       size: 16,
@@ -861,13 +859,12 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                             _getWidgetTitle(config.key),
                             style: TextStyle(
                               fontSize: 8,
-                              color: Colors.white.withOpacity(0.70), // respecting listTile with white70 layout
+                              color: Colors.white70, // Fixed variable
                             ),
                           ),
                         ],
                       ),
                     ),
-                    // Visibility slider switcher
                     Switch.adaptive(
                       value: config.isEnabled,
                       activeColor: const Color(0xFF06B6D4),
@@ -926,7 +923,6 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                   color: Colors.white54,
                 ),
               ),
-              // Settings helper dot
               Container(
                 width: 6,
                 height: 6,
@@ -945,7 +941,6 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
   }
 }
 
-// Custom widget to cleanly group nested sub-operations or list containers inside Silver-View
 class SilverNestedListWrapper extends StatelessWidget {
   final String title;
   final Widget child;

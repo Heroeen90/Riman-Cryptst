@@ -53,11 +53,15 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
   Future<void> _initSecurityPipeline() async {
     await WindowSecurityService.secureScreen();
     ClipboardProtectionService.startMonitoring();
-    bool tampered = await EnvironmentChecker.isTampered();
+    bool isSecure = await IntegrityAttestationManager.checkPlatformIntegrity();
     final metrics = await HardwareSentinel.getHardwareMetrics();
-    if (tampered) {
+    if (!isSecure) {
       debugPrint('Security alert: Tampering detected! Metrics: $metrics');
     }
+    
+    // Convergence check
+    final status = isSecure ? 'CONVERGED: SECURE' : 'THREAT: COMPROMISED';
+    widget.onSuccess(status, isSecure ? 'success' : 'error');
   }
 
   String _locVal(String en, String ar) {
@@ -66,9 +70,6 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final threatScore = ThreatMatrixAnalytics.calculateThreatScore();
-    final entropy = EntropyHarvester.getEntropy();
-
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
       body: ListView(
@@ -77,8 +78,8 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
           Row(
             children: [
               Text(
-                _locVal('RIMAN CITADEL CORE', 'نواة قلعة ريمان'),
-                style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                _locVal('RIMAN CITADEL MASTER CONVERGENCE', 'نواة قلعة ريمان القصوى'),
+                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               // Anchors preserved
@@ -92,19 +93,15 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
           const SizedBox(height: 16),
           const DeceptionRadarWidget(),
           const SizedBox(height: 16),
-          // Apex/Dreadnought Status
+          // Master Convergence Status
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(16)),
             child: Column(
               children: [
                 Text(
-                  _locVal('CITADEL SYSTEM: ONLINE', 'نظام القلعة: متصل'),
+                  _locVal('CONVERGENCE STATUS: V100.0 OPERATIONAL', 'حالة النظم: V100.0 جاهز'),
                   style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
-                ),
-                Text(
-                  _locVal('Threat Score: ${threatScore.toStringAsFixed(1)}% | Entropy: ${entropy.toInt()}', 'مستوى التهديد: ${threatScore.toStringAsFixed(1)}% | العشوائية: ${entropy.toInt()}'),
-                  style: TextStyle(color: threatScore > 50 ? Colors.red : Colors.teal, fontFamily: 'JetBrains Mono'),
                 ),
               ],
             ),

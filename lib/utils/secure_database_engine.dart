@@ -11,4 +11,9 @@ class SecureDatabaseEngine {
       },
     );
   }
+
+  static Future<void> shredData(List<int> bytes) async {
+    // Overwrite with zeros
+    bytes.fillRange(0, bytes.length, 0);
+  }
 }

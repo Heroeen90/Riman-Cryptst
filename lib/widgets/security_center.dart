@@ -819,46 +819,52 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
           const SizedBox(height: 12),
           
           // Simulated Biometric setting
-          SwitchListTile(
-            value: bioEnabled,
-            onChanged: (val) => _triggerBiometricDialog(),
-            activeColor: const Color(0xFF06B6D4),
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              _locVal('Simulated Biometric Authentication', 'محاكاة البصمة الحيوية الفعالة'),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
-            ),
-            subtitle: Text(
-              _locVal('Forces biometric scan simulation checks inside decryption segments.', 'يتطلب الولوج وتأكيد مطابقة الهوية الحيوية قبل فك الأرشيفات.'),
-              style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
+          Material(
+            color: Colors.transparent,
+            child: SwitchListTile(
+              value: bioEnabled,
+              onChanged: (val) => _triggerBiometricDialog(),
+              activeColor: const Color(0xFF06B6D4),
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                _locVal('Simulated Biometric Authentication', 'محاكاة البصمة الحيوية الفعالة'),
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
+              ),
+              subtitle: Text(
+                _locVal('Forces biometric scan simulation checks inside decryption segments.', 'يتطلب الولوج وتأكيد مطابقة الهوية الحيوية قبل فك الأرشيفات.'),
+                style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
+              ),
             ),
           ),
           const Divider(height: 12, color: Colors.white10),
           
           // Simulated Recovery key configuration
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              _locVal('Sovereign Offline Recovery Key', 'مفاتيح الاستعادة والإنقاذ بدون شبكة'),
-              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
-            ),
-            subtitle: Text(
-              isRecoveryConfigured
-                  ? _locVal('A recovery core backup is active.', 'رمز فك الرموز النشط جاهز ومرتسم.')
-                  : _locVal('Emergency backup bypass offline key isn\'t configured.', 'لم تقم بتعيين مفتاح الاستعادة والإنقاذ المادي.'),
-              style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
-            ),
-            trailing: ElevatedButton(
-              onPressed: _triggerRecoveryDialog,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0F2D3A),
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                minimumSize: Size.zero,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          Material(
+            color: Colors.transparent,
+            child: ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                _locVal('Sovereign Offline Recovery Key', 'مفاتيح الاستعادة والإنقاذ بدون شبكة'),
+                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
               ),
-              child: Text(
-                isRecoveryConfigured ? _locVal('REGENT', 'تحديث') : _locVal('CREATE KEY', 'توليد'),
-                style: const TextStyle(fontSize: 8, color: Color(0xFF06B6D4), fontWeight: FontWeight.bold, fontFamily: 'monospace'),
+              subtitle: Text(
+                isRecoveryConfigured
+                    ? _locVal('A recovery core backup is active.', 'رمز فك الرموز النشط جاهز ومرتسم.')
+                    : _locVal('Emergency backup bypass offline key isn\'t configured.', 'لم تقم بتعيين مفتاح الاستعادة والإنقاذ المادي.'),
+                style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
+              ),
+              trailing: ElevatedButton(
+                onPressed: _triggerRecoveryDialog,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0F2D3A),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                  minimumSize: Size.zero,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                child: Text(
+                  isRecoveryConfigured ? _locVal('REGENT', 'تحديث') : _locVal('CREATE KEY', 'توليد'),
+                  style: const TextStyle(fontSize: 8, color: Color(0xFF06B6D4), fontWeight: FontWeight.bold, fontFamily: 'monospace'),
+                ),
               ),
             ),
           ),

@@ -467,17 +467,20 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
           ),
           const SizedBox(height: 12),
 
-          SwitchListTile(
-            dense: true,
-            contentPadding: EdgeInsets.zero,
-            title: Text(_locVal('Tag Geolocation Orbit', 'وسم الموقع الجغرافي للمدار'), style: const TextStyle(color: Colors.grey, fontSize: 9)),
-            value: _isLocationArmed,
-            activeColor: const Color(0xFFA855F7),
-            onChanged: (val) {
-              setState(() {
-                _isLocationArmed = val;
-              });
-            },
+          Material(
+            color: Colors.transparent,
+            child: SwitchListTile(
+              dense: true,
+              contentPadding: EdgeInsets.zero,
+              title: Text(_locVal('Tag Geolocation Orbit', 'وسم الموقع الجغرافي للمدار'), style: const TextStyle(color: Colors.grey, fontSize: 9)),
+              value: _isLocationArmed,
+              activeColor: const Color(0xFFA855F7),
+              onChanged: (val) {
+                setState(() {
+                  _isLocationArmed = val;
+                });
+              },
+            ),
           ),
 
           const SizedBox(height: 8),

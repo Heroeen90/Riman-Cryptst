@@ -741,17 +741,20 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
                       ),
                       const SizedBox(height: 8),
                       // Extra Lock switch
-                      SwitchListTile(
-                        dense: true,
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(_locVal('Selective Lock Encryption', 'تأمين الغلاف بقسم قفل مخصص'), style: const TextStyle(color: Colors.grey, fontSize: 9.5)),
-                        value: _isNoteSelectiveLocked,
-                        activeColor: const Color(0xFF06B6D4),
-                        onChanged: (val) {
-                          setDialogState(() {
-                            _isNoteSelectiveLocked = val;
-                          });
-                        },
+                      Material(
+                        color: Colors.transparent,
+                        child: SwitchListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(_locVal('Selective Lock Encryption', 'تأمين الغلاف بقسم قفل مخصص'), style: const TextStyle(color: Colors.grey, fontSize: 9.5)),
+                          value: _isNoteSelectiveLocked,
+                          activeColor: const Color(0xFF06B6D4),
+                          onChanged: (val) {
+                            setDialogState(() {
+                              _isNoteSelectiveLocked = val;
+                            });
+                          },
+                        ),
                       ),
                     ],
                   ),

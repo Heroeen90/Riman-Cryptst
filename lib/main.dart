@@ -25,13 +25,14 @@ import 'widgets/workspace_dashboard.dart';
 import 'widgets/kernel_dashboard.dart';
 import 'widgets/intelligence_dashboard.dart';
 import 'widgets/cloud_dashboard.dart';
+import 'widgets/riman_x_home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   try {
     runApp(const RimanCryptstApp());
   } catch (e, stackTrace) {
-    debugPrint('Fatal error starting Riman Cryptst application: \$e\n\$stackTrace');
+    debugPrint('Fatal error starting Riman Cryptst application: \$e\\n\$stackTrace');
   }
 }
 
@@ -125,8 +126,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _startSplashScreenLoading() {
-    // FIX: Injected testing anchor string "درع النصوص" directly into initialization statuses so the test suite reads it immediately on startup
-    _loadingStatus = _locale == 'ar' ? 'تهيئة النظام الكمومي لـ درع النصوص ريمان...' : 'Quantum system initializing for درع النصوص...';
+    _loadingStatus = _locale == 'ar' ? 'تهيئة النظام الكمومي لـ Riman...' : 'Quantum system initializing...';
     Timer.periodic(const Duration(milliseconds: 25), (timer) {
       if (!mounted) {
         timer.cancel();
@@ -312,13 +312,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
               children: [
                 const Icon(Icons.lock, color: Colors.red, size: 56),
                 const SizedBox(height: 16),
-                // FIX: Doubled testing visibility anchor inside the top-most layout frame header for absolute safety
-                const Text(
-                  'درع النصوص',
-                  style: TextStyle(fontSize: 1, color: Colors.transparent),
-                ),
                 Text(
-                  locVal('Sovereign Session Locked', 'تأمين وتجميد الذاكرة (درع النصوص)'),
+                  locVal('Sovereign Session Locked', 'تأمين وتجميد الذاكرة'),
                   style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
                 ),
                 const SizedBox(height: 8),
@@ -449,6 +444,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildTabBar() {
     final List<Map<String, dynamic>> tabs = [
+      {'icon': Icons.bolt, 'key': 'tab_riman_x'},
       {'icon': Icons.monitor_heart, 'key': 'tab_dashboard'},
       {'icon': Icons.verified_user, 'key': 'tab_security'},
       {'icon': Icons.security, 'key': 'tab_vaults'},
@@ -639,6 +635,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return _buildAppLockOverlay();
     }
 
+    final double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0B0F19),
@@ -720,6 +718,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: IndexedStack(
                 index: _currentTabIndex,
                 children: [
+                  RimanXHomeWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                    onNavigateTab: (index) => setState(() => _currentTabIndex = index),
+                  ),
                   SovereignDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,

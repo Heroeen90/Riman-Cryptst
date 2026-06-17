@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riman_cryptst/main.dart';
-import 'package:riman_cryptst/utils/vault_service.dart';
 
 void main() {
   testWidgets('Verify Riman Cryptst layout loads cleanly', (WidgetTester tester) async {
-    // FORCE UNLOCK: Bypass lock screen status safely
-    VaultService().setLocked(false);
-
     // Build App
     await tester.pumpWidget(const RimanCryptstApp());
 
@@ -17,17 +13,18 @@ void main() {
     }
     await tester.pumpAndSettle();
 
-    // Verify Tab Icons are fully visible and active inside dashboard viewport (Language Independent)
-    expect(find.byIcon(Icons.monitor_heart), findsAtLeastNWidgets(1));
-    expect(find.byIcon(Icons.security), findsAtLeastNWidgets(1));
+    // Verify Arabic tabs are visible by default
+    expect(find.text('مكتب المراقبة'), findsOneWidget);
+    expect(find.text('درع النصوص'), findsOneWidget);
 
-    // Swap language to English using the global language selector button
+    // Swap language to English using the language selector button
     final Finder languageButton = find.byIcon(Icons.language);
     expect(languageButton, findsOneWidget);
     await tester.tap(languageButton);
     await tester.pumpAndSettle();
 
-    // Verify interface components remain operational post language toggling
-    expect(find.byIcon(Icons.language), findsOneWidget);
+    // Verify English tabs are now visible
+    expect(find.text('Monitor Desk'), findsOneWidget);
+    expect(find.text('Text Shield'), findsOneWidget);
   });
 }

@@ -100,7 +100,11 @@ class _SecureGalleryWidgetState extends State<SecureGalleryWidget> with SingleTi
   @override
   void initState() {
     super.initState();
-    _seedDefaultMedia();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        _seedDefaultMedia();
+      }
+    });
   }
 
   @override

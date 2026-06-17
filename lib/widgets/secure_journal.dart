@@ -67,9 +67,10 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
   @override
   void initState() {
     super.initState();
-    // FIX: Wrapped inside a PostFrameCallback to prevent setState() during build phase crash
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _seedDefaultJournal();
+      if (mounted) {
+        _seedDefaultJournal();
+      }
     });
   }
 

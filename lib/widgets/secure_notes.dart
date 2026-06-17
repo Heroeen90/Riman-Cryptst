@@ -105,9 +105,10 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
   @override
   void initState() {
     super.initState();
-    // FIX: Wrapped inside a PostFrameCallback to prevent setState() during build phase crash
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _seedDefaultNotes();
+      if (mounted) {
+        _seedDefaultNotes();
+      }
     });
   }
 
@@ -164,7 +165,6 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
       return;
     }
 
-    if (!mounted) return;
     setState(() {
       _isUnlocked = true;
     });
@@ -182,7 +182,6 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
   }
 
   void _lockVault() {
-    if (!mounted) return;
     setState(() {
       _isUnlocked = false;
       _vaultPassword = '';
@@ -212,7 +211,6 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
       return;
     }
 
-    if (!mounted) return;
     setState(() {
       _notes.insert(
         0,
@@ -248,7 +246,6 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
       return;
     }
 
-    if (!mounted) return;
     setState(() {
       if (_activeDetailNote != null) {
         // Edit Mode
@@ -294,7 +291,6 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
   }
 
   void _shredNote(String id) {
-    if (!mounted) return;
     setState(() {
       _notes.removeWhere((element) => element.id == id);
       if (_activeDetailNote?.id == id) {
@@ -354,9 +350,8 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
                           style: const TextStyle(color: Color(0xFF06B6D4), fontSize: 9, fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: 4),
-                        // FIX: Embedded explicit testing anchor text "درع النصوص" so it is globally discoverable in both locked and unlocked view states
                         Text(
-                          _locVal('Secure Notes Safe Room - درع النصوص', 'مستودع الملاحظات الآمنة والمسودات - درع النصوص'),
+                          _locVal('Secure Notes Safe Room', 'مستودع الملاحظات الآمنة والمسودات'),
                           style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
                         ),
                       ],

@@ -13,6 +13,9 @@ import '../utils/runtime_obfuscator.dart';
 import '../utils/debugger_detector.dart';
 import '../utils/encrypted_cache.dart';
 import '../utils/hardware_binder.dart';
+import '../utils/network_pinning_service.dart';
+import '../utils/in_memory_crypto_wrapper.dart';
+import '../utils/integrity_attestation_manager.dart';
 
 import '../utils/biometric_storage_service.dart';
 import '../utils/window_security_service.dart';
@@ -71,7 +74,7 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
           Row(
             children: [
               Text(
-                _locVal('RIMAN SOVEREIGN DREADNOUGHT', 'بارجة ريمان السيادية'),
+                _locVal('RIMAN CITADEL CORE', 'نواة قلعة ريمان'),
                 style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
@@ -93,7 +96,7 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             child: Column(
               children: [
                 Text(
-                  _locVal('DREADNOUGHT STATUS: ACTIVE', 'حالة البارجة: نشطة'),
+                  _locVal('CITADEL SYSTEM: ONLINE', 'نظام القلعة: متصل'),
                   style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
                 ),
                 Text(

@@ -228,7 +228,7 @@ class EnterpriseService extends ChangeNotifier {
           'titleAr': ws.nameAr,
           'detailsEn': 'Workspace template: ${ws.templateType}',
           'detailsAr': 'قالب سياق العمل: ${ws.templateType}',
-          'badgeColor': const Color(0xFF3B82F6),
+          'badgeColor': Color(0xFF3B82F6),
         });
       }
 
@@ -244,7 +244,7 @@ class EnterpriseService extends ChangeNotifier {
             'titleAr': 'مؤشر أصل حرج: $resource',
             'detailsEn': 'Contained in sealed storage cluster of ${ws.nameEn}',
             'detailsAr': 'محفوظ ضمن مصفوفة حيازة ${ws.nameAr}',
-            'badgeColor': const Color(0xFF10B981),
+            'badgeColor': Color(0xFF10B981),
           });
         }
       }

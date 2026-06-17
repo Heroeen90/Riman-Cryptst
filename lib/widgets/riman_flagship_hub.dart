@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'command_bar.dart';
 import 'deception_radar.dart';
 import '../utils/threat_matrix_analytics.dart';
+import '../utils/polymorphic_engine.dart';
+import '../utils/memory_decoy.dart';
+import '../utils/isolation_gatekeeper.dart';
 
 class RimanFlagshipHubWidget extends StatelessWidget {
   final String locale;
@@ -20,6 +23,7 @@ class RimanFlagshipHubWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final threatScore = ThreatMatrixAnalytics.calculateThreatScore();
+    
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
       body: ListView(
@@ -28,11 +32,11 @@ class RimanFlagshipHubWidget extends StatelessWidget {
           Row(
             children: [
               Text(
-                _locVal('RIMAN FLAGSHIP HUB', 'مركز عمليات ريمان'),
+                _locVal('RIMAN SOVEREIGN CITADEL', 'قلعة ريمان السيادية'),
                 style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              // Anchor required for testing
+              // Anchors preserved
               const Icon(Icons.monitor_heart, color: Colors.green),
               const SizedBox(width: 8),
               const Icon(Icons.security, color: Colors.cyan),
@@ -43,14 +47,23 @@ class RimanFlagshipHubWidget extends StatelessWidget {
           const SizedBox(height: 16),
           const DeceptionRadarWidget(),
           const SizedBox(height: 16),
+          // Integrity Status
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(16)),
-            child: Text(
-              _locVal('Threat Score: ${threatScore.toStringAsFixed(1)}%', 'مستوى التهديد: ${threatScore.toStringAsFixed(1)}%'),
-              style: TextStyle(color: threatScore > 50 ? Colors.red : Colors.green, fontFamily: 'JetBrains Mono'),
+            child: Column(
+              children: [
+                Text(
+                  _locVal('CITADEL STATUS: OPTIMIZED', 'حالة القلعة: مثالية'),
+                  style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
+                ),
+                Text(
+                  _locVal('Threat Score: ${threatScore.toStringAsFixed(1)}%', 'مستوى التهديد: ${threatScore.toStringAsFixed(1)}%'),
+                  style: TextStyle(color: threatScore > 50 ? Colors.red : Colors.teal, fontFamily: 'JetBrains Mono'),
+                ),
+              ],
             ),
-          )
+          ),
         ],
       ),
     );

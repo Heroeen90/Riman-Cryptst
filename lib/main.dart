@@ -23,6 +23,7 @@ import 'widgets/forensics_dashboard.dart';
 import 'widgets/sentinel_dashboard.dart';
 import 'widgets/workspace_dashboard.dart';
 import 'widgets/kernel_dashboard.dart';
+import 'widgets/intelligence_dashboard.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -450,6 +451,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.shield, 'key': 'tab_sentinel'},
       {'icon': Icons.business_center, 'key': 'tab_workspace'},
       {'icon': Icons.developer_board, 'key': 'tab_kernel'},
+      {'icon': Icons.psychology, 'key': 'tab_intelligence'},
       {'icon': Icons.text_snippet, 'key': 'tab_text'},
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
       {'icon': Icons.lock_clock, 'key': 'tab_capsules'},
@@ -752,6 +754,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   KernelDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  IntelligenceDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

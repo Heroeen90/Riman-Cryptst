@@ -44,6 +44,7 @@ const Map<String, Map<String, String>> i18nData = {
     'tab_sentinel': 'Riman Sentinel Hub',
     'tab_workspace': 'Riman Enterprise Core',
     'tab_kernel': 'Riman Security Kernel',
+    'tab_intelligence': 'Intelligence Network',
     
     'entropy_reservoir': 'Entropy Reservoir',
     'spectrum_coherence': 'Spectrum Coherence',
@@ -253,6 +254,7 @@ const Map<String, Map<String, String>> i18nData = {
     'tab_sentinel': 'حارس ريمان الأمني',
     'tab_workspace': 'نواة ريمان للمؤسسات',
     'tab_kernel': 'نواة أمن ريمان (Kernel)',
+    'tab_intelligence': 'شبكة ريمان الاستخباراتية',
     
     'entropy_reservoir': 'خزان العشوائية (الأمواج)',
     'spectrum_coherence': 'ترابط الطيف الرياضي',

@@ -754,11 +754,11 @@ class _KernelDashboardWidgetState extends State<KernelDashboardWidget> {
                               },
                               itemBuilder: (ctx) => [
                                 if (!isSuspended)
-                                  DropdownMenuItem(
+                                  PopupMenuItem<String>(
                                     value: 'rotate',
                                     child: Text(_locVal('Rotate Key', 'إجراء دوران للمفتاح'), style: const TextStyle(color: Colors.white, fontSize: 8.5)),
                                   ),
-                                DropdownMenuItem(
+                                PopupMenuItem<String>(
                                   value: 'destroy',
                                   child: Text(_locVal('Zeroize (Destroy)', 'إتلاف وتصفير الخلية'), style: const TextStyle(color: Color(0xFFEF4444), fontSize: 8.5, fontWeight: FontWeight.bold)),
                                 ),

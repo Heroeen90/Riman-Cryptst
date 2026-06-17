@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'utils/translations.dart';
 import 'utils/vault_service.dart';
+import 'utils/share_intent_service.dart';
+import 'widgets/share_target_sheet.dart';
 import 'widgets/sovereign_dashboard.dart';
 import 'widgets/security_center.dart';
 import 'widgets/smart_vaults_tab.dart';
@@ -104,14 +106,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _pinValue = '';
   String _pinError = '';
 
+import 'utils/share_intent_service.dart';
+import 'widgets/share_target_sheet.dart';
+
+// ... (in _DashboardScreenState)
   @override
   void initState() {
     super.initState();
     _startSplashScreenLoading();
     _seedInitialSecurityLogs();
     VaultService().addListener(_onVaultServiceUpdate);
+    ShareIntentService.initialize((file) {
+      showModalBottomSheet(
+        context: context,
+        builder: (_) => ShareTargetSheet(file: file),
+      );
+    });
   }
-
   @override
   void dispose() {
     _terminalScrollController.dispose();

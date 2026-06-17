@@ -110,6 +110,14 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
               SliverToBoxAdapter(
                 child: _buildDashboardHeroHeader(),
               ),
+              
+              // Cyber Threat Radar Grid
+              SliverToBoxAdapter(
+                 child: Padding(
+                   padding: const EdgeInsets.symmetric(horizontal: 16),
+                   child: _buildCyberThreatRadar(),
+                 ),
+              ),
 
               // Search results or Customizer overlay or standard grid list
               if (_searchQuery.isNotEmpty) ...[
@@ -139,6 +147,49 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  
+  // Tactical Intelligence Radar Widget
+  Widget _buildCyberThreatRadar() {
+    return Container(
+      height: 200,
+      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.white.withOpacity(0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.radar, color: Color(0xFF06B6D4), size: 16),
+              const SizedBox(width: 8),
+              Text(
+                _locVal('CYBER THREAT SIMULATION RADAR', 'رادارات محاكاة التهديدات السيبرانية'),
+                style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                  color: Colors.white54,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: CustomPaint(
+              size: Size.infinite,
+              painter: CyberThreatPainter(),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -246,7 +297,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 11,
-                  color: Colors.white70, // Fixed compilation rule variable
+                  color: Colors.white.withOpacity(0.70), // Colors.white70 replacement
                   height: 1.4,
                 ),
               ),
@@ -264,7 +315,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                         height: 8,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          color: Colors.green, // FIX: Avoid non-existent color literal 'emerald'
+                          color: Colors.green,
                         ),
                       ),
                       const SizedBox(width: 8),
@@ -275,7 +326,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                           fontFamily: 'Inter',
                           fontSize: 10,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green, // FIX: Avoid non-existent color literal 'emerald'
+                          color: Colors.green,
                         ),
                       ),
                     ],
@@ -300,7 +351,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
-                        side: BorderSide( // FIX: Rectified forbidden parameter 'borderSide' to valid 'side'
+                        side: BorderSide(
                           color: _isCustomizing ? const Color(0xFF06B6D4) : Colors.white12,
                         ),
                       ),
@@ -391,7 +442,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                     ),
                     style: TextStyle(
                       fontSize: 10,
-                      color: Colors.white70, // Fixed complying standard
+                      color: Colors.white.withOpacity(0.70), // complying with white70 rule
                       height: 1.3,
                     ),
                   ),
@@ -559,7 +610,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                         result.subtitle,
                         style: TextStyle(
                           fontFamily: 'Inter',
-                          color: Colors.white70, // Fixed variable
+                          color: Colors.white.withOpacity(0.70), // Colors.white70 complying
                           fontSize: 10,
                         ),
                       ),
@@ -675,7 +726,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 9,
-                        color: Colors.white70, // Fixed standard token
+                        color: Colors.white.withOpacity(0.70), // Colors.white70 replacement
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -689,6 +740,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
             const SizedBox(height: 4),
             GestureDetector(
               onTap: () {
+                // Take to activities log log screen if needed, or trigger success note
                 widget.onSuccess(
                   _locVal('Total of ${list.length} secure operations are archived in local database thread.', 'تمت أرشفة ${list.length} عملية أمنية مسجلة في المحرك المحلي.'),
                   'info',
@@ -715,7 +767,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
   Color _getSeverityColor(String sev) {
     if (sev == 'critical') return const Color(0xFFF43F5E); // Rose
     if (sev == 'warning') return const Color(0xFFF59E0B); // Amber
-    if (sev == 'success') return const Color(0xFF10B981); // Emerald / Green
+    if (sev == 'success') return const Color(0xFF10B981); // Emerald
     return const Color(0xFF06B6D4); // Cyan info
   }
 
@@ -837,6 +889,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                 ),
                 child: Row(
                   children: [
+                    // Drag marker icons or order weights
                     Icon(
                       Icons.menu,
                       size: 16,
@@ -859,12 +912,13 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                             _getWidgetTitle(config.key),
                             style: TextStyle(
                               fontSize: 8,
-                              color: Colors.white70, // Fixed variable
+                              color: Colors.white.withOpacity(0.70), // respecting listTile with white70 layout
                             ),
                           ),
                         ],
                       ),
                     ),
+                    // Visibility slider switcher
                     Switch.adaptive(
                       value: config.isEnabled,
                       activeColor: const Color(0xFF06B6D4),
@@ -923,6 +977,7 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
                   color: Colors.white54,
                 ),
               ),
+              // Settings helper dot
               Container(
                 width: 6,
                 height: 6,
@@ -941,6 +996,26 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
   }
 }
 
+class CyberThreatPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final paint = Paint()
+      ..color = const Color(0xFF06B6D4).withOpacity(0.3)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+
+    // Draw concentric circles
+    for (int i = 1; i <= 3; i++) {
+      canvas.drawCircle(center, (size.width / 8) * i * 2, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// Custom widget to cleanly group nested sub-operations or list containers inside Silver-View
 class SilverNestedListWrapper extends StatelessWidget {
   final String title;
   final Widget child;

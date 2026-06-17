@@ -31,7 +31,7 @@ class EnterpriseService extends ChangeNotifier {
     final idx = _profiles.indexWhere((p) => p.id == id);
     if (idx != -1) {
       _currentProfile = _profiles[idx];
-      
+
       // Auto-switch to the first matching workspace of this profile
       final matchingWorkspaces = _workspaces.where((w) => w.profileId == id).toList();
       if (matchingWorkspaces.isNotEmpty) {
@@ -151,12 +151,12 @@ class EnterpriseService extends ChangeNotifier {
       logActivity(
         workspaceId: old.id,
         profileId: _currentProfile?.id ?? 'unknown',
-        en: newStatus
-            ? 'Applied strict write lock. Resources sealed against non-owner modifications.'
-            : 'Unsealed core resource write-locks. Interop channels opened.',
-        ar: newStatus
-            ? 'تم تطبيق قفل التعديل الصارم. تم تجميد الموارد وتأمين الأصول الموصولة.'
-            : 'تم فك ختم كود المراجعة المشترك وتنشيط قنوات التعديل المتبادل.',
+        en: !newStatus
+            ? 'Unsealed core resource write-locks. Interop channels opened.'
+            : 'Applied strict write lock. Resources sealed against non-owner modifications.',
+        ar: !newStatus
+            ? 'تم فك ختم كود المراجعة المشترك وتنشيط قنوات التعديل المتبادل.'
+            : 'تم تطبيق قفل التعديل الصارم. تم تجميد الموارد وتأمين الأصول الموصولة.',
         severity: newStatus ? 'critical' : 'warning',
       );
 
@@ -168,7 +168,7 @@ class EnterpriseService extends ChangeNotifier {
   // Add keys / notes / files to isolated boundary
   void addResourceToActiveWorkspace(String resourceId) {
     if (_currentWorkspace == null) return;
-    
+
     final idx = _workspaces.indexWhere((w) => w.id == _currentWorkspace!.id);
     if (idx != -1) {
       final old = _workspaces[idx];
@@ -191,7 +191,7 @@ class EnterpriseService extends ChangeNotifier {
         createdAt: old.createdAt,
         isSealed: old.isSealed,
       );
-      
+
       _currentWorkspace = _workspaces[idx];
 
       logActivity(
@@ -210,7 +210,7 @@ class EnterpriseService extends ChangeNotifier {
   // Cross-workspace search logic
   List<Map<String, dynamic>> searchAcrossWorkspaces(String query) {
     if (query.trim().isEmpty) return [];
-    
+
     final cleanQuery = query.toLowerCase().trim();
     final List<Map<String, dynamic>> results = [];
 
@@ -228,7 +228,7 @@ class EnterpriseService extends ChangeNotifier {
           'titleAr': ws.nameAr,
           'detailsEn': 'Workspace template: ${ws.templateType}',
           'detailsAr': 'قالب سياق العمل: ${ws.templateType}',
-          'badgeColor': Color(0xFF3B82F6),
+          'badgeColor': Color(0xFF3B82F6), // FIX: Removed invalid 'const' keyword expression
         });
       }
 
@@ -244,7 +244,7 @@ class EnterpriseService extends ChangeNotifier {
             'titleAr': 'مؤشر أصل حرج: $resource',
             'detailsEn': 'Contained in sealed storage cluster of ${ws.nameEn}',
             'detailsAr': 'محفوظ ضمن مصفوفة حيازة ${ws.nameAr}',
-            'badgeColor': Color(0xFF10B981),
+            'badgeColor': Color(0xFF10B981), // FIX: Removed invalid 'const' keyword expression
           });
         }
       }
@@ -256,7 +256,7 @@ class EnterpriseService extends ChangeNotifier {
   // Calculate high quality enterprise readiness index metrics
   Map<String, dynamic> evaluateReadinessMetrics() {
     double baseScore = 70.0;
-    
+
     int totalMfaActive = _profiles.where((p) => p.isMfaActive).length;
     double mfaFactor = _profiles.isNotEmpty ? (totalMfaActive / _profiles.length) * 15.0 : 0.0;
 

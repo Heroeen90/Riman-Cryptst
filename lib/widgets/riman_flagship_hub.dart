@@ -4,6 +4,9 @@ import 'deception_radar.dart';
 import 'dynamic_theme_panel.dart';
 import 'reorderable_dashboard_grid.dart';
 import 'telemetry_graph_canvas.dart';
+import 'hud_notification_overlay.dart';
+import 'floating_action_dock.dart';
+import 'visual_filter_chips.dart';
 
 import '../utils/threat_matrix_analytics.dart';
 import '../utils/polymorphic_engine.dart';
@@ -78,6 +81,10 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
+      floatingActionButton: FloatingActionDock(actions: [
+        FloatingActionButton(onPressed: () => HudNotificationOverlay.show(context, 'Security Locked'), child: const Icon(Icons.lock)),
+        FloatingActionButton(onPressed: () => HudNotificationOverlay.show(context, 'System Search Ready'), child: const Icon(Icons.search)),
+      ]),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -100,6 +107,8 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             onColorChanged: (color) => setState(() => _accentColor = color),
           ),
           const SizedBox(height: 16),
+          const VisualFilterChips(),
+          const SizedBox(height: 16),
           CommandBarWidget(locale: widget.locale, onSuccess: widget.onSuccess),
           const SizedBox(height: 16),
           const TelemetryGraphCanvas(),
@@ -115,7 +124,7 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             child: Column(
               children: [
                 Text(
-                  _locVal('CONVERGENCE STATUS: V100.0 OPERATIONAL', 'حالة النظم: V100.0 جاهز'),
+                  _locVal('CONVERGENCE STATUS: V110.0 OPERATIONAL', 'حالة النظم: V110.0 جاهز'),
                   style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
                 ),
               ],

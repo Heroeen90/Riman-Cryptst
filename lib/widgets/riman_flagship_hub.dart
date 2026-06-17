@@ -18,6 +18,8 @@ import '../utils/biometric_storage_service.dart';
 import '../utils/window_security_service.dart';
 import '../utils/crypto_engine.dart';
 import '../utils/environment_checker.dart';
+import '../utils/clipboard_protection_service.dart';
+import '../utils/hardware_sentinel.dart';
 
 class RimanFlagshipHubWidget extends StatefulWidget {
   final String locale;
@@ -44,9 +46,11 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
 
   Future<void> _initSecurityPipeline() async {
     await WindowSecurityService.secureScreen();
+    ClipboardProtectionService.startMonitoring();
     bool tampered = await EnvironmentChecker.isTampered();
+    final metrics = await HardwareSentinel.getHardwareMetrics();
     if (tampered) {
-      debugPrint('Security alert: Tampering detected!');
+      debugPrint('Security alert: Tampering detected! Metrics: $metrics');
     }
   }
 

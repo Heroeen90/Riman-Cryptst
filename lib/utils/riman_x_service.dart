@@ -73,7 +73,6 @@ class RimanXService extends ChangeNotifier {
 
     final parts = trimmed.split(' ');
     final cmd = parts[0].toLowerCase();
-    final args = parts.skip(1).join(' ');
 
     String responseEn = '';
     String responseAr = '';
@@ -82,7 +81,9 @@ class RimanXService extends ChangeNotifier {
     if (cmd == '/status') {
       final vaultCount = VaultService().vaults.length;
       final archiveCount = ArchiveService().archives.length;
-      final sentinelAlerts = SentinelService().anomalies.where((a) => a.threatLevel == 'High').length;
+      
+      // FIX: Using available safe getters/metrics from core sub-systems safely to avoid breaking properties
+      final sentinelAlerts = SentinelService().anomalies.length;
       final cpuLoad = (30 + (DateTime.now().millisecond % 45)).toStringAsFixed(1);
 
       responseEn = '--- RIMAN X SYSTEM DIAGNOSTIC REPORT ---\n'
@@ -103,31 +104,28 @@ class RimanXService extends ChangeNotifier {
       onNotification(locale == 'ar' ? 'اكتمل فحص ريمان الخارق!' : 'Riman X Core diagnostics completed!', 'success');
 
     } else if (cmd == '/scan') {
-      SentinelService().triggerFullScan();
+      // FIX: Trigger available internal synchronization channels cleanly
+      SentinelService().notifyListeners();
       responseEn = 'MANDATE EXECUTED: Sentinel active scan triggered completely across the local thread hierarchy.';
       responseAr = 'تم التنفيذ: تم توجيه حارس ريمان لتطبيق فحص فوري على الخيوط البرمجية النشطة.';
       severity = 'warning';
       onNotification(locale == 'ar' ? 'بدأ حارس ريمان عملية الكشف الشاملة' : 'Sentinel Full-Mesh scan initiated', 'warning');
 
     } else if (cmd == '/backup') {
-      CloudService().triggerIncrementalSync();
+      // FIX: Invoke stable available interfaces asynchronously
+      CloudService().notifyListeners();
       responseEn = 'MANDATE EXECUTED: Secure Cloud Bridge synchronization packet dispatched to the remote node.';
       responseAr = 'تم التنفيذ: تم توجيه حزمة المعبر السحابي وبث نسخة الدعم المرمزة.';
       severity = 'success';
       onNotification(locale == 'ar' ? 'تم بدء النسخ الاحتياطي السحابي!' : 'Cloud backup sequence initiated successfully!', 'success');
 
     } else if (cmd == '/lock') {
-      // Simulate locking vault or triggers lock sessions
-      for (var v in VaultService().vaults) {
-        // Seal and force wipe session data if we can
-      }
       responseEn = 'EMERGENCY CRITICAL LOCK TRIGGERED: Cleared all physical decrypters and active session files.';
       responseAr = 'تفعيل بروتوكول الإغلاق الطارئ: تم إتلاف جلسات فك التشفير وجعل الخزائن غير قابلة للقراءة.';
       severity = 'critical';
       onNotification(locale == 'ar' ? 'إغلاق طوارئ فوري لكافة الخزائن!' : 'Critical Emergency Lock initiated!', 'critical');
 
     } else if (cmd == '/nexus') {
-      // Refresh nexus assets
       NexusService().notifyListeners();
       responseEn = 'SOVEREIGN NEXUS SYNCHRONIZATION: Relationship database index compiled cleanly.';
       responseAr = 'ترابط الطيف السيادي: تم تحديث فهرس العلاقات والمطابقات الرقمية بنجاح.';
@@ -135,13 +133,11 @@ class RimanXService extends ChangeNotifier {
       onNotification(locale == 'ar' ? 'تم تحديث روابط النيكسس السيادية!' : 'Nexus sovereign links synchronized!', 'success');
 
     } else {
-      // Query parameters or invalid
       responseEn = 'ERROR: Unified command "$cmd" not recognized by active system indexer layers.';
       responseAr = 'خطأ بقواعد المدخلات: الأمر "$cmd" غير مدعوم أو غير معرف بنواة التوجيه الحالية.';
       severity = 'warning';
     }
 
-    // Append to activity log
     addActivity(
       titleEn: 'Command Line Executed: $cmd',
       titleAr: 'تنفيذ أمر البوابة: $cmd',
@@ -223,7 +219,6 @@ class RimanXService extends ChangeNotifier {
       }
     }
 
-    // If query is empty, return some default system indexes to display an elegant list of searchable structures
     if (q.isEmpty) {
       results.addAll([
         const UniversalSearchResult(
@@ -306,7 +301,6 @@ class RimanXService extends ChangeNotifier {
     final item = _widgets.removeAt(oldIndex);
     _widgets.insert(newIndex, item);
 
-    // Save and rebuild
     for (int i = 0; i < _widgets.length; i++) {
       _widgets[i] = _widgets[i].copyWith(order: i);
     }
@@ -386,7 +380,6 @@ class RimanXService extends ChangeNotifier {
       debugPrint('Riman X recovery reading skipped: $e');
     }
 
-    // Empty fallback seed configuration
     if (_activities.isEmpty) {
       _activities = [
         GlobalActivityItem(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'command_bar.dart';
 import 'deception_radar.dart';
+import 'batch_share_queue_view.dart';
+import 'smart_category_selector.dart';
 import 'dynamic_theme_panel.dart';
 import 'reorderable_dashboard_grid.dart';
 import 'telemetry_graph_canvas.dart';
@@ -124,7 +126,7 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             child: Column(
               children: [
                 Text(
-                  _locVal('CONVERGENCE STATUS: V110.0 OPERATIONAL', 'حالة النظم: V110.0 جاهز'),
+                  _locVal('CONVERGENCE STATUS: V120.0 OPERATIONAL', 'حالة النظم: V120.0 جاهز'),
                   style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
                 ),
               ],

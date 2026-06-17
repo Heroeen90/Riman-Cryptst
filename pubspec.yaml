@@ -20,6 +20,7 @@ dependencies:
   path: ^1.9.0
   path_provider: ^2.1.2
   receive_sharing_intent: ^1.2.0
+  flutter_local_notifications: ^17.0.0
   dio: ^5.0.0
   dio_http_formatter: ^0.1.0
   http_certificate_pinning: ^2.0.1

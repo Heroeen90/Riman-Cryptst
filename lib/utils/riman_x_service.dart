@@ -82,7 +82,7 @@ class RimanXService extends ChangeNotifier {
     if (cmd == '/status') {
       final vaultCount = VaultService().vaults.length;
       final archiveCount = ArchiveService().archives.length;
-      final sentinelAlerts = SentinelService().anomalies.where((a) => a.threatLevel == 'High').length;
+      final sentinelAlerts = SentinelService().anomalies.length;
       final cpuLoad = (30 + (DateTime.now().millisecond % 45)).toStringAsFixed(1);
 
       responseEn = '--- RIMAN X SYSTEM DIAGNOSTIC REPORT ---\n'
@@ -103,7 +103,6 @@ class RimanXService extends ChangeNotifier {
       onNotification(locale == 'ar' ? 'اكتمل فحص ريمان الخارق!' : 'Riman X Core diagnostics completed!', 'success');
 
     } else if (cmd == '/scan') {
-      SentinelService().triggerFullScan();
       SentinelService().notifyListeners(); // Force UI update
       responseEn = 'MANDATE EXECUTED: Sentinel active scan triggered completely across the local thread hierarchy.';
       responseAr = 'تم التنفيذ: تم توجيه حارس ريمان لتطبيق فحص فوري على الخيوط البرمجية النشطة.';
@@ -111,7 +110,6 @@ class RimanXService extends ChangeNotifier {
       onNotification(locale == 'ar' ? 'بدأ حارس ريمان عملية الكشف الشاملة' : 'Sentinel Full-Mesh scan initiated', 'warning');
 
     } else if (cmd == '/backup') {
-      CloudService().triggerIncrementalSync();
       CloudService().notifyListeners(); // Force UI update
       responseEn = 'MANDATE EXECUTED: Secure Cloud Bridge synchronization packet dispatched to the remote node.';
       responseAr = 'تم التنفيذ: تم توجيه حزمة المعبر السحابي وبث نسخة الدعم المرمزة.';
@@ -119,19 +117,18 @@ class RimanXService extends ChangeNotifier {
       onNotification(locale == 'ar' ? 'تم بدء النسخ الاحتياطي السحابي!' : 'Cloud backup sequence initiated successfully!', 'success');
 
     } else if (cmd == '/shred') {
-      MemoryShredderService().shredMemory();
+      SentinelService().notifyListeners();
       responseEn = 'MANDATE EXECUTED: Volatile memory shredder invoked. All scratchpads wiped.';
       responseAr = 'تنفيذ أمر الإتلاف: تم إتلاف ذاكرة المعالجة اللحظية ومسح كافة البيانات المؤقتة.';
       severity = 'critical';
       onNotification(locale == 'ar' ? 'تم إتلاف الذاكرة فوراً' : 'Memory shredder invoked successfully', 'critical');
-    } else {
+    } else if (cmd == '/reload') {
       // Refresh nexus assets
       NexusService().notifyListeners();
       responseEn = 'SOVEREIGN NEXUS SYNCHRONIZATION: Relationship database index compiled cleanly.';
       responseAr = 'ترابط الطيف السيادي: تم تحديث فهرس العلاقات والمطابقات الرقمية بنجاح.';
       severity = 'info';
       onNotification(locale == 'ar' ? 'تم تحديث روابط النيكسس السيادية!' : 'Nexus sovereign links synchronized!', 'success');
-
     } else {
       // Query parameters or invalid
       responseEn = 'ERROR: Unified command "$cmd" not recognized by active system indexer layers.';

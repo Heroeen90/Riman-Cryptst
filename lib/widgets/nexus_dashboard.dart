@@ -1172,7 +1172,7 @@ class _NexusDashboardWidgetState extends State<NexusDashboardWidget> with Single
                                 const SizedBox(height: 1),
                                 Text(
                                   item.details,
-                                  style: TextStyle(fontSize: 8, color: Colors.grey.shade505 ?? Colors.grey),
+                                  style: const TextStyle(fontSize: 8, color: Colors.grey),
                                   overflow: TextOverflow.ellipsis,
                                 ),
                               ],

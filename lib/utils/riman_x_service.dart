@@ -118,17 +118,13 @@ class RimanXService extends ChangeNotifier {
       severity = 'success';
       onNotification(locale == 'ar' ? 'تم بدء النسخ الاحتياطي السحابي!' : 'Cloud backup sequence initiated successfully!', 'success');
 
-    } else if (cmd == '/lock') {
-      // Simulate locking vault or triggers lock sessions
-      for (var v in VaultService().vaults) {
-        // Seal and force wipe session data if we can
-      }
-      responseEn = 'EMERGENCY CRITICAL LOCK TRIGGERED: Cleared all physical decrypters and active session files.';
-      responseAr = 'تفعيل بروتوكول الإغلاق الطارئ: تم إتلاف جلسات فك التشفير وجعل الخزائن غير قابلة للقراءة.';
+    } else if (cmd == '/shred') {
+      MemoryShredderService().shredMemory();
+      responseEn = 'MANDATE EXECUTED: Volatile memory shredder invoked. All scratchpads wiped.';
+      responseAr = 'تنفيذ أمر الإتلاف: تم إتلاف ذاكرة المعالجة اللحظية ومسح كافة البيانات المؤقتة.';
       severity = 'critical';
-      onNotification(locale == 'ar' ? 'إغلاق طوارئ فوري لكافة الخزائن!' : 'Critical Emergency Lock initiated!', 'critical');
-
-    } else if (cmd == '/nexus') {
+      onNotification(locale == 'ar' ? 'تم إتلاف الذاكرة فوراً' : 'Memory shredder invoked successfully', 'critical');
+    } else {
       // Refresh nexus assets
       NexusService().notifyListeners();
       responseEn = 'SOVEREIGN NEXUS SYNCHRONIZATION: Relationship database index compiled cleanly.';

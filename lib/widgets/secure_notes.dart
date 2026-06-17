@@ -696,54 +696,54 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
                   style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 content: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: _noteTitleCtrl,
-                        style: const TextStyle(fontSize: 11, color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: _locVal('Title', 'عنوان الملاحظة'),
-                          labelStyle: const TextStyle(color: Colors.grey, fontSize: 10),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        TextField(
+                          controller: _noteTitleCtrl,
+                          style: const TextStyle(fontSize: 11, color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: _locVal('Title', 'عنوان الملاحظة'),
+                            labelStyle: const TextStyle(color: Colors.grey, fontSize: 10),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      TextField(
-                        controller: _noteContentCtrl,
-                        maxLines: 4,
-                        style: const TextStyle(fontSize: 10, color: Colors.white),
-                        decoration: InputDecoration(
-                          labelText: _locVal('Content Payload', 'نص الرسالة المكتوب'),
-                          labelStyle: const TextStyle(color: Colors.grey, fontSize: 10),
+                        const SizedBox(height: 10),
+                        TextField(
+                          controller: _noteContentCtrl,
+                          maxLines: 4,
+                          style: const TextStyle(fontSize: 10, color: Colors.white),
+                          decoration: InputDecoration(
+                            labelText: _locVal('Content Payload', 'نص الرسالة المكتوب'),
+                            labelStyle: const TextStyle(color: Colors.grey, fontSize: 10),
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(_locVal('Category', 'التصنيف'), style: const TextStyle(color: Colors.grey, fontSize: 10)),
-                          DropdownButton<String>(
-                            dropdownColor: const Color(0xFF111827),
-                            value: _selectedCategory,
-                            style: const TextStyle(color: Color(0xFF06B6D4), fontSize: 10, fontWeight: FontWeight.bold),
-                            items: _categories.map((c) {
-                              return DropdownMenuItem(value: c, child: Text(c));
-                            }).toList(),
-                            onChanged: (newVal) {
-                              if (newVal != null) {
-                                setDialogState(() {
-                                  _selectedCategory = newVal;
-                                });
-                              }
-                            },
-                          )
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      // Extra Lock switch
-                      Material(
-                        color: Colors.transparent,
-                        child: SwitchListTile(
+                        const SizedBox(height: 12),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(_locVal('Category', 'التصنيف'), style: const TextStyle(color: Colors.grey, fontSize: 10)),
+                            DropdownButton<String>(
+                              dropdownColor: const Color(0xFF111827),
+                              value: _selectedCategory,
+                              style: const TextStyle(color: Color(0xFF06B6D4), fontSize: 10, fontWeight: FontWeight.bold),
+                              items: _categories.map((c) {
+                                return DropdownMenuItem(value: c, child: Text(c));
+                              }).toList(),
+                              onChanged: (newVal) {
+                                if (newVal != null) {
+                                  setDialogState(() {
+                                    _selectedCategory = newVal;
+                                  });
+                                }
+                              },
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // Extra Lock switch
+                        SwitchListTile(
                           dense: true,
                           contentPadding: EdgeInsets.zero,
                           title: Text(_locVal('Selective Lock Encryption', 'تأمين الغلاف بقسم قفل مخصص'), style: const TextStyle(color: Colors.grey, fontSize: 9.5)),
@@ -755,8 +755,8 @@ class _SecureNotesWidgetState extends State<SecureNotesWidget> {
                             });
                           },
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 actions: [

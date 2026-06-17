@@ -803,25 +803,25 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.04)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            children: [
-              const Icon(Icons.settings_suggest_outlined, color: Color(0xFF06B6D4), size: 14),
-              const SizedBox(width: 8),
-              Text(
-                _locVal('Sovereign Protection Settings & Recommendations', 'إعدادات الحماية والتوصيات النشطة'),
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white, fontFamily: 'monospace'),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          
-          // Simulated Biometric setting
-          Material(
-            color: Colors.transparent,
-            child: SwitchListTile(
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.settings_suggest_outlined, color: Color(0xFF06B6D4), size: 14),
+                const SizedBox(width: 8),
+                Text(
+                  _locVal('Sovereign Protection Settings & Recommendations', 'إعدادات الحماية والتوصيات النشطة'),
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white, fontFamily: 'monospace'),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            
+            // Simulated Biometric setting
+            SwitchListTile(
               value: bioEnabled,
               onChanged: (val) => _triggerBiometricDialog(),
               activeColor: const Color(0xFF06B6D4),
@@ -835,13 +835,10 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
                 style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
               ),
             ),
-          ),
-          const Divider(height: 12, color: Colors.white10),
-          
-          // Simulated Recovery key configuration
-          Material(
-            color: Colors.transparent,
-            child: ListTile(
+            const Divider(height: 12, color: Colors.white10),
+            
+            // Simulated Recovery key configuration
+            ListTile(
               contentPadding: EdgeInsets.zero,
               title: Text(
                 _locVal('Sovereign Offline Recovery Key', 'مفاتيح الاستعادة والإنقاذ بدون شبكة'),
@@ -867,7 +864,6 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
                 ),
               ),
             ),
-          ),
           
           // Recommendations listings
           if (!isRecoveryConfigured || !bioEnabled || isWeak) ...[
@@ -911,8 +907,9 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
           ]
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
 
 class _HealthIndicatorRow extends StatelessWidget {

@@ -412,9 +412,11 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.04)),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      child: Material(
+        color: Colors.transparent,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           Row(
             children: [
               const Icon(Icons.add_comment_outlined, color: Color(0xFFA855F7), size: 14),
@@ -467,20 +469,17 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
           ),
           const SizedBox(height: 12),
 
-          Material(
-            color: Colors.transparent,
-            child: SwitchListTile(
-              dense: true,
-              contentPadding: EdgeInsets.zero,
-              title: Text(_locVal('Tag Geolocation Orbit', 'وسم الموقع الجغرافي للمدار'), style: const TextStyle(color: Colors.grey, fontSize: 9)),
-              value: _isLocationArmed,
-              activeColor: const Color(0xFFA855F7),
-              onChanged: (val) {
-                setState(() {
-                  _isLocationArmed = val;
-                });
-              },
-            ),
+          SwitchListTile(
+            dense: true,
+            contentPadding: EdgeInsets.zero,
+            title: Text(_locVal('Tag Geolocation Orbit', 'وسم الموقع الجغرافي للمدار'), style: const TextStyle(color: Colors.grey, fontSize: 9)),
+            value: _isLocationArmed,
+            activeColor: const Color(0xFFA855F7),
+            onChanged: (val) {
+              setState(() {
+                _isLocationArmed = val;
+              });
+            },
           ),
 
           const SizedBox(height: 8),
@@ -510,8 +509,9 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
           )
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildTimelineSection(List<JournalEntryModel> items) {
     return Container(

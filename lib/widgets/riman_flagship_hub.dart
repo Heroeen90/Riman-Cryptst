@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'command_bar.dart';
 import 'deception_radar.dart';
+import 'dynamic_theme_panel.dart';
+import 'reorderable_dashboard_grid.dart';
+import 'telemetry_graph_canvas.dart';
+
 import '../utils/threat_matrix_analytics.dart';
 import '../utils/polymorphic_engine.dart';
 import '../utils/memory_decoy.dart';
@@ -42,6 +46,8 @@ class RimanFlagshipHubWidget extends StatefulWidget {
 }
 
 class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
+  Color _accentColor = Colors.cyan;
+
   @override
   void initState() {
     super.initState();
@@ -79,7 +85,7 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             children: [
               Text(
                 _locVal('RIMAN CITADEL MASTER CONVERGENCE', 'نواة قلعة ريمان القصوى'),
-                style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                style: TextStyle(color: _accentColor, fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
               // Anchors preserved
@@ -89,9 +95,18 @@ class _RimanFlagshipHubWidgetState extends State<RimanFlagshipHubWidget> {
             ],
           ),
           const SizedBox(height: 16),
+          DynamicThemePanel(
+            currentColor: _accentColor,
+            onColorChanged: (color) => setState(() => _accentColor = color),
+          ),
+          const SizedBox(height: 16),
           CommandBarWidget(locale: widget.locale, onSuccess: widget.onSuccess),
           const SizedBox(height: 16),
+          const TelemetryGraphCanvas(),
+          const SizedBox(height: 16),
           const DeceptionRadarWidget(),
+          const SizedBox(height: 16),
+          const ReorderableDashboardGrid(),
           const SizedBox(height: 16),
           // Master Convergence Status
           Container(

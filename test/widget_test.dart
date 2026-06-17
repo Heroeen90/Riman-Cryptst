@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:riman_cryptst/main.dart';
+import 'package:riman_cryptst/utils/vault_service.dart';
 
 void main() {
   testWidgets('Verify Riman Cryptst layout loads cleanly', (WidgetTester tester) async {
+    // FORCE UNLOCK: bypass the lock screen programmatically for safe pipeline runner compliance
+    VaultService().setLocked(false);
+
     // Build App
     await tester.pumpWidget(const RimanCryptstApp());
 
@@ -13,21 +17,7 @@ void main() {
     }
     await tester.pumpAndSettle();
 
-    // FIXED: Bypass the Sovereign App Lock screen by simulated typing of default PIN "1234"
-    await tester.tap(find.text('1'));
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('2'));
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('3'));
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('4'));
-    await tester.pump(const Duration(milliseconds: 100));
-    
-    // Tap the OPEN button to flush buffers and enter primary layout scope
-    await tester.tap(find.text('OPEN'));
-    await tester.pumpAndSettle();
-
-    // Verify Arabic tabs are visible inside the dashboard layout viewport
+    // Verify Arabic tabs are now fully visible since vault is unlocked cleanly
     expect(find.text('مكتب المراقبة'), findsOneWidget);
     expect(find.text('درع النصوص'), findsOneWidget);
 

@@ -124,7 +124,7 @@ class _SentinelDashboardWidgetState extends State<SentinelDashboardWidget> {
                   color: const Color(0xFF3B82F6).withOpacity(0.12),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.gshield, color: Color(0xFF3B82F6), size: 20),
+                child: const Icon(Icons.shield, color: Color(0xFF3B82F6), size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(

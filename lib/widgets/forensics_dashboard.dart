@@ -692,7 +692,7 @@ class _ForensicsDashboardWidgetState extends State<ForensicsDashboardWidget> {
                         ),
                         PopupMenuButton<String>(
                           icon: const Icon(Icons.tune, color: Colors.grey, size: 16),
-                          dropdownColor: const Color(0xFF0F172A),
+                          color: const Color(0xFF0F172A),
                           onSelected: (val) {
                             if (val == 'corrupt') {
                               _injectCorruption(item);

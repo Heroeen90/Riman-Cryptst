@@ -96,7 +96,7 @@ class ForensicsService extends ChangeNotifier {
         final fMeta = json.encode({
           'category': f.category,
           'sizeInBytes': f.sizeInBytes,
-          'timestamp': f.timestamp,
+          'timestamp': f.createdAt.toIso8601String(),
         });
         _getOrCreateIntegrity(
           freshList,

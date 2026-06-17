@@ -9,6 +9,10 @@ import '../utils/secret_splitter.dart';
 import '../utils/entropy_harvester.dart';
 import '../utils/secure_tunnel.dart';
 import '../utils/archival_shredder.dart';
+import '../utils/runtime_obfuscator.dart';
+import '../utils/debugger_detector.dart';
+import '../utils/encrypted_cache.dart';
+import '../utils/hardware_binder.dart';
 
 class RimanFlagshipHubWidget extends StatelessWidget {
   final String locale;
@@ -37,7 +41,7 @@ class RimanFlagshipHubWidget extends StatelessWidget {
           Row(
             children: [
               Text(
-                _locVal('RIMAN APEX BASTION', 'معقل ريمان المحصن'),
+                _locVal('RIMAN SOVEREIGN DREADNOUGHT', 'بارجة ريمان السيادية'),
                 style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
               ),
               const Spacer(),
@@ -52,14 +56,14 @@ class RimanFlagshipHubWidget extends StatelessWidget {
           const SizedBox(height: 16),
           const DeceptionRadarWidget(),
           const SizedBox(height: 16),
-          // Apex Status
+          // Apex/Dreadnought Status
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(color: const Color(0xFF1E293B), borderRadius: BorderRadius.circular(16)),
             child: Column(
               children: [
                 Text(
-                  _locVal('APEX STATUS: BASTION SECURED', 'حالة المعقل: محصن'),
+                  _locVal('DREADNOUGHT STATUS: ACTIVE', 'حالة البارجة: نشطة'),
                   style: const TextStyle(color: Colors.blueGrey, fontFamily: 'JetBrains Mono'),
                 ),
                 Text(

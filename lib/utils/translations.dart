@@ -40,6 +40,7 @@ const Map<String, Map<String, String>> i18nData = {
     'tab_media_vault': 'Secure Media Vault',
     'tab_nexus': 'Sovereign Nexus',
     'tab_archive': 'Quantum Archive Engine',
+    'tab_forensics': 'Riman Forensics Lab',
     
     'entropy_reservoir': 'Entropy Reservoir',
     'spectrum_coherence': 'Spectrum Coherence',
@@ -245,6 +246,7 @@ const Map<String, Map<String, String>> i18nData = {
     'tab_media_vault': 'خزنة الوسائط المشفرة',
     'tab_nexus': 'الترابط السيادي (Nexus)',
     'tab_archive': 'محرك الأرشفة الكمي',
+    'tab_forensics': 'مختبر جنائي ريمان',
     
     'entropy_reservoir': 'خزان العشوائية (الأمواج)',
     'spectrum_coherence': 'ترابط الطيف الرياضي',

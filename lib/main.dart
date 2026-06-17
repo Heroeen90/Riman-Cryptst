@@ -19,6 +19,7 @@ import 'widgets/secure_gallery.dart';
 import 'widgets/secure_media.dart';
 import 'widgets/nexus_dashboard.dart';
 import 'widgets/archive_dashboard.dart';
+import 'widgets/forensics_dashboard.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -442,6 +443,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       {'icon': Icons.security, 'key': 'tab_vaults'},
       {'icon': Icons.hub, 'key': 'tab_nexus'},
       {'icon': Icons.archive, 'key': 'tab_archive'},
+      {'icon': Icons.policy, 'key': 'tab_forensics'},
       {'icon': Icons.text_snippet, 'key': 'tab_text'},
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
       {'icon': Icons.lock_clock, 'key': 'tab_capsules'},
@@ -724,6 +726,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   ArchiveDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  ForensicsDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

@@ -6,11 +6,6 @@ void main() {
   testWidgets('Verify Riman Cryptst layout loads cleanly', (WidgetTester tester) async {
     // Build App
     await tester.pumpWidget(const RimanCryptstApp());
-
-    // Advance time to bypass splash screen (splash screen transitions take 2.5 seconds)
-    for (int i = 0; i < 110; i++) {
-      await tester.pump(const Duration(milliseconds: 25));
-    }
     await tester.pumpAndSettle();
 
     // Verify Arabic tabs are visible by default

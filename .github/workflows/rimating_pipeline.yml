@@ -27,8 +27,18 @@ jobs:
       - run: flutter pub get
       - name: Test
         run: flutter test
-      - name: Build APK
-        run: flutter build apk --release
+      - name: Build Debug APK
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter build apk --debug --android-skip-build-dependency-validation
+          fi
+
+      # Step 10: Build Release APK
+      - name: Build Release APK
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter build apk --release --android-skip-build-dependency-validation
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: release-apk

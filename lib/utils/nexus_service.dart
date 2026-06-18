@@ -347,4 +347,9 @@ class NexusService extends ChangeNotifier {
       ),
     ];
   }
+
+  // Trigger update manually for external widgets safely
+  void triggerUpdate() {
+    notifyListeners();
+  }
 }

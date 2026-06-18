@@ -77,7 +77,7 @@ class _NexusDashboardWidgetState extends State<NexusDashboardWidget> with Single
 
   void _triggerSync() {
     // Collect all in-memory assets and update Nexus catalogs
-    _nexusService.notifyListeners();
+    _nexusService.triggerUpdate();
   }
 
   String _locVal(String en, String ar) {

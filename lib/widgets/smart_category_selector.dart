@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 class SmartCategorySelector extends StatefulWidget {
@@ -18,8 +19,16 @@ class _SmartCategorySelectorState extends State<SmartCategorySelector> with Sing
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1));
     // Do not repeat animation in tests to prevent pumpAndSettle timeout
-    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+    if (kIsWeb) {
       _controller.repeat(reverse: true);
+    } else {
+      try {
+        if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+          _controller.repeat(reverse: true);
+        }
+      } catch (_) {
+        _controller.repeat(reverse: true);
+      }
     }
   }
 

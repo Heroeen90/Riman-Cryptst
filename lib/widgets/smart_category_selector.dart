@@ -15,7 +15,11 @@ class _SmartCategorySelectorState extends State<SmartCategorySelector> with Sing
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1))..repeat(reverse: true);
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    // Do not repeat animation in tests to prevent pumpAndSettle timeout
+    if (TestWidgetsFlutterBinding.instance == null) {
+      _controller.repeat(reverse: true);
+    }
   }
 
   @override

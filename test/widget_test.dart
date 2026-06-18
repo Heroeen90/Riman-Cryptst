@@ -6,6 +6,7 @@ void main() {
   testWidgets('Verify Riman Cryptst layout loads cleanly', (WidgetTester tester) async {
     // Build App
     await tester.pumpWidget(const RimanCryptstApp());
+    await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
 
     // Verify Arabic tabs are visible by default

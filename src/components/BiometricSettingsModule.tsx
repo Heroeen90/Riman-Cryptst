@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { 
   Fingerprint, ShieldAlert, CheckCircle, ShieldCheck, Activity, Watch, 
-  Settings, Lock, Unlock, RefreshCw, Smartphone, AlertTriangle 
+  Settings, Lock, Unlock, RefreshCw, Smartphone, AlertTriangle, BarChart3
 } from 'lucide-react';
 import { useTranslation } from '../lib/I18nContext';
+import { BiometricActivityChart } from './BiometricActivityChart';
 
 interface BiometricSettingsProps {
   locale: string;
@@ -293,6 +294,17 @@ export const BiometricSettingsModule: React.FC<BiometricSettingsProps> = ({
               </div>
             </div>
           </div>
+
+          <BiometricActivityChart 
+            title={locVal('Authentication Flow History', 'سجل تدفق التحقق الحيوي')}
+            data={[
+              { time: '10:00', success: 2, failed: 0 },
+              { time: '11:00', success: 5, failed: 1 },
+              { time: '12:00', success: 3, failed: 2 },
+              { time: '13:00', success: 8, failed: 0 },
+              { time: '14:00', success: 4, failed: 1 },
+            ]}
+          />
 
           {/* Settings Control Panel (Feature 7) */}
           <div className="p-5 rounded-2xl bg-neutral-900/40 border border-neutral-850 space-y-6">

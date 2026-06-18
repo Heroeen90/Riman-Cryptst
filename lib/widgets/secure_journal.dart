@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/translations.dart';
-import '../utils/nexus_service.dart';
 
 class JournalEntryModel {
   final String id;
@@ -67,11 +66,7 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        _seedDefaultJournal();
-      }
-    });
+    _seedDefaultJournal();
   }
 
   @override
@@ -100,7 +95,6 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
         location: {'lat': 30.0571, 'lng': 31.2272},
       ),
     ]);
-    NexusService().registerJournals(_entries);
   }
 
   String _locVal(String en, String ar) {
@@ -171,7 +165,6 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
       _titleCtrl.clear();
       _contentCtrl.clear();
       _isLocationArmed = false;
-      NexusService().registerJournals(_entries);
     });
 
     widget.onSecurityLog(
@@ -189,7 +182,6 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
   void _deleteEntry(String id) {
     setState(() {
       _entries.removeWhere((element) => element.id == id);
-      NexusService().registerJournals(_entries);
     });
 
     widget.onSecurityLog(
@@ -420,11 +412,9 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.04)),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
           Row(
             children: [
               const Icon(Icons.add_comment_outlined, color: Color(0xFFA855F7), size: 14),
@@ -517,9 +507,8 @@ class _SecureJournalWidgetState extends State<SecureJournalWidget> {
           )
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 
   Widget _buildTimelineSection(List<JournalEntryModel> items) {
     return Container(

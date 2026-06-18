@@ -349,7 +349,7 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
               Text(
                 _locVal('Conducts memory-safe decryption on the active digital sandbox environment.', 
                         'يقوم المحرك بفصل كاش الأجهزة عبر تشفير ريمان اللحظي ثنائي الاتجاه.'),
-                style: const TextStyle(color: Colors.grey, fontSize: 11, fontFamily: 'monospace'),
+                style: const TextStyle(color: Colors.neutral-500, fontSize: 11, fontFamily: 'monospace'),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 24),
@@ -423,7 +423,7 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
             ],
           ),
           IconButton(
-            icon: const Icon(Icons.lock, color: Colors.pinkAccent, size: 18),
+            icon: const Icon(Icons.lock, color: Colors.roseAccent, size: 18),
             onPressed: _handleLock,
             tooltip: _locVal('Lock Vault', 'إقفال وتحصين'),
           )
@@ -508,17 +508,17 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
         children: [
           Row(
             children: [
-              const Icon(Icons.shield, color: Colors.green, size: 12),
+              const Icon(Icons.shield, color: Colors.emerald, size: 12),
               const SizedBox(width: 4),
               Text(
                 _locVal('SCREENSHOT BLUR PROTECTION ACTIVE', 'حظر لقطات وتسريب الشاشة مفعّل'),
-                style: const TextStyle(fontSize: 9, color: Colors.grey, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 9, color: Colors.neutral-300, fontWeight: FontWeight.bold),
               ),
             ],
           ),
           Switch(
             value: _preventScreenshot,
-            activeColor: Colors.green,
+            activeColor: Colors.emerald,
             materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
             onChanged: (val) {
               setState(() {
@@ -563,7 +563,7 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
                 onChanged: (val) => setState(() => _selectedAlbum = val ?? 'All'),
               ),
               IconButton(
-                icon: Icon(Icons.favorite, color: _onlyFavorites ? Colors.pink : Colors.grey, size: 16),
+                icon: Icon(Icons.favorite, color: _onlyFavorites ? Colors.rose : Colors.grey, size: 16),
                 onPressed: () => setState(() => _onlyFavorites = !_onlyFavorites),
               )
             ],
@@ -611,9 +611,9 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.video_camera_back, size: 48, color: Colors.grey),
+          const Icon(Icons.video_camera_back, size: 48, color: Colors.neutral-700),
           const SizedBox(height: 8),
-          Text(_locVal('ZERO DECRYPTED ASSETS LOCATED', 'لا يوجد ملفات مطابقة'), style: const TextStyle(fontSize: 11, color: Colors.grey)),
+          Text(_locVal('ZERO DECRYPTED ASSETS LOCATED', 'لا يوجد ملفات مطابقة'), style: const TextStyle(fontSize: 11, color: Colors.neutral-500)),
         ],
       ),
     );
@@ -798,11 +798,11 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
                     child: Row(
                       children: [
                         IconButton(
-                          icon: Icon(Icons.favorite, color: item.isFavorite ? Colors.pink : Colors.grey, size: 14),
+                          icon: Icon(Icons.favorite, color: item.isFavorite ? Colors.rose : Colors.grey, size: 14),
                           onPressed: () => _handleToggleFavorite(item.id),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete, color: Colors.grey, size: 14),
+                          icon: const Icon(Icons.delete, color: Colors.neutral-500, size: 14),
                           onPressed: () => _handleDelete(item.id),
                         ),
                       ],
@@ -862,7 +862,7 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
           const SizedBox(height: 16),
           _metricTile(_locVal('Sealed Videos Count', 'أرشيف مقاطع الفيديو المأمنة'), '$vCount files', Colors.cyan),
           _metricTile(_locVal('Sealed Audios Count', 'مجموع المذكرات الصوتية المأمنة'), '$aCount files', Colors.purpleAccent),
-          _metricTile(_locVal('Decoupled Heap Volume', 'إجمالي حجم الأرشيف بالقرص'), '${(totalBytes / 1024).toStringAsFixed(1)} KB', Colors.green),
+          _metricTile(_locVal('Decoupled Heap Volume', 'إجمالي حجم الأرشيف بالقرص'), '${(totalBytes / 1024).toStringAsFixed(1)} KB', Colors.emerald),
           const SizedBox(height: 24),
           Text(
             _locVal('COLLECTIONS BREAKDOWN', 'فهرس تقسيم المجموعات'),
@@ -878,7 +878,7 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(al, style: const TextStyle(fontSize: 10, color: Colors.white70)),
+                  Text(al, style: const TextStyle(fontSize: 10, color: Colors.white75)),
                   Text('$count assets', style: const TextStyle(fontSize: 10, color: Colors.cyan, fontWeight: FontWeight.bold)),
                 ],
               ),
@@ -936,7 +936,7 @@ class _SecureMediaWidgetState extends State<SecureMediaWidget> with SingleTicker
                     color: Colors.cyan,
                   ),
                 ),
-                Text('$score%', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.cyanAccent)),
+                Text('$score%', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.extrabold, color: Colors.cyanAccent)),
               ],
             ),
           ),

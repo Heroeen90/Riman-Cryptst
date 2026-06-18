@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video, User, Share2, Radio
+  Shield, Cpu, Activity, Database, Key, LayoutDashboard, FileLock, MailOpen, Compass, FileCode2, Globe, FileText, BookOpen, Fingerprint, Lock, Unlock, ShieldAlert, Images, Video, User, Share2
 } from 'lucide-react';
 import { SovereignDashboard } from './components/SovereignDashboard';
-import { RimanCommandCenter } from './components/RimanCommandCenter';
-import { RimanEcosystemCore } from './components/RimanEcosystemCore';
 import { TextEncryptionModule } from './components/TextEncryptionModule';
 import { FileEncryptionModule } from './components/FileEncryptionModule';
 import { TimeCapsuleModule } from './components/TimeCapsuleModule';
@@ -28,7 +26,7 @@ import { useTranslation } from './lib/I18nContext';
 export default function App() {
   const { t, locale, setLocale } = useTranslation();
 
-  const [activeTab, setActiveTab] = useState<string>('ecosystem_core');
+  const [activeTab, setActiveTab] = useState<string>('dashboard');
   const [isSplashActive, setIsSplashActive] = useState<boolean>(true);
   const [splashProgress, setSplashProgress] = useState<number>(0);
   
@@ -572,12 +570,10 @@ export default function App() {
         {/* Tab Navigation Menu Area */}
         <nav className="flex flex-wrap gap-2 p-1.5 bg-neutral-900/40 border border-neutral-850 rounded-2xl backdrop-blur-md max-w-full overflow-x-auto select-none">
           {[
-            { id: 'ecosystem_core', label: locale === 'ar' ? 'النظام البيئي الموحد' : 'Ecosystem Core', icon: <Cpu className="w-4 h-4 text-cyan-455 animate-pulse" /> },
-            { id: 'command_center', label: locale === 'ar' ? 'غرفة العمليات السيادية' : 'Sovereign Command Center', icon: <Radio className="w-4 h-4 text-cyan-400 animate-pulse" /> },
             { id: 'dashboard', label: t('tab_dashboard'), icon: <LayoutDashboard className="w-4 h-4" /> },
             { id: 'profile', label: locale === 'ar' ? 'الهوية الطيفية' : 'Riemann Identity', icon: <User className="w-4 h-4 text-amber-400" /> },
             { id: 'security', label: t('tab_security'), icon: <Shield className="w-4 h-4 text-cyan-400" /> },
-            { id: 'recovery', label: locale === 'ar' ? 'مركز الاستعادة' : 'Recovery Center', icon: <Activity className="w-4 h-4 text-rose-455" /> },
+            { id: 'recovery', label: locale === 'ar' ? 'مركز الاستعادة' : 'Recovery Center', icon: <Activity className="w-4 h-4 text-rose-450" /> },
             { id: 'biometrics', label: t('tab_biometrics'), icon: <Fingerprint className="w-4 h-4 text-purple-400" /> },
             { id: 'text', label: t('tab_text'), icon: <FileLock className="w-4 h-4" /> },
             { id: 'file', label: t('tab_file'), icon: <Key className="w-4 h-4" /> },
@@ -611,32 +607,6 @@ export default function App() {
 
         {/* Operational Modules Mount Platform */}
         <section className="bg-neutral-950 min-h-[300px]">
-          {activeTab === 'ecosystem_core' && (
-            <RimanEcosystemCore
-              securityLogs={securityLogs}
-              onSecurityLog={handleSecurityLog}
-              onSuccess={fireToast}
-              onEmergencyLock={() => {
-                setIsAppLocked(true);
-                setPinValue('');
-                sessionStorage.removeItem('riman_gallery_cached_key');
-                sessionStorage.removeItem('riman_media_vault_cached_key');
-                sessionStorage.removeItem('riman_ecosystem_cached_key');
-                handleSecurityLog('Emergency Lock Activated', 'critical', 'Panic protocol initialized. System caches purged.');
-                fireToast(locale === 'ar' ? 'تم تفعيل قفل الطوارئ ومسح كل السجلات النشطة!' : 'Emergency Lock Activated! Cached memory purged.', 'error');
-              }}
-            />
-          )}
-
-          {activeTab === 'command_center' && (
-            <RimanCommandCenter 
-              securityLogs={securityLogs} 
-              onClearLogs={() => setSecurityLogs([])} 
-              onSecurityLog={handleSecurityLog}
-              onSuccess={fireToast}
-            />
-          )}
-
           {activeTab === 'dashboard' && (
             <SovereignDashboard 
               securityLogs={securityLogs} 

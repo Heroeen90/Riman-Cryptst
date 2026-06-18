@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/translations.dart';
@@ -571,7 +570,7 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
             decoration: InputDecoration(
               isDense: true,
               hintText: _locVal('Enter a passphrase to test strength...', 'أدخل كلمة مرور لاختبار العشوائية المقدرة...'),
-              hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 10, fontFamily: 'monospace'),
+              hintStyle: TextStyle(color: Colors.grey.shade650, fontSize: 10, fontFamily: 'monospace'),
               filled: true,
               fillColor: Colors.black38,
               contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
@@ -748,7 +747,7 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
             decoration: InputDecoration(
               isDense: true,
               hintText: _locVal('Type and copy sensitive data to test...', 'اكتب نصاً لنسخه واختبار الإتلاف...'),
-              hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 10, fontFamily: 'monospace'),
+              hintStyle: TextStyle(color: Colors.grey.shade655, fontSize: 10, fontFamily: 'monospace'),
               filled: true,
               fillColor: Colors.black38,
               suffixIcon: GestureDetector(
@@ -804,67 +803,65 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.white.withOpacity(0.04)),
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Row(
-              children: [
-                const Icon(Icons.settings_suggest_outlined, color: Color(0xFF06B6D4), size: 14),
-                const SizedBox(width: 8),
-                Text(
-                  _locVal('Sovereign Protection Settings & Recommendations', 'إعدادات الحماية والتوصيات النشطة'),
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white, fontFamily: 'monospace'),
-                ),
-              ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.settings_suggest_outlined, color: Color(0xFF06B6D4), size: 14),
+              const SizedBox(width: 8),
+              Text(
+                _locVal('Sovereign Protection Settings & Recommendations', 'إعدادات الحماية والتوصيات النشطة'),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 11, color: Colors.white, fontFamily: 'monospace'),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          
+          // Simulated Biometric setting
+          SwitchListTile(
+            value: bioEnabled,
+            onChanged: (val) => _triggerBiometricDialog(),
+            activeColor: const Color(0xFF06B6D4),
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              _locVal('Simulated Biometric Authentication', 'محاكاة البصمة الحيوية الفعالة'),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
             ),
-            const SizedBox(height: 12),
-            
-            // Simulated Biometric setting
-            SwitchListTile(
-              value: bioEnabled,
-              onChanged: (val) => _triggerBiometricDialog(),
-              activeColor: const Color(0xFF06B6D4),
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                _locVal('Simulated Biometric Authentication', 'محاكاة البصمة الحيوية الفعالة'),
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
-              ),
-              subtitle: Text(
-                _locVal('Forces biometric scan simulation checks inside decryption segments.', 'يتطلب الولوج وتأكيد مطابقة الهوية الحيوية قبل فك الأرشيفات.'),
-                style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
-              ),
+            subtitle: Text(
+              _locVal('Forces biometric scan simulation checks inside decryption segments.', 'يتطلب الولوج وتأكيد مطابقة الهوية الحيوية قبل فك الأرشيفات.'),
+              style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
             ),
-            const Divider(height: 12, color: Colors.white10),
-            
-            // Simulated Recovery key configuration
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                _locVal('Sovereign Offline Recovery Key', 'مفاتيح الاستعادة والإنقاذ بدون شبكة'),
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
+          ),
+          const Divider(height: 12, color: Colors.white10),
+          
+          // Simulated Recovery key configuration
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              _locVal('Sovereign Offline Recovery Key', 'مفاتيح الاستعادة والإنقاذ بدون شبكة'),
+              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white, fontFamily: 'monospace'),
+            ),
+            subtitle: Text(
+              isRecoveryConfigured
+                  ? _locVal('A recovery core backup is active.', 'رمز فك الرموز النشط جاهز ومرتسم.')
+                  : _locVal('Emergency backup bypass offline key isn\'t configured.', 'لم تقم بتعيين مفتاح الاستعادة والإنقاذ المادي.'),
+              style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
+            ),
+            trailing: ElevatedButton(
+              onPressed: _triggerRecoveryDialog,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0F2D3A),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                minimumSize: Size.zero,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              subtitle: Text(
-                isRecoveryConfigured
-                    ? _locVal('A recovery core backup is active.', 'رمز فك الرموز النشط جاهز ومرتسم.')
-                    : _locVal('Emergency backup bypass offline key isn\'t configured.', 'لم تقم بتعيين مفتاح الاستعادة والإنقاذ المادي.'),
-                style: TextStyle(fontSize: 8, color: Colors.grey.shade500),
-              ),
-              trailing: ElevatedButton(
-                onPressed: _triggerRecoveryDialog,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF0F2D3A),
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                  minimumSize: Size.zero,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                ),
-                child: Text(
-                  isRecoveryConfigured ? _locVal('REGENT', 'تحديث') : _locVal('CREATE KEY', 'توليد'),
-                  style: const TextStyle(fontSize: 8, color: Color(0xFF06B6D4), fontWeight: FontWeight.bold, fontFamily: 'monospace'),
-                ),
+              child: Text(
+                isRecoveryConfigured ? _locVal('REGENT', 'تحديث') : _locVal('CREATE KEY', 'توليد'),
+                style: const TextStyle(fontSize: 8, color: Color(0xFF06B6D4), fontWeight: FontWeight.bold, fontFamily: 'monospace'),
               ),
             ),
+          ),
           
           // Recommendations listings
           if (!isRecoveryConfigured || !bioEnabled || isWeak) ...[
@@ -908,9 +905,8 @@ class _SecurityCenterWidgetState extends State<SecurityCenterWidget> {
           ]
         ],
       ),
-    ),
-  );
-}
+    );
+  }
 }
 
 class _HealthIndicatorRow extends StatelessWidget {
@@ -1043,12 +1039,9 @@ class _BiometricScanDialogState extends State<_BiometricScanDialog> with SingleT
     super.initState();
     _scanStatus = _locVal('Place finger on screen scanner...', 'يرجى وضع الأصبع على مستشعر البصمة للمطابقة...');
     _pulseController = AnimationController(
-        vsync: this,
-        duration: const Duration(seconds: 1),
-      );
-    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
-      _pulseController.repeat(reverse: true);
-    }
+      vsync: this,
+      duration: const Duration(seconds: 1),
+    )..repeat(reverse: true);
 
     _startSimulatedScan();
   }

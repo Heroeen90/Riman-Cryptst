@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 class SmartCategorySelector extends StatefulWidget {
@@ -17,7 +18,7 @@ class _SmartCategorySelectorState extends State<SmartCategorySelector> with Sing
     super.initState();
     _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1));
     // Do not repeat animation in tests to prevent pumpAndSettle timeout
-    if (TestWidgetsFlutterBinding.instance == null) {
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
       _controller.repeat(reverse: true);
     }
   }

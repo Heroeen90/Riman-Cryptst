@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:math';
 
@@ -14,7 +15,11 @@ class _TelemetryGraphCanvasState extends State<TelemetryGraphCanvas> with Single
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 2));
+    // Do not repeat animation in tests to prevent pumpAndSettle timeout
+    if (!bool.fromEnvironment('dart.vm.product') && !Platform.environment.containsKey('FLUTTER_TEST')) {
+      _controller.repeat();
+    }
   }
 
   @override

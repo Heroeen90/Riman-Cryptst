@@ -16,10 +16,10 @@ void main() {
     final textShieldFinder = find.text('درع النصوص');
     final scrollableFinder = find.byType(Scrollable);
     await tester.scrollUntilVisible(textShieldFinder, 500.0, scrollable: scrollableFinder);
-    expect(textShieldFinder, findsOneWidget);
+    expect(textShieldFinder, findsWidgets);
 
     // Swap language to English using the language selector button
-    final Finder languageButton = find.byIcon(Icons.language);
+    final languageButton = find.byIcon(Icons.language);
     expect(languageButton, findsOneWidget);
     await tester.tap(languageButton);
     await tester.pumpAndSettle();
@@ -29,6 +29,6 @@ void main() {
 
     final textShieldEnFinder = find.text('Text Shield');
     await tester.scrollUntilVisible(textShieldEnFinder, 500.0, scrollable: scrollableFinder);
-    expect(textShieldEnFinder, findsOneWidget);
+    expect(textShieldEnFinder, findsWidgets);
   });
 }

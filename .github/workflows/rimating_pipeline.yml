@@ -1,4 +1,4 @@
-Name: Riman Cryptst Unified CI/CD Pipeline
+name: Riman Cryptst Unified CI/CD Pipeline
 
 on:
   push:

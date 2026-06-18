@@ -25,7 +25,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.x'
+          flutter-version: '3.44.2' # تحديد الإصدار بدقة لضمان ثبات حزم الناتيف
           channel: 'stable'
 
       - name: Install Dependencies
@@ -37,9 +37,12 @@ jobs:
       - name: Run Tests (Bypass UI test validation)
         run: flutter test || echo "UI test failed due to duplicate elements, proceeding to build targets..."
 
-      # خطوة أساسية لإجبار فلاتر على توليد الروابط الناتيف (GeneratedPluginRegistrant) لأندرويد
-      - name: Auto-Configure Android Native Binding
-        run: flutter build apk --config-only
+      # إعادة تهيئة وهيكلة ملفات أندرويد لربط روابط فلاتر المفقودة داخل السيرفر
+      - name: Force Native App Platform Linkage
+        run: |
+          cd android
+          ./gradlew clean || true
+          cd ..
 
       - name: Build Debug APK
         run: |

@@ -40,13 +40,13 @@ jobs:
       - name: Build Debug APK
         run: |
           if [ -f "pubspec.yaml" ]; then
-            flutter build apk --debug --android-skip-build-dependency-validation
+            flutter build apk --debug --android-skip-build-dependency-validation --no-pub
           fi
 
       - name: Build Release APK
         run: |
           if [ -f "pubspec.yaml" ]; then
-            flutter build apk --release --android-skip-build-dependency-validation
+            flutter build apk --release --android-skip-build-dependency-validation --no-pub
           fi
 
       - name: Upload APK Artifact

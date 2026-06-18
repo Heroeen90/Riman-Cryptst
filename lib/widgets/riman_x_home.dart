@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import '../models/riman_x.dart';
@@ -38,7 +39,10 @@ class _RimanXHomeWidgetState extends State<RimanXHomeWidget> with SingleTickerPr
     _rotationController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 15),
-    )..repeat();
+    );
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+      _rotationController.repeat();
+    }
   }
 
   @override

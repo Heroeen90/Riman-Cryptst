@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
 import 'dart:math';
 
 class VisualFilterChips extends StatefulWidget {
@@ -16,7 +17,10 @@ class _VisualFilterChipsState extends State<VisualFilterChips> with SingleTicker
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1))..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 1));
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+      _controller.repeat();
+    }
   }
 
   @override

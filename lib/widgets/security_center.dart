@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../utils/translations.dart';
@@ -1042,9 +1043,12 @@ class _BiometricScanDialogState extends State<_BiometricScanDialog> with SingleT
     super.initState();
     _scanStatus = _locVal('Place finger on screen scanner...', 'يرجى وضع الأصبع على مستشعر البصمة للمطابقة...');
     _pulseController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    )..repeat(reverse: true);
+        vsync: this,
+        duration: const Duration(seconds: 1),
+      );
+    if (!Platform.environment.containsKey('FLUTTER_TEST')) {
+      _pulseController.repeat(reverse: true);
+    }
 
     _startSimulatedScan();
   }

@@ -50,31 +50,51 @@ subprojects { proj ->
                 // 2. Alignment of Compiling and SDK Requirements (Avoids AGP Version Drift and SDK Warnings)
                 try {
                     androidExt.compileSdk = 34
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    try {
+                        androidExt.compileSdkVersion = 34
+                    } catch (Exception ex) {}
+                }
 
                 try {
                     androidExt.defaultConfig {
                         minSdk = 21
                         targetSdk = 34
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    try {
+                        androidExt.defaultConfig {
+                            minSdkVersion = 21
+                            targetSdkVersion = 34
+                        }
+                    } catch (Exception ex) {}
+                }
 
                 // 3. JVM Toolchain/Target Compatibility Locking (Eliminates bytecode version mismatch Errors)
                 try {
-                    if (androidExt.hasProperty('compileOptions')) {
+                    androidExt.compileOptions {
+                        sourceCompatibility = JavaVersion.VERSION_17
+                        targetCompatibility = JavaVersion.VERSION_17
+                    }
+                } catch (Exception e) {
+                    try {
                         androidExt.compileOptions {
-                            sourceCompatibility = JavaVersion.VERSION_17
-                            targetCompatibility = JavaVersion.VERSION_17
+                            sourceCompatibility = "1.7"
+                            targetCompatibility = "1.7"
                         }
-                    }
-                } catch (Exception e) {}
+                    } catch (Exception ex) {}
+                }
                 try {
-                    if (androidExt.hasProperty('kotlinOptions')) {
-                        androidExt.kotlinOptions {
-                            jvmTarget = '17'
-                        }
+                    androidExt.kotlinOptions {
+                        jvmTarget = '17'
                     }
-                } catch (Exception e) {}
+                } catch (Exception e) {
+                    try {
+                        androidExt.kotlinOptions {
+                            jvmTarget = '1.8'
+                        }
+                    } catch (Exception ex) {}
+                }
             }
         }
     }

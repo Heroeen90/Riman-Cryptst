@@ -14,8 +14,8 @@ void main() {
 
     // Scroll to find the Text Shield tab
     final textShieldFinder = find.text('درع النصوص');
-    final listViewFinder = find.byType(ListView).first;
-    await tester.scrollUntilVisible(textShieldFinder, 500.0, scrollable: listViewFinder);
+    final scrollableFinder = find.byType(Scrollable);
+    await tester.scrollUntilVisible(textShieldFinder, 500.0, scrollable: scrollableFinder);
     expect(textShieldFinder, findsOneWidget);
 
     // Swap language to English using the language selector button
@@ -28,7 +28,7 @@ void main() {
     expect(find.text('Monitor Desk'), findsOneWidget);
 
     final textShieldEnFinder = find.text('Text Shield');
-    await tester.scrollUntilVisible(textShieldEnFinder, 500.0, scrollable: listViewFinder);
+    await tester.scrollUntilVisible(textShieldEnFinder, 500.0, scrollable: scrollableFinder);
     expect(textShieldEnFinder, findsOneWidget);
   });
 }

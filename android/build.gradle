@@ -2,10 +2,8 @@ allprojects {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
 }
-
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
@@ -13,87 +11,23 @@ subprojects {
 subprojects {
     project.evaluationDependsOn(':app')
 }
-
 subprojects { proj ->
-    repositories {
-        google()
-        maven { url 'https://maven.google.com' }
-        mavenCentral()
-        maven { url 'https://storage.googleapis.com/download.flutter.io' }
-    }
-    
     afterEvaluate {
         if (proj.hasProperty('android')) {
             def androidExt = proj.extensions.findByName('android')
-            if (androidExt != null) {
-                // 1. Safe Namespace Injection (Claude Fallback Script + Regex Hardening)
-                if (androidExt.namespace == null || androidExt.namespace.isEmpty()) {
-                    def manifestFile = proj.file('src/main/AndroidManifest.xml')
-                    if (manifestFile.exists()) {
-                        try {
-                            def manifestContent = manifestFile.text
-                            def matcher = manifestContent =~ /package=["']([^"']+)["']/
-                            if (matcher.find()) {
-                                androidExt.namespace = matcher.group(1)
-                            } else {
-                                androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
-                            }
-                        } catch (Exception e) {
-                            androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
-                        }
-                    } else {
-                        androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
+            if (androidExt != null && androidExt.namespace == null) {
+                def manifestFile = proj.file('src/main/AndroidManifest.xml')
+                if (manifestFile.exists()) {
+                    def parsedManifest = new XmlSlurper().parse(manifestFile)
+                    def packageName = parsedManifest.@package.text()
+                    if (packageName) {
+                        androidExt.namespace = packageName
                     }
-                }
-
-                // 2. Alignment of Compiling and SDK Requirements (Avoids AGP Version Drift and SDK Warnings)
-                try {
-                    androidExt.compileSdkVersion = 34
-                } catch (Exception e) {
-                    try {
-                        androidExt.compileSdk = 34
-                    } catch (Exception ex) {}
-                }
-
-                try {
-                    androidExt.defaultConfig.minSdkVersion = 21
-                } catch (Exception e) {
-                    try {
-                        androidExt.defaultConfig.minSdk = 21
-                    } catch (Exception ex) {}
-                }
-
-                try {
-                    androidExt.defaultConfig.targetSdkVersion = 34
-                } catch (Exception e) {
-                    try {
-                        androidExt.defaultConfig.targetSdk = 34
-                    } catch (Exception ex) {}
-                }
-
-                // 3. JVM Toolchain/Target Compatibility Locking (Eliminates bytecode version mismatch Errors)
-                try {
-                    androidExt.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
-                    androidExt.compileOptions.targetCompatibility = JavaVersion.VERSION_17
-                } catch (Exception e) {
-                    try {
-                        androidExt.compileOptions.sourceCompatibility = "17"
-                        androidExt.compileOptions.targetCompatibility = "17"
-                    } catch (Exception ex) {}
                 }
             }
         }
     }
-
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-        try {
-            kotlinOptions {
-                jvmTarget = "17"
-            }
-        } catch (Exception e) {}
-    }
 }
-
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

@@ -11,7 +11,12 @@ void main() {
 
     // Verify Arabic tabs are visible by default
     expect(find.text('مكتب المراقبة'), findsOneWidget);
-    expect(find.text('درع النصوص'), findsOneWidget);
+
+    // Scroll to find the Text Shield tab
+    final textShieldFinder = find.text('درع النصوص');
+    final listViewFinder = find.byType(ListView).first;
+    await tester.scrollUntilVisible(textShieldFinder, 500.0, scrollable: listViewFinder);
+    expect(textShieldFinder, findsOneWidget);
 
     // Swap language to English using the language selector button
     final Finder languageButton = find.byIcon(Icons.language);
@@ -21,6 +26,9 @@ void main() {
 
     // Verify English tabs are now visible
     expect(find.text('Monitor Desk'), findsOneWidget);
-    expect(find.text('Text Shield'), findsOneWidget);
+
+    final textShieldEnFinder = find.text('Text Shield');
+    await tester.scrollUntilVisible(textShieldEnFinder, 500.0, scrollable: listViewFinder);
+    expect(textShieldEnFinder, findsOneWidget);
   });
 }

@@ -1,44 +1,51 @@
 import 'package:flutter/material.dart';
-import '../utils/share_intent_service.dart';
-import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-class ShareTargetSheet extends StatefulWidget {
-  final SharedMediaFile file;
+/// ShareTargetSheet - displays received shared file information
+class ShareTargetSheet extends StatelessWidget {
+  final String file;
+
   const ShareTargetSheet({Key? key, required this.file}) : super(key: key);
-
-  @override
-  _ShareTargetSheetState createState() => _ShareTargetSheetState();
-}
-
-class _ShareTargetSheetState extends State<ShareTargetSheet> {
-  double _progress = 0.0;
-  final List<String> _vaults = ['Vault Alpha', 'Vault Beta', 'Vault Gamma'];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: const BoxDecoration(
-        color: Color(0xFF1E293B),
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF030712),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Secure Share Target', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text(
+            'Shared File Received',
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            file,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey[400],
+              fontFamily: 'monospace',
+            ),
+          ),
           const SizedBox(height: 16),
-          CircularProgressIndicator(value: _progress, color: Colors.cyan),
-          const SizedBox(height: 16),
-          ..._vaults.map((v) => ListTile(
-            title: Text(v, style: const TextStyle(color: Colors.white)),
-            onTap: () async {
-              setState(() => _progress = 0.5);
-              // In production, encrypt and map to vault
-              await Future.delayed(const Duration(seconds: 2));
-              await ShareIntentService.shredFile(widget.file.path);
-              Navigator.pop(context);
-            },
-          )).toList(),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF06B6D4),
+              ),
+              child: const Text('Close'),
+            ),
+          ),
         ],
       ),
     );

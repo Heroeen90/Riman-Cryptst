@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.6.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.20"
+        classpath 'dev.flutter:flutter-gradle-plugin:1.0.0'
+    }
+}
+
 allprojects {
     repositories {
         google()
@@ -8,35 +20,7 @@ allprojects {
 rootProject.buildDir = '../build'
 subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
-}
-subprojects {
     project.evaluationDependsOn(':app')
-}
-
-subprojects { proj ->
-    def injectNamespace = {
-        if (proj.hasProperty('android')) {
-            def androidExt = proj.extensions.findByName('android')
-            if (androidExt != null && androidExt.namespace == null) {
-                def manifestFile = proj.file('src/main/AndroidManifest.xml')
-                if (manifestFile.exists()) {
-                    def parsedManifest = new XmlSlurper().parse(manifestFile)
-                    def packageName = parsedManifest.@package.text()
-                    if (packageName) {
-                        androidExt.namespace = packageName
-                    }
-                }
-            }
-        }
-    }
-    
-    if (proj.state.executed) {
-        injectNamespace()
-    } else {
-        proj.afterEvaluate {
-            injectNamespace()
-        }
-    }
 }
 
 tasks.register("clean", Delete) {

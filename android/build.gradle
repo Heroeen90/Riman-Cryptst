@@ -17,22 +17,64 @@ subprojects {
 }
 
 subprojects { proj ->
+    repositories {
+        google()
+        mavenCentral()
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
+    }
+    
     afterEvaluate {
         if (proj.hasProperty('android')) {
             def androidExt = proj.extensions.findByName('android')
-            if (androidExt != null && androidExt.namespace == null) {
-                def manifestFile = proj.file('src/main/AndroidManifest.xml')
-                if (manifestFile.exists()) {
-                    def parsedManifest = new XmlSlurper().parse(manifestFile)
-                    def packageName = parsedManifest.@package.text()
-                    if (packageName) {
-                        androidExt.namespace = packageName
+            if (androidExt != null) {
+                // 1. Safe Namespace Injection (Claude Fallback Script + Regex Hardening)
+                if (androidExt.namespace == null || androidExt.namespace.isEmpty()) {
+                    def manifestFile = proj.file('src/main/AndroidManifest.xml')
+                    if (manifestFile.exists()) {
+                        try {
+                            def manifestContent = manifestFile.text
+                            def matcher = manifestContent =~ /package=["']([^"']+)["']/
+                            if (matcher.find()) {
+                                androidExt.namespace = matcher.group(1)
+                            } else {
+                                androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
+                            }
+                        } catch (Exception e) {
+                            androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
+                        }
                     } else {
                         androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
                     }
-                } else {
-                    androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
                 }
+
+                // 2. Alignment of Compiling and SDK Requirements (Avoids AGP Version Drift and SDK Warnings)
+                try {
+                    androidExt.compileSdk = 34
+                } catch (Exception e) {}
+
+                try {
+                    androidExt.defaultConfig {
+                        minSdk = 21
+                        targetSdk = 34
+                    }
+                } catch (Exception e) {}
+
+                // 3. JVM Toolchain/Target Compatibility Locking (Eliminates bytecode version mismatch Errors)
+                try {
+                    if (androidExt.hasProperty('compileOptions')) {
+                        androidExt.compileOptions {
+                            sourceCompatibility = JavaVersion.VERSION_17
+                            targetCompatibility = JavaVersion.VERSION_17
+                        }
+                    }
+                } catch (Exception e) {}
+                try {
+                    if (androidExt.hasProperty('kotlinOptions')) {
+                        androidExt.kotlinOptions {
+                            jvmTarget = '17'
+                        }
+                    }
+                } catch (Exception e) {}
             }
         }
     }

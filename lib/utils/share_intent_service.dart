@@ -1,30 +1,26 @@
-import 'dart:async';
+import 'dart:io';
+import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-/// ShareIntentService - handles incoming file sharing from other applications
 class ShareIntentService {
-  static final StreamController<String> _shareStream =
-      StreamController<String>.broadcast();
+  static void initialize(Function(SharedMediaFile) onFileReceived) {
+    ReceiveSharingIntent.instance.getInitialMedia().then((List<SharedMediaFile> value) {
+      if (value.isNotEmpty) onFileReceived(value.first);
+      ReceiveSharingIntent.instance.reset();
+    });
 
-  static StreamSubscription<String>? _subscription;
-  static Function(String)? _callback;
-
-  /// Initialize share intent listener
-  static void initialize(Function(String) onFileReceived) {
-    _callback = onFileReceived;
+    ReceiveSharingIntent.instance.getMediaStream().listen((List<SharedMediaFile> value) {
+      if (value.isNotEmpty) onFileReceived(value.first);
+    });
   }
 
-  /// Emit a file path to the share stream
-  static void emitFile(String filePath) {
-    _shareStream.add(filePath);
-    _callback?.call(filePath);
-  }
-
-  /// Get the share stream for listening to incoming files
-  static Stream<String> get shareStream => _shareStream.stream;
-
-  /// Dispose resources
-  static void dispose() {
-    _subscription?.cancel();
-    _shareStream.close();
+  static Future<void> shredFile(String filePath) async {
+    final file = File(filePath);
+    if (await file.exists()) {
+      final length = await file.length();
+      final raf = await file.open(mode: FileMode.writeOnly);
+      await raf.writeFrom(List.generate(length, (index) => 0));
+      await raf.close();
+      await file.delete();
+    }
   }
 }

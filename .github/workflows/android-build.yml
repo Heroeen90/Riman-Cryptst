@@ -1,4 +1,4 @@
-Name: Riman Cryptst - Production DevOps CI
+name: Riman Cryptst - Production DevOps CI
 
 on:
   push:
@@ -45,13 +45,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pub-
 
-      # Step 4.5: [تعديل الحصانة] تنظيف الكاش القديم بالكامل لمنع تضارب كوتلن والأذونات
-      - name: Clean Flutter Build and Dependencies Cache
-        run: |
-          if [ -f "pubspec.yaml" ]; then
-            flutter clean
-          fi
-
       # Step 5: Check and Fetch Dependencies
       - name: Install Dependencies
         run: |
@@ -84,18 +77,18 @@ jobs:
             echo "Skipping tests (no test suite directory or pubspec found)."
           fi
 
-      # Step 9: Build Debug APK [تعديل الحصانة بالتخطي العتادي للتكامل]
+      # Step 9: Build Debug APK
       - name: Build Debug APK
         run: |
           if [ -f "pubspec.yaml" ]; then
-            flutter build apk --debug --android-skip-build-dependency-validation
+            flutter build apk --debug
           fi
 
-      # Step 10: Build Release APK [تعديل الحصانة بالتخطي العتادي للتكامل]
+      # Step 10: Build Release APK
       - name: Build Release APK
         run: |
           if [ -f "pubspec.yaml" ]; then
-            flutter build apk --release --android-skip-build-dependency-validation
+            flutter build apk --release
           fi
 
       # Step 11: Collect and Upload Artifacts (Build output)

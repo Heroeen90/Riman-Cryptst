@@ -34,7 +34,7 @@ void main() {
   try {
     runApp(const RimanCryptstApp());
   } catch (e, stackTrace) {
-    debugPrint('Fatal error starting Riman Cryptst application: $e\n$stackTrace');
+    debugPrint('Fatal error starting Riman Cryptst application: \$e\\n\$stackTrace');
   }
 }
 
@@ -106,6 +106,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _pinValue = '';
   String _pinError = '';
 
+// ... (in _DashboardScreenState)
   @override
   void initState() {
     super.initState();
@@ -119,7 +120,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       );
     });
   }
-
   @override
   void dispose() {
     _terminalScrollController.dispose();
@@ -601,7 +601,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             Row(
                               children: [
                                 Text(
-                                  '[${log.id}] [${log.severity.toUpperCase()}]',
+                                  '[\${log.id}] [${log.severity.toUpperCase()}]',
                                   style: TextStyle(color: severityColor, fontSize: 8, fontWeight: FontWeight.bold, fontFamily: 'monospace'),
                                 ),
                                 const SizedBox(width: 8),
@@ -642,6 +642,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     if (vaultService.isLocked) {
       return _buildAppLockOverlay();
     }
+
+    final double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       appBar: AppBar(

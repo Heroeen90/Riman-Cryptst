@@ -73,6 +73,7 @@ class RimanXService extends ChangeNotifier {
 
     final parts = trimmed.split(' ');
     final cmd = parts[0].toLowerCase();
+    final args = parts.skip(1).join(' ');
 
     String responseEn = '';
     String responseAr = '';
@@ -102,14 +103,14 @@ class RimanXService extends ChangeNotifier {
       onNotification(locale == 'ar' ? 'اكتمل فحص ريمان الخارق!' : 'Riman X Core diagnostics completed!', 'success');
 
     } else if (cmd == '/scan') {
-      SentinelService().notifyListeners(); // Force UI update safely
+      SentinelService().notifyListeners(); // Force UI update
       responseEn = 'MANDATE EXECUTED: Sentinel active scan triggered completely across the local thread hierarchy.';
       responseAr = 'تم التنفيذ: تم توجيه حارس ريمان لتطبيق فحص فوري على الخيوط البرمجية النشطة.';
       severity = 'warning';
       onNotification(locale == 'ar' ? 'بدأ حارس ريمان عملية الكشف الشاملة' : 'Sentinel Full-Mesh scan initiated', 'warning');
 
     } else if (cmd == '/backup') {
-      CloudService().notifyListeners(); // Force UI update safely
+      CloudService().notifyListeners(); // Force UI update
       responseEn = 'MANDATE EXECUTED: Secure Cloud Bridge synchronization packet dispatched to the remote node.';
       responseAr = 'تم التنفيذ: تم توجيه حزمة المعبر السحابي وبث نسخة الدعم المرمزة.';
       severity = 'success';
@@ -121,15 +122,15 @@ class RimanXService extends ChangeNotifier {
       responseAr = 'تنفيذ أمر الإتلاف: تم إتلاف ذاكرة المعالجة اللحظية ومسح كافة البيانات المؤقتة.';
       severity = 'critical';
       onNotification(locale == 'ar' ? 'تم إتلاف الذاكرة فوراً' : 'Memory shredder invoked successfully', 'critical');
-
-    } else if (cmd == '/lock' || cmd == '/reload' || cmd == '/nexus') {
+    } else if (cmd == '/reload') {
+      // Refresh nexus assets
       NexusService().notifyListeners();
       responseEn = 'SOVEREIGN NEXUS SYNCHRONIZATION: Relationship database index compiled cleanly.';
       responseAr = 'ترابط الطيف السيادي: تم تحديث فهرس العلاقات والمطابقات الرقمية بنجاح.';
       severity = 'info';
       onNotification(locale == 'ar' ? 'تم تحديث روابط النيكسس السيادية!' : 'Nexus sovereign links synchronized!', 'success');
-
     } else {
+      // Query parameters or invalid
       responseEn = 'ERROR: Unified command "$cmd" not recognized by active system indexer layers.';
       responseAr = 'خطأ بقواعد المدخلات: الأمر "$cmd" غير مدعوم أو غير معرف بنواة التوجيه الحالية.';
       severity = 'warning';
@@ -392,7 +393,7 @@ class RimanXService extends ChangeNotifier {
           timestamp: DateTime.now().subtract(const Duration(hours: 1)),
           severity: 'success',
           source: 'System',
-         ),
+        ),
         GlobalActivityItem(
           id: 'seed_2',
           titleEn: 'Unified Search Indexer Online',

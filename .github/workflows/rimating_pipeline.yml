@@ -38,10 +38,10 @@ jobs:
         run: flutter test || echo "Widget tests bypassed successfully"
 
       - name: Build Debug APK
-        run: flutter build apk --debug --android-skip-build-dependency-validation --no-pub
+        run: flutter build apk --debug --no-pub
 
       - name: Build Release APK
-        run: flutter build apk --release --android-skip-build-dependency-validation --no-pub
+        run: flutter build apk --release --no-pub
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4

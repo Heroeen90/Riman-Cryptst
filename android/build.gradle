@@ -11,14 +11,13 @@ subprojects {
     project.buildDir = "${rootProject.buildDir}/${project.name}"
 }
 subprojects {
-    if (project.name != 'app') {
-        project.evaluationDependsOn(':app')
-    }
+    project.evaluationDependsOn(':app')
 }
 
 subprojects { proj ->
     repositories {
         google()
+        maven { url 'https://maven.google.com' }
         mavenCentral()
         maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
@@ -49,54 +48,49 @@ subprojects { proj ->
 
                 // 2. Alignment of Compiling and SDK Requirements (Avoids AGP Version Drift and SDK Warnings)
                 try {
-                    androidExt.compileSdk = 34
+                    androidExt.compileSdkVersion = 34
                 } catch (Exception e) {
                     try {
-                        androidExt.compileSdkVersion = 34
+                        androidExt.compileSdk = 34
                     } catch (Exception ex) {}
                 }
 
                 try {
-                    androidExt.defaultConfig {
-                        minSdk = 21
-                        targetSdk = 34
-                    }
+                    androidExt.defaultConfig.minSdkVersion = 21
                 } catch (Exception e) {
                     try {
-                        androidExt.defaultConfig {
-                            minSdkVersion = 21
-                            targetSdkVersion = 34
-                        }
+                        androidExt.defaultConfig.minSdk = 21
+                    } catch (Exception ex) {}
+                }
+
+                try {
+                    androidExt.defaultConfig.targetSdkVersion = 34
+                } catch (Exception e) {
+                    try {
+                        androidExt.defaultConfig.targetSdk = 34
                     } catch (Exception ex) {}
                 }
 
                 // 3. JVM Toolchain/Target Compatibility Locking (Eliminates bytecode version mismatch Errors)
                 try {
-                    androidExt.compileOptions {
-                        sourceCompatibility = JavaVersion.VERSION_17
-                        targetCompatibility = JavaVersion.VERSION_17
-                    }
+                    androidExt.compileOptions.sourceCompatibility = JavaVersion.VERSION_17
+                    androidExt.compileOptions.targetCompatibility = JavaVersion.VERSION_17
                 } catch (Exception e) {
                     try {
-                        androidExt.compileOptions {
-                            sourceCompatibility = "1.7"
-                            targetCompatibility = "1.7"
-                        }
-                    } catch (Exception ex) {}
-                }
-                try {
-                    androidExt.kotlinOptions {
-                        jvmTarget = '17'
-                    }
-                } catch (Exception e) {
-                    try {
-                        androidExt.kotlinOptions {
-                            jvmTarget = '1.8'
-                        }
+                        androidExt.compileOptions.sourceCompatibility = "17"
+                        androidExt.compileOptions.targetCompatibility = "17"
                     } catch (Exception ex) {}
                 }
             }
         }
+    }
+
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        try {
+            kotlinOptions {
+                jvmTarget = "17"
+            }
+        } catch (Exception e) {}
     }
 }
 

@@ -43,7 +43,7 @@ class _SmartCategorySelectorState extends State<SmartCategorySelector> with Sing
         ),
         FadeTransition(
           opacity: _controller,
-          child: const Text('Erasing Original...', style: TextStyle(color: Colors.rose)),
+          child: const Text('Erasing Original...', style: TextStyle(color: Colors.pink)),
         ),
       ],
     );

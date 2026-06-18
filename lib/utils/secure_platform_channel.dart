@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
+import 'dart:convert';
 
 class SecurePlatformChannel {
   static const _channel = MethodChannel('com.riman.cryptst/secure_channel');
@@ -14,4 +15,4 @@ class SecurePlatformChannel {
     return await _channel.invokeMethod(method, {'data': encryptedArgs});
   }
 }
-import 'dart:convert';
+

@@ -7,7 +7,7 @@ class NetworkPinningService {
       await HttpCertificatePinning.check(
         serverURL: url,
         headerHttp: {"accept": "application/json"},
-        sha: "SHA256",
+        sha: SHA.SHA256,
         allowedSHAFingerprints: [fingerprint],
         timeout: 50,
       );

@@ -19,6 +19,7 @@ jobs:
       - name: Inject local.properties
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > android/local.properties
+          echo "flutter.sdk=${FLUTTER_ROOT}" >> android/local.properties
       - name: Build APK Debug
         run: flutter build apk --debug --android-skip-build-dependency-validation --no-pub
       - name: Build APK Release

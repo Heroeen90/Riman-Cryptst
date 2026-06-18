@@ -1,0 +1,11 @@
+{
+  "name": "riman_cryptst",
+  "short_name": "riman_cryptst",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0175C2",
+  "theme_color": "#0175C2",
+  "description": "Next-generation sovereign mathematical hybrid crypto suite leveraging Riemann Zeta Zeros.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false
+}

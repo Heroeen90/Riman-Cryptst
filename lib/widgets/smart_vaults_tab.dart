@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../utils/translations.dart';
 import '../utils/vault_service.dart';

@@ -1,12 +1,12 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
 android {
     namespace "com.riman.cryptst"
-    compileSdk 34
+    compileSdk = 34
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
@@ -19,8 +19,8 @@ android {
 
     defaultConfig {
         applicationId "com.riman.cryptst"
-        minSdk 21
-        targetSdk 34
+        minSdk = 21
+        targetSdk = 34
         versionCode 1
         versionName "1.0.0"
     }
@@ -34,6 +34,9 @@ android {
     }
 }
 
+flutter {
+    source '../..'
+}
+
 dependencies {
-    // kotlin-stdlib is automatically resolved by the kotlin-android plugin
 }

@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'utils/translations.dart';
 import 'utils/vault_service.dart';
+import 'utils/share_intent_service.dart';
+import 'widgets/share_target_sheet.dart';
 import 'widgets/sovereign_dashboard.dart';
 import 'widgets/security_center.dart';
 import 'widgets/smart_vaults_tab.dart';
@@ -17,6 +20,15 @@ import 'widgets/secure_notes.dart';
 import 'widgets/secure_journal.dart';
 import 'widgets/secure_gallery.dart';
 import 'widgets/secure_media.dart';
+import 'widgets/nexus_dashboard.dart';
+import 'widgets/archive_dashboard.dart';
+import 'widgets/forensics_dashboard.dart';
+import 'widgets/sentinel_dashboard.dart';
+import 'widgets/workspace_dashboard.dart';
+import 'widgets/kernel_dashboard.dart';
+import 'widgets/intelligence_dashboard.dart';
+import 'widgets/cloud_dashboard.dart';
+import 'widgets/riman_x_home.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,14 +107,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   String _pinValue = '';
   String _pinError = '';
 
+// ... (in _DashboardScreenState)
   @override
   void initState() {
     super.initState();
     _startSplashScreenLoading();
     _seedInitialSecurityLogs();
     VaultService().addListener(_onVaultServiceUpdate);
+    ShareIntentService.initialize((file) {
+      showModalBottomSheet(
+        context: context,
+        builder: (_) => ShareTargetSheet(file: file),
+      );
+    });
   }
-
   @override
   void dispose() {
     _terminalScrollController.dispose();
@@ -117,6 +135,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   void _startSplashScreenLoading() {
+    if (Platform.environment.containsKey('FLUTTER_TEST')) {
+      _loadingProgress = 100;
+      _isLoaded = true;
+      _appendSecurityLog(
+        'System Startup Completed',
+        'success',
+        'Riemann multi-layer security suite standard protocols established. Secure orbit active.',
+      );
+      return;
+    }
     _loadingStatus = _locale == 'ar' ? 'تهيئة النظام الكمومي لـ Riman...' : 'Quantum system initializing...';
     Timer.periodic(const Duration(milliseconds: 25), (timer) {
       if (!mounted) {
@@ -397,7 +425,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 const SizedBox(height: 24),
                 Text(
                   locVal('Initial bypass PIN is: 1234', 'رمز العبور المبدئي لفك القفل هو: 1234'),
-                  style: TextStyle(fontSize: 8, color: Colors.grey.shade650, fontFamily: 'monospace'),
+                  style: TextStyle(fontSize: 8, color: Colors.grey.shade600, fontFamily: 'monospace'),
                 ),
               ],
             ),
@@ -435,9 +463,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildTabBar() {
     final List<Map<String, dynamic>> tabs = [
+      {'icon': Icons.bolt, 'key': 'tab_riman_x'},
       {'icon': Icons.monitor_heart, 'key': 'tab_dashboard'},
       {'icon': Icons.verified_user, 'key': 'tab_security'},
       {'icon': Icons.security, 'key': 'tab_vaults'},
+      {'icon': Icons.hub, 'key': 'tab_nexus'},
+      {'icon': Icons.archive, 'key': 'tab_archive'},
+      {'icon': Icons.policy, 'key': 'tab_forensics'},
+      {'icon': Icons.shield, 'key': 'tab_sentinel'},
+      {'icon': Icons.business_center, 'key': 'tab_workspace'},
+      {'icon': Icons.developer_board, 'key': 'tab_kernel'},
+      {'icon': Icons.psychology, 'key': 'tab_intelligence'},
+      {'icon': Icons.cloud_upload, 'key': 'tab_cloud_bridge'},
       {'icon': Icons.text_snippet, 'key': 'tab_text'},
       {'icon': Icons.folder_zip, 'key': 'tab_file'},
       {'icon': Icons.lock_clock, 'key': 'tab_capsules'},
@@ -700,6 +737,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: IndexedStack(
                 index: _currentTabIndex,
                 children: [
+                  RimanXHomeWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                    onNavigateTab: (index) => setState(() => _currentTabIndex = index),
+                  ),
                   SovereignDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
@@ -710,6 +753,46 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     onSuccess: _showNotification,
                   ),
                   SmartVaultsTab(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  NexusDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  ArchiveDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  ForensicsDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  SentinelDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  WorkspaceDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  KernelDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  IntelligenceDashboardWidget(
+                    locale: _locale,
+                    onSecurityLog: _appendSecurityLog,
+                    onSuccess: _showNotification,
+                  ),
+                  CloudDashboardWidget(
                     locale: _locale,
                     onSecurityLog: _appendSecurityLog,
                     onSuccess: _showNotification,

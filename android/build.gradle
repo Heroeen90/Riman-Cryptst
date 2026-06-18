@@ -13,6 +13,24 @@ subprojects {
     project.evaluationDependsOn(':app')
 }
 
+subprojects { proj ->
+    afterEvaluate {
+        if (proj.hasProperty('android')) {
+            def androidExt = proj.extensions.findByName('android')
+            if (androidExt != null && androidExt.namespace == null) {
+                def manifestFile = proj.file('src/main/AndroidManifest.xml')
+                if (manifestFile.exists()) {
+                    def parsedManifest = new XmlSlurper().parse(manifestFile)
+                    def packageName = parsedManifest.@package.text()
+                    if (packageName) {
+                        androidExt.namespace = packageName
+                    }
+                }
+            }
+        }
+    }
+}
+
 tasks.register("clean", Delete) {
     delete rootProject.buildDir
 }

@@ -2,6 +2,7 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        maven { url 'https://storage.googleapis.com/download.flutter.io' }
     }
 }
 
@@ -26,7 +27,11 @@ subprojects { proj ->
                     def packageName = parsedManifest.@package.text()
                     if (packageName) {
                         androidExt.namespace = packageName
+                    } else {
+                        androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
                     }
+                } else {
+                    androidExt.namespace = "com.riman.cryptst.${proj.name.replace('-', '_').replace(':', '_')}"
                 }
             }
         }

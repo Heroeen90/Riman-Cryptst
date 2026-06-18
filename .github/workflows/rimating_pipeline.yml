@@ -20,7 +20,14 @@ jobs:
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > android/local.properties
           echo "flutter.sdk=${FLUTTER_ROOT}" >> android/local.properties
-      - name: Build APK Debug
-        run: flutter build apk --debug --android-skip-build-dependency-validation --no-pub
-      - name: Build APK Release
-        run: flutter build apk --release --android-skip-build-dependency-validation --no-pub
+      - name: Build Debug APK
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter build apk --debug --android-skip-build-dependency-validation
+          fi
+
+      - name: Build Release APK
+        run: |
+          if [ -f "pubspec.yaml" ]; then
+            flutter build apk --release --android-skip-build-dependency-validation
+          fi
